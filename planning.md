@@ -15,87 +15,91 @@
   - [Chapter 5 — Producer Reliability](#chapter-5-producer-reliability)
 
 ---
+
 ## Target
+
 ### Developer
 
 You should become comfortable with:
 
-* Kafka architecture
-* Topics and partitions
-* Producers
-* Serializers
-* Partitioning
-* Producer reliability
-* Idempotence
-* Consumers
-* Consumer groups
-* Rebalancing
-* Offset management
-* Transactions
-* Exactly-once semantics
-* AdminClient
-* Kafka Streams
-* Kafka Connect
-* Schema evolution
-* Error handling
-* Performance tuning
-* Testing Kafka applications
-* 
+- Kafka architecture
+- Topics and partitions
+- Producers
+- Serializers
+- Partitioning
+- Producer reliability
+- Idempotence
+- Consumers
+- Consumer groups
+- Rebalancing
+- Offset management
+- Transactions
+- Exactly-once semantics
+- AdminClient
+- Kafka Streams
+- Kafka Connect
+- Schema evolution
+- Error handling
+- Performance tuning
+- Testing Kafka applications
+-
+
 ### Administrator
+
 You should become comfortable with:
 
-* Cluster architecture
-* Brokers
-* KRaft
-* Controllers
-* Replication
-* Leaders and followers
-* ISR
-* Partition management
-* Topic configuration
-* Broker configuration
-* Dynamic configuration
-* Consumer groups
-* Reassignments
-* Preferred leader election
-* Storage
-* Log segments
-* Retention
-* Compaction
-* Security
-* ACLs
-* TLS/SASL
-* Monitoring
-* Metrics
-* Consumer lag
-* Failure diagnosis
-* Capacity planning
-* Disaster recovery
-* MirrorMaker
-* Production operations
-
-
+- Cluster architecture
+- Brokers
+- KRaft
+- Controllers
+- Replication
+- Leaders and followers
+- ISR
+- Partition management
+- Topic configuration
+- Broker configuration
+- Dynamic configuration
+- Consumer groups
+- Reassignments
+- Preferred leader election
+- Storage
+- Log segments
+- Retention
+- Compaction
+- Security
+- ACLs
+- TLS/SASL
+- Monitoring
+- Metrics
+- Consumer lag
+- Failure diagnosis
+- Capacity planning
+- Disaster recovery
+- MirrorMaker
+- Production operations
 
 ## Part I — Kafka Foundations
+
 ### Chapter 1 — Kafka Mental Model
 
 Study:
 
-* Event streaming
-* Publish/subscribe
-* Kafka vs traditional queues
-* Topics
-* Partitions
-* Records
-* Offsets
-* Producers
-* Consumers
-* Brokers
-* Clusters
-* Consumer groups
-* Replication
+- Event streaming
+- Publish/subscribe
+- Kafka vs traditional queues
+- Topics
+- Partitions
+- Records
+- Offsets
+- Producers
+- Consumers
+- Brokers
+- Clusters
+- Consumer groups
+- Replication
   
 Core model:
+
 ```text
                  KAFKA CLUSTER
 
@@ -111,11 +115,15 @@ Producer ---> Topic: orders             |
                  |
           Consumer Group
 ```
+
 You must be able to explain why Kafka is a distributed log rather than simply a message queue.
 
 ## Part II — Kafka Architecture
+
 ### Chapter 2 — Topics, Partitions and Offsets
+
 Master
+
 ```text
 Topic
  ├── Partition 0
@@ -133,23 +141,27 @@ Topic
       ├── Offset 1
       └── Offset 2
 ```
+
 Critical concepts:
 
-* Ordering
-* Partition key
-* Partition count
-* Offset
-* Retention
-* Log segments
-* Replication
+- Ordering
+- Partition key
+- Partition count
+- Offset
+- Retention
+- Log segments
+- Replication
 
 Certification rule
 
 **Ordering is guaranteed within a partition, not across an entire topic.**
 
 ## Part III — Kafka Producers
+
 ### Chapter 3 — Producer Architecture
+
 Study
+
 ```text
 Application
      |
@@ -171,23 +183,25 @@ Broker
 
 Master:
 
-* `bootstrap.servers`
-* `key.serializer`
-* `value.serializer`
-* `acks`
-* `retries`
-* `delivery.timeout.ms`
-* `linger.ms`
-* `batch.size`
-* `buffer.memory`
-* `compression.type`
-* `max.in.flight.requests.per.connection`
-* `request.timeout.ms`
+- `bootstrap.servers`
+- `key.serializer`
+- `value.serializer`
+- `acks`
+- `retries`
+- `delivery.timeout.ms`
+- `linger.ms`
+- `batch.size`
+- `buffer.memory`
+- `compression.type`
+- `max.in.flight.requests.per.connection`
+- `request.timeout.ms`
 
 The book dedicates Chapter 3 to producer construction, configuration, serializers, Avro, partitions, headers, interceptors, quotas and throttling.
 
 ### Chapter 4 — Producer Partitioning
+
 Understand exactly how Kafka chooses a partition.
+
 ```text
 ProducerRecord
       |
@@ -202,7 +216,9 @@ ProducerRecord
       v
     Broker
 ```
+
 You should know:
+
 ```text
 same key
    ↓
@@ -210,21 +226,24 @@ same partition
    ↓
 ordered processing
 ```
+
 when the relevant partitioning conditions remain unchanged.
 
 Study:
 
-* Keyed records
-* Null keys
-* Custom partitioners
-* Partition count changes
-* Load distribution
-* Hot partitions
+- Keyed records
+- Null keys
+- Custom partitioners
+- Partition count changes
+- Load distribution
+- Hot partitions
 
 ### Chapter 5 — Producer Reliability
+
 This is a **high-priority certification chapter**.
 
 Understand
+
 ```text
 acks=0
 acks=1
@@ -256,4 +275,5 @@ retries
 +
 idempotence
 ```
+
 This combination is extremely important.

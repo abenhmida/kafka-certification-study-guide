@@ -1,6 +1,6 @@
 # Chapter 9 — Kafka Security Deep Dive
 
-## Kafka Developer & Administrator Certification Preparation
+> Kafka Developer & Administrator Certification Preparation
 
 > Based on the security concepts covered in *Kafka: The Definitive Guide*, with certification-oriented explanations,
 > operational examples, troubleshooting scenarios, and exam traps.
@@ -30,13 +30,10 @@ By the end of this chapter, you should be able to:
 
 Kafka security is built around four major capabilities:
 
-## 1. **Encryption**
-
-## 2. **Authentication**
-
-## 3. **Authorization**
-
-## 4. **Auditing / monitoring**
+- **Encryption**
+- **Authentication**
+- **Authorization**
+- **Auditing / monitoring**
 
 A useful mental model is:
 
@@ -54,19 +51,19 @@ A useful mental model is:
 
 These capabilities solve different problems.
 
-Encryption
+### Encryption
 
 Protects data from being read while traveling over the network.
 
-Authentication
+### Authentication
 
 Determines the identity of the connecting client.
 
-Authorization
+### Authorization
 
 Determines whether the authenticated identity is allowed to perform an operation.
 
-Auditing
+### Auditing
 
 Provides visibility into security-relevant activity.
 
@@ -105,7 +102,8 @@ A client can successfully authenticate and still receive an authorization failur
 
 For example:
 
-Authentication: SUCCESS Authorization: FAILURE
+**Authentication:** SUCCESS<br>
+**Authorization:** FAILURE
 
 Principal:
 User:alice
@@ -168,7 +166,7 @@ Broker
 v
 ```
 
-TrustStore KeyStore
+### TrustStore vs KeyStore
 
 Usually contains:
 
@@ -187,7 +185,9 @@ TrustStore -> "Who do I trust?"
 
 In one-way TLS:
 
+```text
 Client -----------------> Broker TLS
+```
 
 Broker presents certificate. Client validates broker.
 
@@ -213,9 +213,9 @@ Client Broker
 | --- Client certificate --> |
 |                            |
 +------ authenticated -------+
+```
 
 This can provide strong identity for Kafka clients.
-```
 
 Kafka can map certificate identities to principals.
 
@@ -277,8 +277,8 @@ Common mechanisms:
 Typical client configuration:
 
 ```properties
-`security.protocol`=SASL_SSL
-`sasl.mechanism`=SCRAM-SHA-512
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-512
 ```
 
 SCRAM is frequently useful when certificate-based client authentication is not desired.
@@ -295,23 +295,23 @@ Client
 |
 | Kerberos authentication
 v
-```
-
 KDC
-
-```text
 |
 | ticket
 v
-```
-
 Kafka Broker
+```
 
 Kerberos is particularly common in enterprise environments with centralized identity management.
 
 Important concepts include:
 
-principal keytab ticket KDC service principal
+- principal
+- keytab
+- ticket
+- KDC
+- service
+- principal
 
 ## 12. OAUTHBEARER
 
@@ -333,9 +333,8 @@ Client
 |
 | token
 v
-```
-
 Kafka Broker
+```
 
 Kafka validates the token according to the configured OAuth setup.
 
@@ -354,19 +353,23 @@ Common values include:
 
 Meaning:
 
-Protocol Encryption SASL PLAINTEXT No No SSL Yes No SASL_PLAINTEXT No Yes SASL_SSL Yes Yes
+| Protocol         | Encryption | SASL |
+|------------------|------------|------|
+| `PLAINTEXT`      | No         | No   |
+| `SSL`            | Yes        | No   |
+| `SASL_PLAINTEXT` | No         | Yes  |
+| `SASL_SSL`       | Yes        | Yes  |
 
 The key point:
 
-SSL = TLS encryption SASL = authentication mechanism
+```text
+SSL = TLS encryption 
+SASL = authentication mechanism
+```
 
 Therefore:
 
-- `SASL_SSL`
-
-means:
-
-SASL authentication over TLS.
+- `SASL_SSL` means **SASL** authentication over **TLS**.
 
 ## 14. Kafka Listeners
 
@@ -376,18 +379,20 @@ A broker can expose multiple listeners.
 
 Example:
 
-`listeners`=INTERNAL://:9092,EXTERNAL://:9093
+```properties
+listeners=INTERNAL://:9092,EXTERNAL://:9093
+```
 
 Advertised listeners tell clients how to connect:
 
 ```properties
-`advertised.listeners`=INTERNAL://kafka:9092,EXTERNAL://broker.example.com:9093
+advertised.listeners=INTERNAL://kafka:9092,EXTERNAL://broker.example.com:9093
 ```
 
 Security protocols can be mapped to listener names:
 
 ```properties
-listener.`security.protocol`.map=INTERNAL:SASL_SSL,EXTERNAL:SASL_SSL
+listener.security.protocol.map=INTERNAL:SASL_SSL,EXTERNAL:SASL_SSL
 ```
 
 This allows different listener endpoints to have different purposes.
@@ -400,27 +405,29 @@ Kafka returns metadata containing broker endpoints.
 
 For example:
 
-Client
-
 ```text
-|
-| bootstrap connection
-v
-Broker
-|
-| metadata
-v
-Client learns:
-broker-1.example.com:9093
-broker-2.example.com:9093
-broker-3.example.com:9093
-
-If advertised.listeners contains an unreachable address, clients may authenticate successfully but then fail to communicate with the actual broker.
+        Client
+          |
+          | bootstrap connection
+          v
+        Broker
+          |
+          | metadata
+          v
+    Client learns:
+    broker-1.example.com:9093
+    broker-2.example.com:9093
+    broker-3.example.com:9093
 ```
+
+If `advertised.listeners` contains an unreachable address, clients may authenticate successfully but then fail to
+communicate with the actual broker.
 
 Typical symptom:
 
-Connection refused Unknown host Network unreachable
+- Connection refused
+- Unknown host
+- Network unreachable
 
 This is why security and networking must be considered together.
 
@@ -441,7 +448,9 @@ Broker 1 <---- secure connection ----> Broker 2
 
 Depending on the deployment, inter-broker communication can use:
 
-TLS SASL SASL + TLS
+- TLS
+- SASL
+- SASL + TLS
 
 A cluster can therefore be configured so that client traffic and broker-to-broker traffic use secure listeners.
 
@@ -464,9 +473,12 @@ Conceptually:
 ```
 
 Security planning must therefore consider:
-```text
-client → broker broker → broker broker → controller controller → controller
-```
+
+- client → broker
+- broker → broker
+- broker → controller
+- controller → controller
+
 The exact listener and protocol configuration depends on the Kafka version and architecture.
 
 ## 18. Authorization
@@ -478,18 +490,20 @@ Authorization determines what the principal can do.
 Kafka authorization commonly uses ACLs.
 
 Example:
+
 ```text
 User:alice
-|
-+--> READ orders
-|
-+--> DESCRIBE orders
+    |
+    +--> READ orders
+    |
+    +--> DESCRIBE orders
 ```
 
 But:
+
 ```text
 User:alice
-X--> WRITE orders
+    X--> WRITE orders
 ```
 
 could be denied.
@@ -498,24 +512,33 @@ could be denied.
 
 An ACL describes a permission associated with:
 
-Principal Operation Resource Permission Host
+- Principal
+- Operation
+- Resource
+- Permission
+- Host
 
 Conceptually:
 
-ACL
-
 ```text
-|
-+-- Principal
-+-- Resource
-+-- Operation
-+-- Permission
-+-- Host
+    ACL
+     |
+     +-- Principal
+     +-- Resource
+     +-- Operation
+     +-- Permission
+     +-- Host
 ```
 
 Example:
 
-Principal = User:alice Resource = Topic:orders Operation = READ Permission = ALLOW Host = *
+```text
+Principal = User:alice 
+Resource = Topic:orders 
+Operation = READ 
+Permission = ALLOW 
+Host = *
+```
 
 ## 20. Kafka Resources
 
@@ -523,11 +546,20 @@ ACLs can apply to different Kafka resource types.
 
 Important resources include:
 
-Topic Group Cluster TransactionalId DelegationToken
+- Topic
+- Group
+- Cluster
+- TransactionalId
+- DelegationToken
 
 Examples:
 
-Topic:orders Group:order-service TransactionalId:payments Cluster:kafka-cluster
+```text
+Topic:orders 
+Group:order-service 
+TransactionalId:payments 
+Cluster:kafka-cluster
+```
 
 Certification questions often test which resource an operation applies to.
 
@@ -546,11 +578,10 @@ Typical topic operations include:
 
 Example:
 
-User:producer-app
-
 ```text
-|
-+--> WRITE Topic:orders
+ User:producer-app
+        |
+        +--> WRITE Topic:orders
 ```
 
 A producer normally needs permission to write to its topic.
@@ -559,26 +590,26 @@ A consumer needs permission to read from its topic.
 
 ## 22. Consumer Group Authorization
 
-Consumer groups are resources too.
-
-A consumer usually needs permission related to its group.
+Consumer groups are resources too. A consumer usually needs permission related to its group.
 
 Conceptually:
 
-Consumer
-
 ```text
-|
-+--> READ Topic:orders
-|
-+--> Group:order-service
+    Consumer
+      |
+      +--> READ Topic:orders
+      |
+      +--> Group:order-service
+```
 
 A very common troubleshooting mistake is granting topic access but forgetting group access.
-```
 
 The result can be:
 
-Topic authorization: OK Group authorization: DENIED
+```text
+Topic authorization: OK 
+Group authorization: DENIED
+```
 
 ## 23. Cluster-Level Permissions
 
@@ -587,12 +618,11 @@ Some operations are cluster-level.
 For example:
 
 - `DESCRIBE`
-  CLUSTER_ACTION
+- `CLUSTER_ACTION`
 - `CREATE`
 
-may be associated with cluster operations depending on the specific Kafka API and authorization behavior.
-
-Do not assume every Kafka operation maps directly to a topic ACL.
+may be associated with cluster operations depending on the specific Kafka API and authorization behavior. Do not assume
+every Kafka operation maps directly to a topic ACL.
 
 ## 24. Principal
 
@@ -600,11 +630,18 @@ A principal represents the authenticated identity.
 
 Examples:
 
-User:alice User:order-service User:admin
+```text
+User:alice 
+User:order-service 
+User:admin
+```
 
 The principal can originate from:
 
-TLS certificate identity SASL username Kerberos principal OAuth identity
+- TLS certificate identity
+- SASL username
+- Kerberos principal
+- OAuth identity
 
 Kafka authorization evaluates permissions against this identity.
 
@@ -612,23 +649,33 @@ Kafka authorization evaluates permissions against this identity.
 
 Suppose:
 
-User:alice ALLOW READ Topic:orders
+```text
+User:alice 
+ALLOW READ 
+Topic:orders
+```
 
 Then:
 
+```text
 alice -> READ orders
+```
 
 is allowed.
 
 But:
 
+```text
 alice -> WRITE orders
+```
 
 may be denied.
 
 Similarly:
 
+```text
 bob -> READ orders
+```
 
 may be denied.
 
@@ -663,24 +710,15 @@ Example:
 
 ```properties
 bootstrap.servers=broker1:9093,broker2:9093
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-512
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required
+username="consumer-user"
+password="secret"
 ```
 
-```properties
-`security.protocol`=SASL_SSL
-`sasl.mechanism`=SCRAM-SHA-512
-```
-
-```properties
-`sasl.jaas.config`=\
-```
-
-org.apache.kafka.common.security.scram.ScramLoginModule required \
-username="consumer-user" \
-password="secret";
-
-TLS configuration would additionally include the appropriate trust configuration.
-
-Never place production credentials directly into source control.
+TLS configuration would additionally include the appropriate trust configuration. Never place production credentials
+directly into source control.
 
 ## 28. Producer Security Configuration
 
@@ -688,20 +726,12 @@ Example:
 
 ```properties
 bootstrap.servers=broker1:9093,broker2:9093
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-512
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required
+username="producer-user"
+password="secret"
 ```
-
-```properties
-`security.protocol`=SASL_SSL
-`sasl.mechanism`=SCRAM-SHA-512
-```
-
-```properties
-`sasl.jaas.config`=\
-```
-
-org.apache.kafka.common.security.scram.ScramLoginModule required \
-username="producer-user" \
-password="secret";
 
 The producer's authenticated identity is then evaluated against Kafka ACLs.
 
@@ -709,163 +739,172 @@ The producer's authenticated identity is then evaluated against Kafka ACLs.
 
 A production Kafka security architecture includes the surrounding ecosystem.
 
-                  Identity Provider
-
 ```text
+                  Identity Provider
                          |
                          v
-Producer ---> TLS/SASL ---> Kafka
-|
-+----> Schema Registry
-|
-+----> Kafka Connect
-|
-+----> Kafka Streams
-|
-+----> Monitoring
+        Producer ---> TLS/SASL ---> Kafka
+                         |
+                         +----> Schema Registry
+                         |
+                         +----> Kafka Connect
+                         |
+                         +----> Kafka Streams
+                         |
+                         +----> Monitoring
 ```
 
 Each component may require:
 
-TLS authentication authorization secret management network controls
+- TLS
+- authentication
+- authorization
+- secret management
+- network controls
 
 ## 30. Secret Management
 
 Avoid:
 
+```properties
 password=MyProductionPassword
+```
 
 inside:
 
-Git repositories Docker images public configuration source code logs
+- Git repositories
+- Docker images
+- public configuration
+- source code
+- logs
 
 Prefer:
 
-environment-based secret injection secret managers Kubernetes Secrets with appropriate controls cloud secret-management
-systems secured configuration stores
+- environment-based secret injection
+- secret managers
+- Kubernetes Secrets with appropriate controls
+- cloud secret-management systems
+- secured configuration stores
 
-The principle is:
-
-Credentials should be treated as secrets, not configuration values that can be freely copied.
+The principle is **Credentials should be treated as secrets, not configuration values that can be freely copied.**
 
 ## 31. Network Security
 
 Kafka security should not rely only on authentication.
 
 A defense-in-depth architecture can look like:
-```text
-Internet
-|
-```
-
-Firewall
 
 ```text
-|
-```
-
-Load Balancer / Network Boundary
-
-```text
-|
-Private Network
-|
-```
-
-Kafka
-
-```text
-|
-+-- TLS
-+-- Authentication
-+-- Authorization
-+-- Monitoring
+     Internet
+        |
+     Firewall
+        |
+     Load Balancer / Network Boundary
+        |
+     Private Network
+        |
+     Kafka
+        |
+        +-- TLS
+        +-- Authentication
+        +-- Authorization
+        +-- Monitoring
 ```
 
 Network segmentation reduces the attack surface.
 
 ## 32. Common Security Failure Modes
 
-## Failure 1 — Authentication failed
+### Failure 1 — Authentication failed
 
 Example symptoms:
 
-Authentication failed SASL authentication failed SSL handshake failed
+```text
+Authentication failed 
+SASL authentication failed 
+SSL handshake failed
+```
 
 Investigate:
 
-username password SASL mechanism certificate truststore keystore TLS protocol listener configuration
+- username
+- password
+- SASL mechanism
+- certificate
+- truststore
+- keystore
+- TLS protocol
+- listener configuration
 
-## Failure 2 — Authorization failed
+### Failure 2 — Authorization failed
 
 Example:
 
-TopicAuthorizationException GroupAuthorizationException ClusterAuthorizationException
+```text
+TopicAuthorizationException 
+GroupAuthorizationException 
+ClusterAuthorizationException
+```
 
 Authentication may already be working.
 
 Check:
 
-principal ACL resource operation group host restrictions
+- principal
+- ACL
+- resource
+- operation
+- group
+- host restrictions
 
 ## 33. TLS Handshake Failures
 
 Typical causes:
 
-SSLHandshakeException PKIX path building failed certificate_unknown
+```text
+SSLHandshakeException 
+PKIX path building failed 
+certificate_unknown
+```
 
 Possible causes:
 
-client does not trust broker CA expired certificate hostname mismatch wrong truststore wrong keystore incomplete
-certificate chain incompatible TLS configuration
+- client does not trust broker CA
+- expired certificate
+- hostname mismatch
+- wrong truststore
+- wrong keystore
+- incomplete certificate chain
+- incompatible TLS configuration
 
 ## 34. Hostname Verification
 
 Suppose the broker certificate contains:
 
-DNS:kafka01.example.com
+`DNS:kafka01.example.com` but the client connects to `10.20.30.40`
 
-but the client connects to:
-
-10.20.30.40
-
-Depending on certificate configuration, hostname verification may fail.
-
-The certificate identity must correspond to the endpoint used by the client.
-
-This is a common production issue.
+Depending on certificate configuration, hostname verification may fail. The certificate identity must correspond to the
+endpoint used by the client. This is a common production issue.
 
 ## 35. Troubleshooting Method
 
 When a secure Kafka client fails, troubleshoot in layers.
 
-## 1. DNS
-
 ```text
-   |
-## 2. TCP connectivity
-   |
+    1. DNS
+        |
+    2. text
+        |  
+    3. TCP connectivity
+        |
+    4. TLS handshake**
+        |
+    5. Authentication
+        |
+    6. Authorization
+        |
+    7. Kafka API operation**
 ```
-
-## 3. TLS handshake
-
-```text
-   |
-```
-
-## 4. Authentication
-
-```text
-   |
-```
-
-## 5. Authorization
-
-```text
-   |
-```
-
-## 6. Kafka API operation
 
 Do not start by changing ACLs if the client cannot establish a network connection.
 
@@ -873,41 +912,40 @@ Do not start by changing ACLs if the client cannot establish a network connectio
 
 Problem:
 
-Producer cannot publish to orders.
+`Producer cannot publish to orders.`
 
 Check:
 
-Step 1
+- Step 1: Can the host resolve the broker?
 
-Can the host resolve the broker?
+`getent hosts broker1`
 
-getent hosts broker1 Step 2
+- Step 2: Can it connect to the port?
 
-Can it connect to the port?
+`nc -vz broker1 9093`
 
-nc -vz broker1 9093 Step 3
+- Step 3: Does TLS work? Inspect broker/client TLS configuration.
 
-Does TLS work?
-
-Inspect broker/client TLS configuration.
-
-Step 4
-
-Does authentication succeed?
+- Step 4: Does authentication succeed?
 
 Check:
 
-SASL mechanism credentials JAAS configuration Step 5
+```text
+SASL mechanism 
+credentials 
+JAAS configuration
+```
 
-Does authorization succeed?
+- Step 5: Does authorization succeed?
 
 Check:
 
-User:producer WRITE Topic:orders Step 6
+```text
+User:producer 
+WRITE Topic:orders 
+```
 
-Does the Kafka API operation succeed?
-
-Only now investigate producer/application-level behavior.
+- Step 6: Does the Kafka API operation succeed? Only now investigate producer/application-level behavior.
 
 ## 37. Security Logging
 
@@ -915,7 +953,14 @@ Security troubleshooting requires logs.
 
 Useful categories include:
 
-Authentication failures Authorization failures SSL/TLS errors Connection failures Principal information ACL evaluation
+```text
+Authentication failures 
+Authorization failures 
+SSL/TLS errors 
+Connection failures 
+Principal information 
+ACL evaluation
+```
 
 Centralized logging is strongly recommended for production clusters.
 
@@ -925,11 +970,20 @@ Kafka applications should receive only the permissions they need.
 
 Bad:
 
-User:order-service ALLOW ALL ALL RESOURCES
+```text
+User:order-service 
+ALLOW ALL 
+ALL RESOURCES
+```
 
 Better:
 
-User:order-service WRITE Topic:orders READ Topic:payments READ Group:order-service
+```text
+User:order-service 
+WRITE Topic:orders 
+READ Topic:payments 
+READ Group:order-service
+```
 
 Least privilege reduces blast radius.
 
@@ -939,11 +993,17 @@ Avoid using one Kafka identity for every service.
 
 Bad:
 
+```text
 all-services -> kafka-user
+```
 
 Better:
 
-order-service -> User:order-service payment-service -> User:payment-service billing-service -> User:billing-service
+```text
+order-service -> User:order-service 
+payment-service -> User:payment-service 
+billing-service -> User:billing-service
+```
 
 Then permissions can be independently controlled.
 
@@ -951,33 +1011,25 @@ Then permissions can be independently controlled.
 
 For multiple teams or applications:
 
-Team A
-
 ```text
-|
-+--> User:team-a
-+--> topics: team-a.*
+      Team A
+        |
+        +--> User:team-a
+        +--> topics: team-a.*
+    
+      Team B
+        |
+        +--> User:team-b
+        +--> topics: team-b.*
 ```
-
-Team B
-
-```text
-|
-+--> User:team-b
-+--> topics: team-b.*
 
 ACLs and naming conventions can help enforce boundaries.
-```
 
 ## 41. Certification Trap: TLS Does Not Automatically Mean Authorization
 
 A certificate can authenticate a client.
 
-It does not automatically mean:
-
-Client can READ everything.
-
-Authentication and authorization remain separate.
+It does not automatically mean `Client can READ everything`. Authentication and authorization remain separate.
 
 ## 42. Certification Trap: SASL Does Not Mean Encryption
 
@@ -987,7 +1039,10 @@ This is critical.
 
 means:
 
-Authentication: Yes Encryption: No
+```text
+Authentication: Yes 
+Encryption: No
+```
 
 Whereas:
 
@@ -995,7 +1050,10 @@ Whereas:
 
 means:
 
-Authentication: Yes Encryption: Yes
+```text
+Authentication: Yes 
+Encryption: Yes
+```
 
 ## 43. Certification Trap: SSL Is Not the Same as SASL
 
@@ -1003,102 +1061,75 @@ Authentication: Yes Encryption: Yes
     -> encryption
     -> certificate-based authentication can also be used
 
-SASL -> authentication framework
+    SASL 
+    -> authentication framework
 
 They can be combined.
 
 ## 44. Certification Trap: Topic ACL Is Not Always Enough
 
-A consumer can have:
-
-READ Topic:orders
-
-but still fail because the consumer group permission is missing.
-
-Always inspect both:
-
-Topic Group
-
-when diagnosing consumer authorization.
+A consumer can have `READ Topic:orders` but still fail because the consumer group permission is missing. Always inspect
+both `Topic` and `Group` when diagnosing consumer authorization.
 
 ## 45. Security Architecture Example
 
 A production architecture could look like:
 
-                 Identity Provider
-
 ```text
+                 Identity Provider
                         |
                         v
               +-------------------+
               |   Kafka Clients   |
               +-------------------+
                    |        |
-```
-
                 SASL_SSL   SASL_SSL
-
-```text
                    |        |
                    v        v
               +----------------+
               | Kafka Brokers  |
               +----------------+
                 |            |
-```
-
               TLS            TLS
-
-```text
                 |            |
-```
-
           Broker traffic   Controllers
-
-```text
                 |
-```
-
               ACLs
-
-```text
                 |
        +--------+---------+
        |        |         |
-```
-
     Orders   Payments   Billing
+```
 
 Security layers:
 
-Network controls
-
-+
-
-TLS
-
-+
-
-Authentication
-
-+
-
-Authorization
-
-+
-
-Monitoring
-
-+
-
-Secret management
+```text
+        Network controls
+                +
+        TLS
+                +
+        Authentication
+                +
+        Authorization
+                +
+        Monitoring
+                +
+        Secret management
+```
 
 ## 46. Developer Certification Focus
 
 For developer-oriented exams, know:
 
-security.protocol SASL mechanisms SSL/TLS basics client security properties authentication vs authorization ACL concepts
-consumer group permissions common exceptions secure producer/consumer configuration
+- `security.protocol`
+- SASL mechanisms
+- SSL/TLS basics
+- client security properties
+- authentication vs authorization
+- ACL concepts
+- consumer group permissions
+- common exceptions
+- secure producer/consumer configuration
 
 You should be able to reason from an error message to the likely security layer.
 
@@ -1106,200 +1137,146 @@ You should be able to reason from an error message to the likely security layer.
 
 For administrator-oriented exams, know additionally:
 
-broker listeners advertised listeners inter-broker security controller security ACL administration certificate
-management truststores and keystores SASL configuration principal mapping security troubleshooting least privilege
-secure cluster architecture
+- broker listeners
+- advertised listeners
+- inter-broker security
+- controller security
+- ACL administration
+- certificate management
+- truststores and keystores
+- SASL configuration
+- principal mapping
+- security troubleshooting
+- least privilege
+- secure cluster architecture
 
 ## 48. Exam-Oriented Mental Model
 
 Memorize this sequence:
 
-CONNECT
-
 ```text
-|
-v
+         CONNECT
+            |
+            v
+         NETWORK
+            |
+            v
+           TLS
+            |
+            v
+       AUTHENTICATION
+            |
+            v
+        PRINCIPAL
+            |
+            v
+        AUTHORIZATION
+            |
+            v
+        KAFKA API
 ```
-
-NETWORK
-
-```text
-|
-v
-```
-
-TLS
-
-```text
-|
-v
-```
-
-AUTHENTICATION
-
-```text
-|
-v
-```
-
-PRINCIPAL
-
-```text
-|
-v
-```
-
-AUTHORIZATION
-
-```text
-|
-v
-```
-
-KAFKA API
 
 When diagnosing a failure, identify the first layer that fails.
 
 ## 49. Certification Questions
 
-    Question 1
+### Question 1
 
 A Kafka client receives:
 
+```text
 SASL authentication failed
+```
 
-What should you investigate first?
+**What should you investigate first?**
 
 A. Topic partition count B. Consumer offset C. SASL credentials and mechanism D. Replication factor
 
-Answer: C
+Answer: **C**
 
 Authentication is failing before authorization or topic operations.
 
-Question 2
+### Question 2
 
-Which protocol provides both SASL authentication and TLS encryption?
+**Which protocol provides both SASL authentication and TLS encryption?**
 
 A. PLAINTEXT B. SSL C. SASL_PLAINTEXT D. SASL_SSL
 
-Answer: D
+Answer: **D**
 
-Question 3
+### Question 3
 
 A consumer successfully authenticates but receives GroupAuthorizationException.
 
-What is the most likely issue?
+**What is the most likely issue?**
 
 A. The broker certificate expired B. The consumer lacks permission for the group C. The topic has no partitions D. The
 producer is unavailable
 
-Answer: B
+Answer: **B**
 
-Question 4
+### Question 4
 
 What is the main purpose of a TrustStore?
 
 A. Store application passwords B. Store trusted certificates / certificate authorities C. Store Kafka offsets D. Store
 ACLs
 
-Answer: B
+Answer: **B**
 
-Question 5
+### Question 5
 
-What does authentication determine?
+**What does authentication determine?**
 
 A. What an identity may do B. The identity of the client C. The partition leader D. The consumer offset
 
-Answer: B
+Answer: **B**
 
-Question 6
+### Question 6
 
-What does authorization determine?
+**What does authorization determine?**
 
 A. Client identity B. Broker identity C. Whether an authenticated principal may perform an operation D. Network routing
 
-Answer: C
+Answer: **C**
 
-Question 7
+### Question 7
 
-Which is normally unsafe for password-based authentication unless additional network protection exists?
+**Which is normally unsafe for password-based authentication unless additional network protection exists?**
 
 A. SASL_SSL B. SASL_PLAINTEXT C. SSL D. mTLS
 
-Answer: B
+Answer: **B**
 
-Question 8
+### Question 8
 
-A Kafka client connects successfully to the bootstrap server but later tries to connect to an unreachable hostname. What
-Kafka configuration should be investigated?
+**A Kafka client connects successfully to the bootstrap server but later tries to connect to an unreachable hostname.
+What Kafka configuration should be investigated?**
 
-A. advertised.listeners B. log.retention.ms C. num.partitions D. compression.type
+A. `advertised.listeners`
+B. `log.retention.ms`
+C. `num.partitions`
+D. `compression.type`
 
-Answer: A
+Answer: **A**
 
-Question 9
+### Question 9
 
-What is the purpose of least privilege?
+**What is the purpose of least privilege?**
 
 A. Increase partition count B. Reduce the permissions and potential blast radius of identities C. Increase producer
 throughput D. Disable authentication
 
-Answer: B
+Answer: **B**
 
-Question 10
+### Question 10
 
-Which sequence is the best troubleshooting model?
+**Which sequence is the best troubleshooting model?**
 
 A. ACL → partition → DNS → TLS B. DNS → TCP → TLS → authentication → authorization C. Offset → consumer → DNS → ACL D.
 Producer → partition → schema → ACL
 
-Answer: B
-
-## 50. Administrator Lab
-
-Create three Kafka identities:
-
-producer-orders consumer-orders admin
-
-Create topic:
-
-orders
-
-Grant:
-
-producer-orders WRITE orders
-
-consumer-orders READ orders READ consumer-group orders-service
-
-Do not grant:
-
-consumer-orders WRITE orders
-
-Test:
-
-producer -> WRITE -> SUCCESS consumer -> READ -> SUCCESS consumer -> WRITE -> DENIED
-
-This lab demonstrates the complete security chain:
-
-Identity
-
-```text
-|
-Authentication
-|
-Principal
-|
-```
-
-ACL
-
-```text
-|
-Authorization
-|
-```
-
-Kafka operation
+Answer: **B**
 
 ## 51. Security Checklist
 
@@ -1314,51 +1291,75 @@ failures monitored Authorization failures monitored Certificate rotation procedu
 ## 52. Final Exam Cheat Sheet
 
     TLS
-    -> encryption
-    -> certificate-based authentication possible
+        -> encryption
+        -> certificate-based authentication possible
 
-SASL -> authentication
+    SASL 
+        -> authentication
 
-- `SASL_SSL`
-  -> SASL authentication + TLS encryption
+    SASL_SSL
+        -> SASL authentication + TLS encryption
 
+    SASL_PLAINTEXT
+        -> SASL authentication without TLS encryption
 
-- `SASL_PLAINTEXT`
-  -> SASL authentication without TLS encryption
+    KeyStore 
+        -> identity/private key/certificate
 
-KeyStore -> identity/private key/certificate
+    TrustStore 
+        -> trusted certificates / CAs
 
-TrustStore -> trusted certificates / CAs
+    Authentication 
+        -> Who are you?
 
-Authentication -> Who are you?
+    Authorization 
+        -> What can you do?
 
-Authorization -> What can you do?
+    Principal 
+        -> authenticated identity
 
-Principal -> authenticated identity
+    ACL 
+        -> authorization rule
 
-ACL -> authorization rule
+    Producer 
+        -> usually WRITE topic
 
-Producer -> usually WRITE topic
+    Consumer 
+        -> READ topic 
+        -> consumer-group permissions
 
-Consumer -> READ topic -> consumer-group permissions
+    Listeners 
+        -> broker endpoints
 
-Listeners -> broker endpoints
+    Advertised listeners 
+        -> addresses returned to clients
 
-Advertised listeners -> addresses returned to clients
+    Inter-broker security 
+        -> protects broker-to-broker traffic
 
-Inter-broker security -> protects broker-to-broker traffic
-
-Troubleshooting -> DNS -> TCP -> TLS -> Authentication -> Authorization -> Kafka operation
+    Troubleshooting 
+        -> DNS 
+        -> TCP 
+        -> TLS 
+        -> Authentication 
+        -> Authorization 
+        -> Kafka operation
 
 ## 53. Key Takeaways
 
 The most important concepts from this chapter are:
 
-Authentication and authorization are different. TLS provides encryption and can provide certificate-based
-authentication. SASL provides authentication mechanisms. SASL_SSL combines SASL authentication with TLS encryption.
-SASL_PLAINTEXT does not encrypt network traffic. A KeyStore represents local identity; a TrustStore represents trusted
-identities/CAs. Kafka ACLs control authorization. Consumer authorization often involves both topic and consumer-group
-permissions. advertised.listeners is critical for client connectivity. Inter-broker and controller communication must
-also be considered in secure cluster design. Least privilege is the preferred authorization strategy. Security
-troubleshooting should proceed layer by layer. Secure Kafka is not just a Kafka configuration problem; identity,
-certificates, networking, secrets, monitoring, and ecosystem components all matter.
+1. Authentication and authorization are different.
+2. TLS provides encryption and can provide certificate-based authentication.
+3. `SASL` provides authentication mechanisms.
+4. `SASL_SSL` combines SASL authentication with TLS encryption.
+5. `SASL_PLAINTEXT` does not encrypt network traffic.
+6. A KeyStore represents local identity; a TrustStore represents trusted identities/CAs.
+7. Kafka ACLs control authorization.
+8. Consumer authorization often involves both topic and consumer-group permissions.
+9. advertised.listeners is critical for client connectivity.
+10. Inter-broker and controller communication must also be considered in secure cluster design.
+11. Least privilege is the preferred authorization strategy.
+12. Security troubleshooting should proceed layer by layer.
+13. Secure Kafka is not just a Kafka configuration problem; identity, certificates, networking, secrets, monitoring, and
+    ecosystem components all matter.
