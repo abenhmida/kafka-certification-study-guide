@@ -16,7 +16,7 @@ Welcome to the Kafka Certification Mastery repository. Below is a comprehensive 
   - Group coordination, Rebalancing, and Offset management.
 - [**Chapter 6: Kafka Storage, Replication, ISR and Fault Tolerance**](kafka-certification-mastery-chapter-6.md)
   - Durability, ISR, High Watermark, and Failure scenarios.
-- [**Chapter 7: Consumer Groups**](Kafka_Certification_Chapter_07_Consumer_Groups.md)
+- [**Chapter 7: Consumer Groups**](Kafka-Certification-mastery-Chapter-7.md)
   - Detailed scenarios, Assignment strategies, and Operations.
 
 ## Supplementary Resources

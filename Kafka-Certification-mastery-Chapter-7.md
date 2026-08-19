@@ -1195,75 +1195,56 @@ active consumers <= partitions
 
 Coordinates:
 
-```text
-membership
-heartbeats
-generations
-rebalances
-offset commits
-```
+- membership
+- heartbeats
+- generations
+- rebalances
+- offset commits
 
 ### Rebalance
 
 Common triggers:
 
-```text
-join
-leave
-crash
-subscription change
-poll timeout
-```
+- join
+- leave
+- crash
+- subscription change
+- poll timeout
 
 ### Heartbeat
 
-```text
-heartbeat.interval.ms
-session.timeout.ms
-```
+- `heartbeat.interval.ms`
+- `session.timeout.ms`
 
 ### Polling
 
-```text
-max.poll.interval.ms
-max.poll.records
-```
+- `max.poll.interval.ms`
+- `max.poll.records`
 
 ### Assignment
 
 Know:
 
-```text
-Range
-RoundRobin
-Sticky
-CooperativeSticky
-```
+- Range
+- RoundRobin
+- Sticky
+- CooperativeSticky
 
 ### Static Membership
 
-```text
-group.instance.id
-```
+- `group.instance.id`
 
 ### Critical distinction
 
-```text
-heartbeat timeout
-       !=
-poll timeout
-```
+> **heartbeat timeout != poll timeout**
 
 ### Most important rule
 
-```text
-Partitions determine maximum
-consumer-group parallelism.
-```
+> **Partitions determine maximum consumer-group parallelism.**
 
 ---
 
-# Final Exam Drill
+## Final Exam Drill
 
 Answer these without looking at the chapter:
 
@@ -1290,22 +1271,11 @@ Answer these without looking at the chapter:
 
 ## Five Answers You Absolutely Must Know
 
-```text
-Partitions > consumers
-    -> some consumers can be idle
-
-Consumers > partitions
-    -> cannot increase partition-level parallelism
-
-Same group
-    -> partitions are shared
-
-Different groups
-    -> each group consumes independently
-
-Slow poll loop
-    -> possible group membership loss + rebalance
-```
+- **Partitions > consumers** -> some consumers can be idle
+- **Consumers > partitions** -> cannot increase partition-level parallelism
+- **Same group** -> partitions are shared
+- **Different groups** -> each group consumes independently
+- **Slow poll loop** -> possible group membership loss + rebalance
 
 ---
 
