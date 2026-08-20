@@ -73,48 +73,42 @@ This distinction is one of the most important certification concepts.
 
 Suppose a client connects to Kafka.
 
-Client
-
 ```text
-|
-| "I am alice"
-v
-Authentication
-|
-| authenticated identity = alice
-v
-Authorization
-|
-| "Can alice READ topic orders?"
-v
+ Client
+    |
+    | "I am alice"
+    v
+    Authentication
+    |
+    | authenticated identity = alice
+    v
+    Authorization
+    |
+    | "Can alice READ topic orders?"
+    v
 ALLOW / DENY
 ```
 
-Authentication answers:
+**Authentication answers**: **_Who are you?_**
 
-Who are you?
-
-Authorization answers:
-
-What are you allowed to do?
+**Authorization answers**: **_What are you allowed to do?_**
 
 A client can successfully authenticate and still receive an authorization failure.
 
 For example:
-
-**Authentication:** SUCCESS<br>
-**Authorization:** FAILURE
+```text
+Authentication: SUCCESS
+Authorization: FAILURE
 
 Principal:
 User:alice
 
 Requested operation:
-
-- `READ`
+`READ`
 
 Resource:
 Topic:orders
-
+```
 This distinction is frequently tested.
 
 ## 4. Encryption with TLS
@@ -123,29 +117,29 @@ TLS protects network traffic.
 
 Kafka can use TLS for:
 
-Client → Broker Broker → Broker Broker → Controller Client → Schema Registry Client → Connect Client → other Kafka
-ecosystem components
+* Client → Broker 
+* Broker → Broker 
+* Broker → Controller 
+* Client → Schema Registry 
+* Client → Connect 
+* Client → other Kafka ecosystem components
 
 Conceptually:
-
-Producer
-
 ```text
-|
-| TLS encrypted
-v
-+--------+
-| Broker |
-+--------+
-^
-|
-| TLS encrypted
-|
-Consumer
-
-TLS provides confidentiality and integrity.
+     Producer
+        |
+        | TLS encrypted
+        v
+    +--------+
+    | Broker |
+    +--------+
+        ^
+        |
+        | TLS encrypted
+        |
+     Consumer
 ```
-
+TLS provides confidentiality and integrity.
 It can also participate in authentication through certificates.
 
 ## 5. TLS Authentication
@@ -153,33 +147,37 @@ It can also participate in authentication through certificates.
 Kafka commonly uses Java KeyStores and TrustStores.
 
 A simplified model:
-
-Client
-
 ```text
-|
-| client certificate/private key
-v
-Broker
-|
-| trusts CA
-v
+  Client
+    |
+    | client certificate/private key
+    v
+  Broker
+    |
+    | trusts CA
+    v
+TrustStore
 ```
 
-### TrustStore vs KeyStore
+### KeyStore
 
 Usually contains:
 
-private key certificate certificate chain TrustStore
+* private key
+* certificate
+* certificate chain
+
+### TrustStore
 
 Contains certificates or certificate authorities that the application trusts.
 
 A common certification trap is confusing these two.
 
 Remember:
-
+```text
 KeyStore -> "Who am I?"
 TrustStore -> "Who do I trust?"
+```
 
 ## 6. One-Way TLS
 
@@ -187,14 +185,13 @@ In one-way TLS:
 
 ```text
 Client -----------------> Broker TLS
+
+Broker presents certificate. 
+Client validates broker.
 ```
 
-Broker presents certificate. Client validates broker.
-
 The broker proves its identity to the client.
-
 The client does not necessarily present a certificate.
-
 This protects the client from connecting to an impersonating broker, assuming certificate validation is correctly
 configured.
 
@@ -216,7 +213,6 @@ Client Broker
 ```
 
 This can provide strong identity for Kafka clients.
-
 Kafka can map certificate identities to principals.
 
 ## 8. SASL Authentication
@@ -239,23 +235,23 @@ PLAIN uses username/password credentials.
 
 Conceptually:
 
-Client
+
 
 ```text
-|
-| username + password
-v
-Broker
-|
-v
+  Client
+    |
+    | username + password
+    v
+  Broker
+    |
+    v
 Authentication
 ```
 
 Important:
+**SASL/PLAIN should normally be used over TLS.**
 
-SASL/PLAIN should normally be used over TLS.
-
-Otherwise credentials can be exposed on the network.
+Otherwise, credentials can be exposed on the network.
 
 A common secure configuration is:
 
@@ -289,16 +285,15 @@ GSSAPI is commonly associated with Kerberos.
 
 Conceptually:
 
-Client
-
 ```text
-|
-| Kerberos authentication
-v
-KDC
-|
-| ticket
-v
+  Client
+    |
+    | Kerberos authentication
+    v
+    KDC
+    |
+    | ticket
+    v
 Kafka Broker
 ```
 
@@ -318,24 +313,21 @@ Important concepts include:
 OAuth-based authentication uses bearer tokens.
 
 Conceptually:
-
-Client
-
 ```text
-|
-| authenticate
-v
+  Client
+    |
+    | authenticate
+    v
 Identity Provider
-|
-| access token
-v
-Client
-|
-| token
-v
+    |
+    | access token
+    v
+  Client
+    |
+    | token
+    v
 Kafka Broker
 ```
-
 Kafka validates the token according to the configured OAuth setup.
 
 This is useful in environments with centralized identity providers.
