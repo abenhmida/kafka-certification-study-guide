@@ -6,7 +6,7 @@ stateful processing, repartitioning, joins, windowing, state stores, fault toler
 scaling, and troubleshooting.
 ```
 
-# 1. Learning Objectives
+## 1. Learning Objectives
 
 By the end of this chapter, you should be able to:
 
