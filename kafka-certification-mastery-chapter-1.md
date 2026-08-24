@@ -8,22 +8,22 @@
 - [3. Kafka Records](#3-kafka-records)
 - [4. Topics](#4-topics)
 - [5. Partitions](#5-partitions)
-  - [Certification Rule #1](#certification-rule-1)
+- [Certification Rule #1](#certification-rule-1)
 - [6. Why Kafka Uses Partitions](#6-why-kafka-uses-partitions)
-  - [6.1 Scalability](#61-scalability)
-  - [6.2 Parallelism](#62-parallelism)
+- [6.1 Scalability](#61-scalability)
+- [6.2 Parallelism](#62-parallelism)
 - [7. Brokers](#7-brokers)
 - [8. Replication](#8-replication)
 - [9. Leaders and Followers](#9-leaders-and-followers)
 - [10. ISR — In-Sync Replicas](#10-isr-in-sync-replicas)
 - [11. Producers](#11-producers)
 - [12. Partitioning](#12-partitioning)
-  - [Certification Rule #2](#certification-rule-2)
+- [Certification Rule #2](#certification-rule-2)
 - [13. Consumers](#13-consumers)
 - [14. Offsets](#14-offsets)
 - [15. Consumer Groups](#15-consumer-groups)
 - [16. The Golden Consumer-Group Rule](#16-the-golden-consumer-group-rule)
-  - [Certification Rule #3](#certification-rule-3)
+- [Certification Rule #3](#certification-rule-3)
 - [17. Multiple Consumer Groups](#17-multiple-consumer-groups)
 - [18. Kafka Is Not a Traditional Queue](#18-kafka-is-not-a-traditional-queue)
 - [19. Retention](#19-retention)
@@ -32,6 +32,7 @@
 - [Next Chapter](#next-chapter)
 
 ---
+
 ## Kafka Mental Model
 
 > Certification track: CCDAK + CCAAK  
@@ -838,7 +839,7 @@ If you understand this pipeline, you already have the foundation for a large por
 
 ---
 
-# 22. Administrator Mental Model
+## 22. Administrator Mental Model
 
 An administrator asks:
 
@@ -880,7 +881,7 @@ The administrator's mental model is:
 
 ---
 
-# 23. Developer Mental Model
+## 23. Developer Mental Model
 
 A developer thinks about:
 
@@ -911,7 +912,7 @@ A senior Kafka engineer must understand both models.
 
 ---
 
-# 24. Certification Trap #1 — More Consumers Than Partitions
+## 24. Certification Trap #1 — More Consumers Than Partitions
 
 **Question**
 
@@ -933,7 +934,7 @@ Four consumers remain idle.
 
 ---
 
-# 25. Certification Trap #2 — Ordering
+## 25. Certification Trap #2 — Ordering
 
 **Question**
 
@@ -959,7 +960,7 @@ A → B → C → D → E → F
 
 ---
 
-# 26. Certification Trap #3 — Consumption Deletes Records
+## 26. Certification Trap #3 — Consumption Deletes Records
 
 **Question**
 
@@ -975,7 +976,7 @@ The consumer advances its position and manages committed offsets independently.
 
 ---
 
-# 27. Certification Trap #4 — Global Offsets
+## 27. Certification Trap #4 — Global Offsets
 
 **Question**
 
@@ -997,7 +998,7 @@ These are different records.
 
 ---
 
-# 28. Certification Trap #5 — Replication
+## 28. Certification Trap #5 — Replication
 
 **Question**
 
@@ -1025,7 +1026,7 @@ There is one partition leader responsible for serving writes.
 
 ---
 
-# 29. Hands-On Lab — Create a Topic
+## 29. Hands-On Lab — Create a Topic
 
 Create:
 
@@ -1069,7 +1070,7 @@ Do not proceed until you can explain every field.
 
 ---
 
-# 30. Developer Exercise — Partitioning
+## 30. Developer Exercise — Partitioning
 
 Produce records using different keys:
 
@@ -1097,7 +1098,7 @@ Do not simply memorize this. Observe it.
 
 ---
 
-# 31. Administrator Exercise — Replication
+## 31. Administrator Exercise — Replication
 
 Create:
 
@@ -1139,7 +1140,7 @@ The objective is to make partition placement intuitive.
 
 ---
 
-# 32. Mental Model Checkpoint
+## 32. Mental Model Checkpoint
 
 Before moving to Chapter 2, you should be able to explain this diagram without notes:
 
@@ -1199,7 +1200,7 @@ If those 15 answers are intuitive rather than memorized, **Chapter 1 is complete
 
 ---
 
-# 33. Chapter 1 Summary
+## 33. Chapter 1 Summary
 
 The core Kafka mental model is:
 
@@ -1243,29 +1244,3 @@ Remember these rules:
 15. **Keys influence partition selection and therefore ordering.**
 
 ---
-
-## Next Chapter
-
-**Chapter 2 — Kafka Architecture Deep Dive**
-
-The next chapter will move from the logical model into Kafka's internals:
-
-- broker internals
-- KRaft controllers
-- metadata
-- controller quorum
-- partition leaders
-- replication protocol
-- ISR management
-- leader election
-- request flow
-- network threads
-- I/O threads
-- log manager
-- page cache
-- disk
-- broker failure
-- partition failure
-- exact broker-failure sequence
-- CCDAK/CCAAK certification scenarios
-- architecture laboratory

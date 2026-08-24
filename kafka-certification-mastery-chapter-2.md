@@ -1838,35 +1838,3 @@ Consumer ◄────────────── Fetch ──┘
 The essential architecture is:
 
 > **KRaft manages cluster metadata. Brokers manage partition data. Partition leaders handle client traffic for their partitions. Followers replicate leaders. ISR identifies replicas that are sufficiently synchronized. Producers and consumers use metadata to locate the correct brokers.**
-
----
-
-# 58. Next Chapter
-
-## Chapter 3 — Topics, Partitions, Offsets and Log Internals
-
-The next chapter will cover:
-
-- partition internals
-- offset assignment
-- log segments
-- offset indexes
-- time indexes
-- timestamps
-- retention
-- deletion
-- log compaction
-- tombstones
-- ordering
-- partition scaling
-- partition reassignment
-- hot partitions
-- key distribution
-- storage sizing
-- administrator commands
-- developer experiments
-- certification questions
-- certification traps
-- practical failure scenarios
-
-This chapter will connect Kafka's architecture directly to its **storage engine and partition behavior**.

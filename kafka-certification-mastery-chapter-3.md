@@ -8,7 +8,6 @@
   - [Delete retention](#delete-retention)
   - [Compaction](#compaction)
   - [Why not simply create thousands of partitions?](#why-not-simply-create-thousands-of-partitions)
-- [Chapter 4 — Producers Deep Dive](#chapter-4-producers-deep-dive)
 
 ---
 ## Chapter 3 — Topics, Partitions, Offsets and Log Internals
@@ -1826,36 +1825,3 @@ You should be able to explain:
 The essential model:
 
 > **A Kafka topic is divided into partitions. Each partition is an ordered append-only log identified by offsets. Partitions are the unit of ordering, replication and consumer-group parallelism. Logs are divided into segments, which enables retention and compaction. Keys influence partition placement and therefore per-key ordering.**
-
----
-
-# 68. Next Chapter
-
-## Chapter 4 — Producers Deep Dive
-
-The next chapter will cover:
-
-- producer architecture
-- serializer
-- partitioner
-- batching
-- `linger.ms`
-- `batch.size`
-- compression
-- `acks`
-- retries
-- delivery timeout
-- request timeout
-- idempotent producer
-- sequence numbers
-- producer epochs
-- duplicate prevention
-- `max.in.flight.requests.per.connection`
-- ordering under retries
-- transactions
-- exactly-once semantics
-- producer failure scenarios
-- producer tuning
-- producer troubleshooting
-- CCDAK certification questions
-- senior-level producer design exercises
