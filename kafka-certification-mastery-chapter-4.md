@@ -32,6 +32,7 @@
 - [Chapter 5 — Consumers and Consumer Groups Deep Dive](#chapter-5-consumers-and-consumer-groups-deep-dive)
 
 ---
+
 ## Chapter 4 — Producers Deep Dive
 
 > Certification track: CCDAK + CCAAK  
@@ -1763,9 +1764,9 @@ Now Kafka cannot provide a single partition ordering guarantee for the customer'
 
 ---
 
-# 61. Certification Questions
+## 61. Certification Questions
 
-## Question 1
+### Question 1
 
 What is the main purpose of `acks`?
 
@@ -1775,7 +1776,7 @@ It controls the acknowledgment requirement for producer writes and therefore inf
 
 ---
 
-## Question 2
+### Question 2
 
 Does `acks=all` mean every configured replica must acknowledge?
 
@@ -1787,7 +1788,7 @@ It works with the in-sync replica model.
 
 ---
 
-## Question 3
+### Question 3
 
 What does `min.insync.replicas` control?
 
@@ -1797,7 +1798,7 @@ The minimum number of replicas that must be in sync for writes requiring the ISR
 
 ---
 
-## Question 4
+### Question 4
 
 What problem does idempotent production solve?
 
@@ -1807,7 +1808,7 @@ It prevents duplicate records caused by retrying producer requests under the sup
 
 ---
 
-## Question 5
+### Question 5
 
 Does idempotence alone implement a full read-process-write exactly-once pipeline?
 
@@ -1819,7 +1820,7 @@ Transactions and transactional offset handling are needed for the broader exactl
 
 ---
 
-## Question 6
+### Question 6
 
 What is `linger.ms` used for?
 
@@ -1829,7 +1830,7 @@ It allows the producer to wait briefly for additional records so that larger bat
 
 ---
 
-## Question 7
+### Question 7
 
 What is `batch.size`?
 
@@ -1839,7 +1840,7 @@ The target batch size in bytes for records destined for the same partition.
 
 ---
 
-## Question 8
+### Question 8
 
 What is the difference between `request.timeout.ms` and `delivery.timeout.ms`?
 
@@ -1851,7 +1852,7 @@ What is the difference between `request.timeout.ms` and `delivery.timeout.ms`?
 
 ---
 
-## Question 9
+### Question 9
 
 Why use compression?
 
@@ -1861,7 +1862,7 @@ To reduce network and potentially storage usage, at the cost of CPU for compress
 
 ---
 
-## Question 10
+### Question 10
 
 Why is a key important?
 
@@ -1871,7 +1872,7 @@ It can determine partition placement and therefore provide partition affinity an
 
 ---
 
-# 62. Certification Scenario
+## 62. Certification Scenario
 
 Configuration:
 
@@ -1919,7 +1920,7 @@ The ISR count remains 2, satisfying `min.insync.replicas=2`.
 
 ---
 
-# 63. Certification Scenario
+## 63. Certification Scenario
 
 Same configuration.
 
@@ -1947,7 +1948,7 @@ The producer should receive an insufficient-replicas style failure rather than s
 
 ---
 
-# 64. Certification Scenario — ACK Lost
+## 64. Certification Scenario — ACK Lost
 
 Sequence:
 
@@ -1978,7 +1979,7 @@ This is one of the most important producer failure scenarios to understand.
 
 ---
 
-# 65. Certification Scenario — Batch vs Latency
+## 65. Certification Scenario — Batch vs Latency
 
 A team says:
 
@@ -1994,7 +1995,7 @@ Tune against actual workload requirements.
 
 ---
 
-# 66. Certification Scenario — More Partitions
+## 66. Certification Scenario — More Partitions
 
 A team says:
 
@@ -2021,7 +2022,7 @@ Increasing partitions can improve parallelism but is not a universal performance
 
 ---
 
-# 67. Senior Design Exercise
+## 67. Senior Design Exercise
 
 Requirement:
 
@@ -2051,10 +2052,10 @@ The correct architecture comes from measurement rather than arbitrary configurat
 
 ---
 
-# 68. Producer Troubleshooting Matrix
+## 68. Producer Troubleshooting Matrix
 
 | Symptom | Possible Cause |
-|---|---|
+| --- | --- |
 | High request latency | Broker, network or overload |
 | High retry rate | Transient broker/network failures |
 | Buffer exhaustion | Producer faster than Kafka |
@@ -2068,7 +2069,7 @@ The correct architecture comes from measurement rather than arbitrary configurat
 
 ---
 
-# 69. Producer Mental Model
+## 69. Producer Mental Model
 
 Memorize:
 
@@ -2120,49 +2121,7 @@ send offsets
 commitTransaction
 ```
 
----
-
-# 70. Chapter 4 Knowledge Checklist
-
-You should be able to explain:
-
-- [ ] ProducerRecord
-- [ ] serialization
-- [ ] key serializer
-- [ ] value serializer
-- [ ] partitioner
-- [ ] keyed records
-- [ ] keyless records
-- [ ] batching
-- [ ] `batch.size`
-- [ ] `linger.ms`
-- [ ] compression
-- [ ] `acks=0`
-- [ ] `acks=1`
-- [ ] `acks=all`
-- [ ] `min.insync.replicas`
-- [ ] producer retries
-- [ ] idempotent producer
-- [ ] producer ID
-- [ ] sequence numbers
-- [ ] in-flight requests
-- [ ] `enable.idempotence`
-- [ ] transactions
-- [ ] transactional IDs
-- [ ] `read_committed`
-- [ ] exactly-once processing
-- [ ] `request.timeout.ms`
-- [ ] `delivery.timeout.ms`
-- [ ] `buffer.memory`
-- [ ] `max.block.ms`
-- [ ] producer backpressure
-- [ ] producer metrics
-- [ ] producer failure scenarios
-- [ ] producer tuning
-
----
-
-# 71. Final Takeaway
+## 70. Final Takeaway
 
 The producer is not merely a network client.
 
@@ -2191,43 +2150,14 @@ Retry / idempotence / transaction handling
 ```
 
 The certification-level mental model is:
+ 
 
-> **Partition choice determines where the record goes. Batching determines how efficiently it is sent. `acks` determines the acknowledgment requirement. ISR and `min.insync.replicas` determine durability constraints. Retries provide resilience. Idempotence prevents retry-induced duplicates. Transactions provide atomic multi-record/multi-partition processing semantics.**
+- **Partition choice determines where the record goes.**
+- **Batching determines how efficiently it is sent.**
+- **`acks` determines the acknowledgment requirement.**
+- **ISR and `min.insync.replicas` determine durability constraints.**
+- **Retries provide resilience.**
+- **Idempotence prevents retry-induced duplicates.**
+- **Transactions provide atomic multi-record/multi-partition processing semantics.**
 
 ---
-
-# 72. Next Chapter
-
-## Chapter 5 — Consumers and Consumer Groups Deep Dive
-
-The next chapter will cover:
-
-- consumer architecture
-- fetch requests
-- consumer groups
-- partition assignment
-- group coordinator
-- group membership
-- rebalancing
-- eager vs cooperative rebalancing
-- static membership
-- heartbeats
-- session timeout
-- poll loop
-- `max.poll.interval.ms`
-- offset commits
-- auto commit
-- manual commit
-- commit-before/after processing
-- duplicate processing
-- message loss scenarios
-- consumer lag
-- partition parallelism
-- consumer scaling
-- poison messages
-- retry and dead-letter patterns
-- exactly-once consumption
-- consumer failure scenarios
-- certification questions
-- administrator troubleshooting
-- senior-level design exercises
