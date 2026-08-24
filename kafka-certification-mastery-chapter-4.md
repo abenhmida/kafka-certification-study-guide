@@ -2150,8 +2150,7 @@ Retry / idempotence / transaction handling
 ```
 
 The certification-level mental model is:
- 
-
+>
 - **Partition choice determines where the record goes.**
 - **Batching determines how efficiently it is sent.**
 - **`acks` determines the acknowledgment requirement.**

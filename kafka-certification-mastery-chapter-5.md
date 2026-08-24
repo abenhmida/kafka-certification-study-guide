@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-- [Chapter 5 — Consumers and Consumer Groups Deep Dive](#chapter-5-consumers-and-consumer-groups-deep-dive)
+- [Chapter 5 — Consumers and Consumer Groups Deep Dive](#chapter-5--consumers-and-consumer-groups-deep-dive)
   - [Pattern A](#pattern-a)
   - [Pattern B](#pattern-b)
   - [Pattern C](#pattern-c)
@@ -14,9 +14,9 @@
   - [Processing guarantees](#processing-guarantees)
   - [Performance](#performance)
   - [Failure handling](#failure-handling)
-- [Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance](#chapter-6-kafka-storage-replication-isr-and-fault-tolerance)
 
 ---
+
 ## Chapter 5 — Consumers and Consumer Groups Deep Dive
 
 > Certification track: CCDAK + CCAAK  
@@ -24,7 +24,7 @@
 
 ---
 
-# 1. Why Consumers Matter
+## 1. Why Consumers Matter
 
 Kafka consumers are responsible for reading records from partitions and delivering them to application code.
 
@@ -64,7 +64,7 @@ For certification, the most important concepts are:
 
 ---
 
-# 2. Consumer Architecture
+## 2. Consumer Architecture
 
 A consumer does not normally receive records through a broker "push".
 
@@ -86,7 +86,7 @@ This pull-based architecture gives consumers control over their consumption rate
 
 ---
 
-# 3. Consumer Group
+## 3. Consumer Group
 
 A consumer group is a set of consumers cooperating to consume a topic.
 
@@ -116,7 +116,7 @@ Each partition is assigned to one consumer within the group at a time.
 
 ---
 
-# 4. Consumer Group Parallelism
+## 4. Consumer Group Parallelism
 
 Suppose:
 
@@ -152,7 +152,7 @@ Maximum active parallelism is bounded by the partition count.
 
 ---
 
-# 5. One Consumer Can Process Multiple Partitions
+## 5. One Consumer Can Process Multiple Partitions
 
 Suppose:
 
@@ -178,7 +178,7 @@ But:
 
 ---
 
-# 6. Same Topic, Different Groups
+## 6. Same Topic, Different Groups
 
 Suppose:
 
@@ -211,7 +211,7 @@ This is one of Kafka's key architectural properties.
 
 ---
 
-# 7. Consumer Group Isolation
+## 7. Consumer Group Isolation
 
 Offsets are maintained per consumer group.
 
@@ -229,7 +229,7 @@ Therefore one group's progress does not automatically advance another group's po
 
 ---
 
-# 8. Group ID
+## 8. Group ID
 
 The consumer group is identified by:
 
@@ -249,7 +249,7 @@ This is a common way to create an independent consumer application.
 
 ---
 
-# 9. Consumer Position
+## 9. Consumer Position
 
 Suppose:
 
@@ -286,7 +286,7 @@ This is different from the committed offset.
 
 ---
 
-# 10. Current Position vs Committed Offset
+## 10. Current Position vs Committed Offset
 
 This distinction is fundamental.
 
@@ -311,7 +311,7 @@ If the consumer crashes, recovery can begin from the committed position rather t
 
 ---
 
-# 11. Offset Commit
+## 11. Offset Commit
 
 Suppose:
 
@@ -347,7 +347,7 @@ This is why committed offsets represent the next position to consume.
 
 ---
 
-# 12. Automatic Offset Commit
+## 12. Automatic Offset Commit
 
 Kafka consumers can automatically commit offsets.
 
@@ -363,7 +363,7 @@ This is convenient, but it can be dangerous if application processing takes long
 
 ---
 
-# 13. Why Auto Commit Can Cause Duplicates
+## 13. Why Auto Commit Can Cause Duplicates
 
 Suppose:
 
@@ -396,7 +396,7 @@ This can lead to message loss from the application's processing perspective.
 
 ---
 
-# 14. Manual Commit
+## 14. Manual Commit
 
 For precise processing semantics, applications can commit explicitly.
 
@@ -429,7 +429,7 @@ offset advancement
 
 ---
 
-# 15. Commit After Processing
+## 15. Commit After Processing
 
 A common at-least-once pattern is:
 
@@ -467,7 +467,7 @@ rather than exactly-once.
 
 ---
 
-# 16. At-Least-Once Semantics
+## 16. At-Least-Once Semantics
 
 At-least-once means:
 
@@ -498,7 +498,7 @@ Therefore application operations should ideally be idempotent when duplicate pro
 
 ---
 
-# 17. At-Most-Once Semantics
+## 17. At-Most-Once Semantics
 
 At-most-once processing prioritizes avoiding duplicates at the cost of potential loss.
 
@@ -521,7 +521,7 @@ The application can lose the record from its processing perspective.
 
 ---
 
-# 18. Exactly-Once
+## 18. Exactly-Once
 
 Exactly-once processing requires more than simply choosing when to commit.
 
@@ -556,7 +556,7 @@ Process
 
 ---
 
-# 19. Consumer Poll Loop
+## 19. Consumer Poll Loop
 
 A typical consumer loop looks conceptually like:
 
@@ -588,7 +588,7 @@ poll again
 
 ---
 
-# 20. Why Poll Matters
+## 20. Why Poll Matters
 
 The consumer must continue polling.
 
@@ -604,7 +604,7 @@ If application processing blocks for too long, the consumer can be considered un
 
 ---
 
-# 21. `max.poll.interval.ms`
+## 21. `max.poll.interval.ms`
 
 This configuration limits the maximum delay between successful calls to `poll()` before the consumer is considered to have failed its group-level processing interval.
 
@@ -618,7 +618,7 @@ If application processing takes too long between polls, the consumer can leave t
 
 ---
 
-# 22. Long Processing Problem
+## 22. Long Processing Problem
 
 Suppose:
 
@@ -656,7 +656,7 @@ This is a classic source of unexpected rebalances.
 
 ---
 
-# 23. `max.poll.records`
+## 23. `max.poll.records`
 
 This configuration limits the number of records returned by a poll.
 
@@ -687,7 +687,7 @@ max.poll.interval.ms
 
 ---
 
-# 24. Poll Interval Sizing
+## 24. Poll Interval Sizing
 
 A useful reasoning model is:
 
@@ -705,7 +705,7 @@ Do not design exactly at the limit.
 
 ---
 
-# 25. Heartbeats
+## 25. Heartbeats
 
 Consumer group membership also involves heartbeats.
 
@@ -723,7 +723,7 @@ Heartbeats tell the group coordinator that the consumer is alive.
 
 ---
 
-# 26. `session.timeout.ms`
+## 26. `session.timeout.ms`
 
 If the coordinator does not receive heartbeats within the configured session timeout, the consumer can be considered dead.
 
@@ -749,7 +749,7 @@ This can trigger a rebalance.
 
 ---
 
-# 27. `heartbeat.interval.ms`
+## 27. `heartbeat.interval.ms`
 
 This controls the approximate heartbeat frequency.
 
@@ -767,7 +767,7 @@ The exact recommended values depend on the Kafka version and deployment.
 
 ---
 
-# 28. Group Coordinator
+## 28. Group Coordinator
 
 Each consumer group has a broker acting as its group coordinator.
 
@@ -785,7 +785,7 @@ It is not necessarily the leader of the partitions being consumed.
 
 ---
 
-# 29. Group Membership
+## 29. Group Membership
 
 When a consumer joins:
 
@@ -819,7 +819,7 @@ New assignment
 
 ---
 
-# 30. Rebalancing
+## 30. Rebalancing
 
 A rebalance redistributes partitions among group members.
 
@@ -849,7 +849,7 @@ depending on the assignment strategy.
 
 ---
 
-# 31. Why Rebalances Matter
+## 31. Why Rebalances Matter
 
 Rebalances can temporarily disrupt processing.
 
@@ -872,7 +872,7 @@ Frequent rebalances can reduce throughput and increase latency.
 
 ---
 
-# 32. Common Rebalance Causes
+## 32. Common Rebalance Causes
 
 - consumer starts
 - consumer stops
@@ -884,7 +884,7 @@ Frequent rebalances can reduce throughput and increase latency.
 
 ---
 
-# 33. Eager Rebalancing
+## 33. Eager Rebalancing
 
 Traditional eager rebalancing can revoke partitions from consumers and redistribute the entire assignment.
 
@@ -911,7 +911,7 @@ This can cause a stop-the-world effect for the group.
 
 ---
 
-# 34. Cooperative Rebalancing
+## 34. Cooperative Rebalancing
 
 Cooperative rebalancing aims to reduce disruption.
 
@@ -933,7 +933,7 @@ This can reduce unnecessary pauses.
 
 ---
 
-# 35. Static Membership
+## 35. Static Membership
 
 Kafka supports static group membership using:
 
@@ -962,7 +962,7 @@ This is especially useful for long-lived consumer instances.
 
 ---
 
-# 36. Partition Assignment Strategies
+## 36. Partition Assignment Strategies
 
 Kafka supports different assignment approaches.
 
@@ -986,7 +986,7 @@ Different strategies optimize different properties.
 
 ---
 
-# 37. Range Assignment
+## 37. Range Assignment
 
 Range assignment considers partitions by topic and assigns contiguous ranges.
 
@@ -1008,7 +1008,7 @@ With multiple topics, range assignment can sometimes produce uneven distribution
 
 ---
 
-# 38. Round Robin
+## 38. Round Robin
 
 Round-robin assignment distributes partitions cyclically.
 
@@ -1026,7 +1026,7 @@ This can provide more even distribution across topics depending on subscriptions
 
 ---
 
-# 39. Sticky Assignment
+## 39. Sticky Assignment
 
 Sticky assignment attempts to:
 
@@ -1040,7 +1040,7 @@ This is useful because moving partitions during every rebalance can be expensive
 
 ---
 
-# 40. Cooperative Sticky
+## 40. Cooperative Sticky
 
 Cooperative sticky combines:
 
@@ -1062,7 +1062,7 @@ This is an important modern Kafka consumer concept.
 
 ---
 
-# 41. Consumer Lag
+## 41. Consumer Lag
 
 Consumer lag represents how far a consumer/group is behind the partition's current end.
 
@@ -1079,7 +1079,7 @@ The exact metric interpretation depends on whether you are looking at committed 
 
 ---
 
-# 42. Lag Is Not Always Bad
+## 42. Lag Is Not Always Bad
 
 A small or temporary lag can be normal.
 
@@ -1111,7 +1111,7 @@ rather than a single number.
 
 ---
 
-# 43. Persistent Lag
+## 43. Persistent Lag
 
 Persistent increasing lag can indicate:
 
@@ -1131,7 +1131,7 @@ Kafka itself may not be the root cause.
 
 ---
 
-# 44. Consumer Scaling
+## 44. Consumer Scaling
 
 Suppose:
 
@@ -1185,7 +1185,7 @@ Eight consumers may be idle.
 
 ---
 
-# 45. Consumer Scaling Is Partition-Bounded
+## 45. Consumer Scaling Is Partition-Bounded
 
 The rule:
 
@@ -1205,7 +1205,7 @@ This is why partition count is also a consumer architecture decision.
 
 ---
 
-# 46. Poison Message
+## 46. Poison Message
 
 A poison message is a record that repeatedly fails processing.
 
@@ -1237,7 +1237,7 @@ The partition can stop making progress.
 
 ---
 
-# 47. Poison Message Strategies
+## 47. Poison Message Strategies
 
 Possible patterns include:
 
@@ -1265,7 +1265,7 @@ Consumer
 
 ---
 
-# 48. Why DLT Is Not a Kafka Native Guarantee
+## 48. Why DLT Is Not a Kafka Native Guarantee
 
 A dead-letter topic is an application architecture pattern.
 
@@ -1277,7 +1277,7 @@ This is a common certification/interview distinction.
 
 ---
 
-# 49. Consumer Failure Scenario
+## 49. Consumer Failure Scenario
 
 Suppose:
 
@@ -1305,7 +1305,7 @@ C2 resumes from the group's committed offset.
 
 ---
 
-# 50. Failure Scenario — Processing Before Commit
+## 50. Failure Scenario — Processing Before Commit
 
 Suppose:
 
@@ -1333,7 +1333,7 @@ This is expected under at-least-once processing.
 
 ---
 
-# 51. Failure Scenario — Commit Before Processing
+## 51. Failure Scenario — Commit Before Processing
 
 Suppose:
 
@@ -1371,7 +1371,7 @@ at-most-once
 
 ---
 
-# 52. Manual Commit Patterns
+## 52. Manual Commit Patterns
 
 ### Pattern A
 
@@ -1405,7 +1405,7 @@ Can support Kafka-to-Kafka exactly-once processing.
 
 ---
 
-# 53. `commitSync`
+## 53. `commitSync`
 
 A synchronous commit waits for the commit result.
 
@@ -1425,7 +1425,7 @@ This gives stronger control but can add latency.
 
 ---
 
-# 54. `commitAsync`
+## 54. `commitAsync`
 
 An asynchronous commit does not block in the same way.
 
@@ -1444,7 +1444,7 @@ It can improve throughput but requires careful handling of commit ordering and f
 
 ---
 
-# 55. Async Commit Hazard
+## 55. Async Commit Hazard
 
 Suppose:
 
@@ -1469,7 +1469,7 @@ The exact strategy should match the application's processing model.
 
 ---
 
-# 56. Offset Commit Per Record vs Batch
+## 56. Offset Commit Per Record vs Batch
 
 Committing every record:
 
@@ -1498,7 +1498,7 @@ This is a classic throughput vs duplicate-processing tradeoff.
 
 ---
 
-# 57. Consumer Fetching
+## 57. Consumer Fetching
 
 Consumers use fetch-related configurations to control how much data is retrieved.
 
@@ -1520,7 +1520,7 @@ These affect:
 
 ---
 
-# 58. `fetch.min.bytes`
+## 58. `fetch.min.bytes`
 
 The broker can wait until at least the configured amount of data is available before responding, subject to the relevant timing behavior.
 
@@ -1530,7 +1530,7 @@ But they can also increase latency when traffic is low.
 
 ---
 
-# 59. `fetch.max.wait.ms`
+## 59. `fetch.max.wait.ms`
 
 This limits how long the broker may wait to satisfy the fetch conditions.
 
@@ -1550,7 +1550,7 @@ It interacts with `fetch.min.bytes`.
 
 ---
 
-# 60. `max.partition.fetch.bytes`
+## 60. `max.partition.fetch.bytes`
 
 This limits the amount of data returned for a partition in a fetch response.
 
@@ -1564,7 +1564,7 @@ The important operational lesson is:
 
 ---
 
-# 61. `fetch.max.bytes`
+## 61. `fetch.max.bytes`
 
 This controls the maximum amount of data returned for a fetch request across partitions, subject to Kafka's handling of individual records and partition fetch limits.
 
@@ -1584,7 +1584,7 @@ FetchRequest
 
 ---
 
-# 62. Consumer Memory
+## 62. Consumer Memory
 
 Consumer configuration affects memory usage.
 
@@ -1602,7 +1602,7 @@ If the application polls huge amounts of data and processes slowly, memory press
 
 ---
 
-# 63. Backpressure in Consumers
+## 63. Backpressure in Consumers
 
 Suppose:
 
@@ -1632,7 +1632,7 @@ But simply increasing consumer threads does not help if the topic has too few pa
 
 ---
 
-# 64. Multi-Threaded Consumer Design
+## 64. Multi-Threaded Consumer Design
 
 KafkaConsumer is not generally designed to be shared arbitrarily across application threads.
 
@@ -1663,7 +1663,7 @@ This is an advanced design area.
 
 ---
 
-# 65. Partition-Level Ordering with Parallel Processing
+## 65. Partition-Level Ordering with Parallel Processing
 
 Suppose:
 
@@ -1698,7 +1698,7 @@ Therefore:
 
 ---
 
-# 66. Preserving Ordering
+## 66. Preserving Ordering
 
 If strict ordering is required:
 
@@ -1721,7 +1721,7 @@ The application architecture must preserve the required ordering semantics.
 
 ---
 
-# 67. Consumer Group Coordinator vs Partition Leader
+## 67. Consumer Group Coordinator vs Partition Leader
 
 These are different concepts.
 
@@ -1739,7 +1739,7 @@ The same broker can perform both roles, but they are conceptually distinct.
 
 ---
 
-# 68. Certification Trap — One Group
+## 68. Certification Trap — One Group
 
 Question:
 
@@ -1755,7 +1755,7 @@ If both applications must independently receive every event, they should use dif
 
 ---
 
-# 69. Certification Trap — Different Groups
+## 69. Certification Trap — Different Groups
 
 Question:
 
@@ -1767,7 +1767,7 @@ Offsets are maintained independently per group.
 
 ---
 
-# 70. Certification Trap — More Consumers
+## 70. Certification Trap — More Consumers
 
 Question:
 
@@ -1779,7 +1779,7 @@ At most 3 consumers can actively consume those 3 partitions within that group.
 
 ---
 
-# 71. Certification Trap — Commit
+## 71. Certification Trap — Commit
 
 Question:
 
@@ -1797,7 +1797,7 @@ Records before 500 are considered processed from the group's perspective.
 
 ---
 
-# 72. Certification Trap — Crash
+## 72. Certification Trap — Crash
 
 Question:
 
@@ -1811,7 +1811,7 @@ This is normal at-least-once behavior.
 
 ---
 
-# 73. Certification Trap — Poll
+## 73. Certification Trap — Poll
 
 Question:
 
@@ -1825,7 +1825,7 @@ The consumer must maintain group membership correctly.
 
 ---
 
-# 74. Certification Trap — Heartbeat
+## 74. Certification Trap — Heartbeat
 
 Question:
 
@@ -1839,7 +1839,7 @@ The application must also respect the poll interval and processing constraints.
 
 ---
 
-# 75. Certification Scenario
+## 75. Certification Scenario
 
 Configuration:
 
@@ -1897,7 +1897,7 @@ depending on requirements.
 
 ---
 
-# 76. Certification Scenario — Consumer Lag
+## 76. Certification Scenario — Consumer Lag
 
 Metrics:
 
@@ -1920,7 +1920,7 @@ Possible responses:
 
 ---
 
-# 77. Administrator Scenario — Rebalance Storm
+## 77. Administrator Scenario — Rebalance Storm
 
 Symptoms:
 
@@ -1948,7 +1948,7 @@ Do not immediately blame Kafka brokers.
 
 ---
 
-# 78. Administrator Scenario — One Consumer Slow
+## 78. Administrator Scenario — One Consumer Slow
 
 Suppose:
 
@@ -1983,7 +1983,7 @@ Adding a fourth consumer may not help because P0 is still a single partition.
 
 ---
 
-# 79. Administrator Scenario — Rebalance After Slow Processing
+## 79. Administrator Scenario — Rebalance After Slow Processing
 
 Suppose:
 
@@ -2033,7 +2033,7 @@ This is a serious production failure mode.
 
 ---
 
-# 80. Consumer Design Checklist
+## 80. Consumer Design Checklist
 
 Before deploying a consumer, answer:
 
@@ -2057,10 +2057,10 @@ Before deploying a consumer, answer:
 
 ---
 
-# 81. Consumer Troubleshooting Matrix
+## 81. Consumer Troubleshooting Matrix
 
 | Symptom | Likely Areas |
-|---|---|
+| --------- | -------------- |
 | Increasing lag | Processing too slow, insufficient parallelism |
 | Frequent rebalances | Poll interval, crashes, network, deployments |
 | Duplicate processing | Commit timing, crashes, retries |
@@ -2074,7 +2074,7 @@ Before deploying a consumer, answer:
 
 ---
 
-# 82. Hands-On Lab — Consumer Group Basics
+## 82. Hands-On Lab — Consumer Group Basics
 
 Create:
 
@@ -2114,7 +2114,7 @@ The exact assignment can differ by strategy.
 
 ---
 
-# 83. Hands-On Lab — Add Consumers
+## 83. Hands-On Lab — Add Consumers
 
 Start:
 
@@ -2146,7 +2146,7 @@ Observe that there are no more partitions available for another active consumer.
 
 ---
 
-# 84. Hands-On Lab — Different Group IDs
+## 84. Hands-On Lab — Different Group IDs
 
 Start:
 
@@ -2179,7 +2179,7 @@ with independent offsets.
 
 ---
 
-# 85. Hands-On Lab — Crash Before Commit
+## 85. Hands-On Lab — Crash Before Commit
 
 Design:
 
@@ -2201,7 +2201,7 @@ This demonstrates at-least-once processing.
 
 ---
 
-# 86. Hands-On Lab — Commit Before Processing
+## 86. Hands-On Lab — Commit Before Processing
 
 Reverse the sequence:
 
@@ -2221,7 +2221,7 @@ This demonstrates the danger of advancing offsets before business processing com
 
 ---
 
-# 87. Hands-On Lab — Rebalance
+## 87. Hands-On Lab — Rebalance
 
 Run:
 
@@ -2247,7 +2247,7 @@ Then restart C2 and observe another rebalance.
 
 ---
 
-# 88. Hands-On Lab — Poll Interval
+## 88. Hands-On Lab — Poll Interval
 
 Configure a deliberately small:
 
@@ -2269,7 +2269,7 @@ This is one of the most valuable consumer labs for certification preparation.
 
 ---
 
-# 89. Hands-On Lab — Lag
+## 89. Hands-On Lab — Lag
 
 Generate records faster than the consumer can process.
 
@@ -2289,7 +2289,7 @@ Repeat with too few partitions and demonstrate that adding consumers eventually 
 
 ---
 
-# 90. Hands-On Lab — Poison Record
+## 90. Hands-On Lab — Poison Record
 
 Create:
 
@@ -2323,7 +2323,7 @@ and compare the behavior.
 
 ---
 
-# 91. Senior Design Scenario
+## 91. Senior Design Scenario
 
 You operate:
 
@@ -2395,7 +2395,7 @@ The correct solution depends on the application's ordering and delivery requirem
 
 ---
 
-# 92. Senior Design Scenario — 100 Consumers
+## 92. Senior Design Scenario — 100 Consumers
 
 Topic:
 
@@ -2448,7 +2448,7 @@ future growth
 
 ---
 
-# 93. Senior Design Scenario — Ordering
+## 93. Senior Design Scenario — Ordering
 
 Requirement:
 
@@ -2475,7 +2475,7 @@ This is one of the most important Kafka design patterns.
 
 ---
 
-# 94. Consumer Mental Model
+## 94. Consumer Mental Model
 
 Memorize:
 
@@ -2521,7 +2521,7 @@ Resume from committed offsets
 
 ---
 
-# 95. Certification Summary
+## 95. Certification Summary
 
 You should now be able to explain:
 
@@ -2592,7 +2592,7 @@ slow processing
 
 ---
 
-# 96. Final Exam Mental Model
+## 96. Final Exam Mental Model
 
 If you remember only one diagram from this chapter, remember this:
 
@@ -2626,36 +2626,3 @@ If you remember only one diagram from this chapter, remember this:
 The critical principle is:
 
 > **Kafka consumers do not delete records after processing. They track progress using offsets. Consumer groups divide partitions among members, and failures or membership changes can trigger rebalances.**
-
----
-
-# 97. Next Chapter
-
-## Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance
-
-The next chapter will cover:
-
-- replication factor
-- leaders and followers
-- ISR
-- high watermark
-- leader epoch
-- replica fetchers
-- follower lag
-- unclean leader election
-- leader election
-- broker failure
-- partition recovery
-- data durability
-- `min.insync.replicas`
-- replication lag
-- disk failures
-- rack awareness
-- KRaft controller implications
-- partition reassignment
-- preferred leader election
-- failure scenarios
-- certification questions
-- administrator troubleshooting
-- capacity planning
-- senior-level disaster scenarios
