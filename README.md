@@ -26,7 +26,14 @@ Welcome to the Kafka Certification Mastery repository. Below is a comprehensive 
 - [**Kafka Developer Certification Mock Exam**](kafka_developer_certification_mock_exam.md)
   - Practice questions for CCDAK/CCAAK certification.
 
-## Project Planning
+## Mock Exames Planning
 
-- [**Planning**](planning.md)
-  - Project milestones and roadmap.
+- [**Mock Exam 1**](mock-exam-1.md)
+- [**Mock Exam 2**](mock-exam-2.md)
+- [**Mock Exam 3**](mock-exam-3.md)
+- [**Mock Exam 4**](mock-exam-4.md)
+- [**Mock Exam 5**](mock-exam-5.md)
+- [**Mock Exam 6**](mock-exam-6.md)
+- [**Mock Exam 7**](mock-exam-7.md)
+- [**Mock Exam 8**](mock-exam-8.md)
+
