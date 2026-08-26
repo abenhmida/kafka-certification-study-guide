@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>kafka-certification-mastery-chapter-5</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="kafka-certification-mastery-chapter-5_files/libs/clipboard/clipboard.min.js"></script>
+<script src="kafka-certification-mastery-chapter-5_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="kafka-certification-mastery-chapter-5_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="kafka-certification-mastery-chapter-5_files/libs/quarto-html/popper.min.js"></script>
+<script src="kafka-certification-mastery-chapter-5_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="kafka-certification-mastery-chapter-5_files/libs/quarto-html/anchor.min.js"></script>
+<link href="kafka-certification-mastery-chapter-5_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="kafka-certification-mastery-chapter-5_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="kafka-certification-mastery-chapter-5_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="kafka-certification-mastery-chapter-5_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="kafka-certification-mastery-chapter-5_files/libs/bootstrap/bootstrap-0e6a2e4163fffd11eea0638cac9ae91e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="apache-kafka-certification-mastery" class="level1">
+<h1>Apache Kafka Certification Mastery</h1>
+<section id="table-of-contents" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#chapter-5--consumers-and-consumer-groups-deep-dive">Chapter 5 — Consumers and Consumer Groups Deep Dive</a>
+<ul>
+<li><a href="#pattern-a">Pattern A</a></li>
+<li><a href="#pattern-b">Pattern B</a></li>
+<li><a href="#pattern-c">Pattern C</a></li>
+<li><a href="#answer">Answer</a></li>
+<li><a href="#consumer-groups">Consumer groups</a></li>
+<li><a href="#offset-management">Offset management</a></li>
+<li><a href="#rebalancing">Rebalancing</a></li>
+<li><a href="#liveness">Liveness</a></li>
+<li><a href="#processing-guarantees">Processing guarantees</a></li>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#failure-handling">Failure handling</a></li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="chapter-5-consumers-and-consumer-groups-deep-dive" class="level2">
+<h2 class="anchored" data-anchor-id="chapter-5-consumers-and-consumer-groups-deep-dive">Chapter 5 — Consumers and Consumer Groups Deep Dive</h2>
+<blockquote class="blockquote">
+<p>Certification track: CCDAK + CCAAK<br>
+Reference foundation: <em>Kafka: The Definitive Guide</em>, 2nd Edition</p>
+</blockquote>
+<hr>
+</section>
+<section id="why-consumers-matter" class="level2">
+<h2 class="anchored" data-anchor-id="why-consumers-matter">1. Why Consumers Matter</h2>
+<p>Kafka consumers are responsible for reading records from partitions and delivering them to application code.</p>
+<p>The basic flow is:</p>
+<pre class="text"><code>Kafka Partition
+      │
+      ▼
+Consumer Fetch
+      │
+      ▼
+Consumer Buffer
+      │
+      ▼
+Application Poll
+      │
+      ▼
+Processing
+      │
+      ▼
+Offset Commit</code></pre>
+<p>For certification, the most important concepts are:</p>
+<ul>
+<li>consumer groups</li>
+<li>partition assignment</li>
+<li>offsets</li>
+<li>polling</li>
+<li>heartbeats</li>
+<li>rebalancing</li>
+<li>commits</li>
+<li>lag</li>
+<li>failure recovery</li>
+<li>delivery semantics</li>
+</ul>
+<hr>
+</section>
+<section id="consumer-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-architecture">2. Consumer Architecture</h2>
+<p>A consumer does not normally receive records through a broker “push”.</p>
+<p>Instead, it sends fetch requests.</p>
+<pre class="text"><code>Consumer
+   │
+   │ FetchRequest
+   ▼
+Broker
+   │
+   │ records
+   ▼
+Consumer</code></pre>
+<p>This pull-based architecture gives consumers control over their consumption rate.</p>
+<hr>
+</section>
+<section id="consumer-group" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-group">3. Consumer Group</h2>
+<p>A consumer group is a set of consumers cooperating to consume a topic.</p>
+<p>Example:</p>
+<pre class="text"><code>Topic: orders
+
+P0
+P1
+P2
+P3</code></pre>
+<p>Consumer group:</p>
+<pre class="text"><code>orders-service
+
+C1 → P0
+C2 → P1
+C3 → P2
+C4 → P3</code></pre>
+<p>Each partition is assigned to one consumer within the group at a time.</p>
+<hr>
+</section>
+<section id="consumer-group-parallelism" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-group-parallelism">4. Consumer Group Parallelism</h2>
+<p>Suppose:</p>
+<pre class="text"><code>Partitions = 4
+Consumers = 4</code></pre>
+<p>Possible assignment:</p>
+<pre class="text"><code>C1 → P0
+C2 → P1
+C3 → P2
+C4 → P3</code></pre>
+<p>Now add:</p>
+<pre class="text"><code>C5</code></pre>
+<p>There are still only four partitions.</p>
+<p>Therefore:</p>
+<pre class="text"><code>C5 → idle</code></pre>
+<p>Maximum active parallelism is bounded by the partition count.</p>
+<hr>
+</section>
+<section id="one-consumer-can-process-multiple-partitions" class="level2">
+<h2 class="anchored" data-anchor-id="one-consumer-can-process-multiple-partitions">5. One Consumer Can Process Multiple Partitions</h2>
+<p>Suppose:</p>
+<pre class="text"><code>Partitions = 6
+Consumers = 2</code></pre>
+<p>Possible assignment:</p>
+<pre class="text"><code>C1 → P0 P2 P4
+C2 → P1 P3 P5</code></pre>
+<p>Therefore:</p>
+<blockquote class="blockquote">
+<p>A consumer can own multiple partitions.</p>
+</blockquote>
+<p>But:</p>
+<blockquote class="blockquote">
+<p>A partition is assigned to at most one consumer in a consumer group at a time.</p>
+</blockquote>
+<hr>
+</section>
+<section id="same-topic-different-groups" class="level2">
+<h2 class="anchored" data-anchor-id="same-topic-different-groups">6. Same Topic, Different Groups</h2>
+<p>Suppose:</p>
+<pre class="text"><code>orders
+ ├── P0
+ ├── P1
+ └── P2</code></pre>
+<p>Group A:</p>
+<pre class="text"><code>A1 → P0
+A2 → P1
+A3 → P2</code></pre>
+<p>Group B:</p>
+<pre class="text"><code>B1 → P0
+B2 → P1
+B3 → P2</code></pre>
+<p>Both groups independently consume the topic.</p>
+<p>This is one of Kafka’s key architectural properties.</p>
+<hr>
+</section>
+<section id="consumer-group-isolation" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-group-isolation">7. Consumer Group Isolation</h2>
+<p>Offsets are maintained per consumer group.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>orders / P0
+
+Group A → offset 100
+Group B → offset 450
+Group C → offset 72</code></pre>
+<p>Therefore one group’s progress does not automatically advance another group’s position.</p>
+<hr>
+</section>
+<section id="group-id" class="level2">
+<h2 class="anchored" data-anchor-id="group-id">8. Group ID</h2>
+<p>The consumer group is identified by:</p>
+<pre class="properties"><code>group.id</code></pre>
+<p>Example:</p>
+<pre class="properties"><code>group.id=orders-service</code></pre>
+<p>Changing the group ID effectively creates a different consumer group with its own committed offsets.</p>
+<p>This is a common way to create an independent consumer application.</p>
+<hr>
+</section>
+<section id="consumer-position" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-position">9. Consumer Position</h2>
+<p>Suppose:</p>
+<pre class="text"><code>P0
+
+100 → A
+101 → B
+102 → C
+103 → D</code></pre>
+<p>A consumer has fetched:</p>
+<pre class="text"><code>A
+B
+C</code></pre>
+<p>Its current position can be:</p>
+<pre class="text"><code>103</code></pre>
+<p>meaning:</p>
+<pre class="text"><code>next record to fetch = 103</code></pre>
+<p>This is different from the committed offset.</p>
+<hr>
+</section>
+<section id="current-position-vs-committed-offset" class="level2">
+<h2 class="anchored" data-anchor-id="current-position-vs-committed-offset">10. Current Position vs Committed Offset</h2>
+<p>This distinction is fundamental.</p>
+<pre class="text"><code>Current position
+    ↓
+where the consumer currently expects to read
+
+Committed offset
+    ↓
+where the consumer group has durably recorded its progress</code></pre>
+<p>Example:</p>
+<pre class="text"><code>Current position = 103
+Committed offset = 101</code></pre>
+<p>If the consumer crashes, recovery can begin from the committed position rather than the in-memory current position.</p>
+<hr>
+</section>
+<section id="offset-commit" class="level2">
+<h2 class="anchored" data-anchor-id="offset-commit">11. Offset Commit</h2>
+<p>Suppose:</p>
+<pre class="text"><code>100 → A
+101 → B
+102 → C
+103 → D</code></pre>
+<p>The consumer successfully processes:</p>
+<pre class="text"><code>A
+B
+C</code></pre>
+<p>It can commit:</p>
+<pre class="text"><code>103</code></pre>
+<p>The conceptual meaning is:</p>
+<pre class="text"><code>processed through offset 102
+next position = 103</code></pre>
+<p>This is why committed offsets represent the next position to consume.</p>
+<hr>
+</section>
+<section id="automatic-offset-commit" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-offset-commit">12. Automatic Offset Commit</h2>
+<p>Kafka consumers can automatically commit offsets.</p>
+<p>Configuration:</p>
+<pre class="properties"><code>enable.auto.commit=true</code></pre>
+<p>The consumer periodically commits offsets based on the configured auto-commit interval.</p>
+<p>This is convenient, but it can be dangerous if application processing takes longer than expected.</p>
+<hr>
+</section>
+<section id="why-auto-commit-can-cause-duplicates" class="level2">
+<h2 class="anchored" data-anchor-id="why-auto-commit-can-cause-duplicates">13. Why Auto Commit Can Cause Duplicates</h2>
+<p>Suppose:</p>
+<pre class="text"><code>Consumer fetches:
+A
+B
+C</code></pre>
+<p>The application is still processing C.</p>
+<p>If offsets are committed before processing fully completes:</p>
+<pre class="text"><code>commit → next offset</code></pre>
+<p>Then the consumer crashes.</p>
+<p>On restart:</p>
+<pre class="text"><code>Kafka believes records were already processed</code></pre>
+<p>The application may skip work.</p>
+<p>This can lead to message loss from the application’s processing perspective.</p>
+<hr>
+</section>
+<section id="manual-commit" class="level2">
+<h2 class="anchored" data-anchor-id="manual-commit">14. Manual Commit</h2>
+<p>For precise processing semantics, applications can commit explicitly.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>poll()
+  │
+  ▼
+process records
+  │
+  ▼
+processing successful
+  │
+  ▼
+commit offset</code></pre>
+<p>This provides greater control over the relationship between:</p>
+<pre class="text"><code>business processing</code></pre>
+<p>and:</p>
+<pre class="text"><code>offset advancement</code></pre>
+<hr>
+</section>
+<section id="commit-after-processing" class="level2">
+<h2 class="anchored" data-anchor-id="commit-after-processing">15. Commit After Processing</h2>
+<p>A common at-least-once pattern is:</p>
+<pre class="text"><code>poll
+  ↓
+process
+  ↓
+commit</code></pre>
+<p>Failure before commit:</p>
+<pre class="text"><code>process succeeds
+    │
+    X
+commit fails
+    │
+    ▼
+record processed again</code></pre>
+<p>Result:</p>
+<pre class="text"><code>duplicate processing</code></pre>
+<p>This is why the model is generally called:</p>
+<blockquote class="blockquote">
+<p>at-least-once</p>
+</blockquote>
+<p>rather than exactly-once.</p>
+<hr>
+</section>
+<section id="at-least-once-semantics" class="level2">
+<h2 class="anchored" data-anchor-id="at-least-once-semantics">16. At-Least-Once Semantics</h2>
+<p>At-least-once means:</p>
+<pre class="text"><code>A record should not be lost due solely to advancing the consumer offset too early,
+but a record may be processed more than once.</code></pre>
+<p>Example:</p>
+<pre class="text"><code>Record
+  │
+  ▼
+process
+  │
+  X
+commit fails
+  │
+  ▼
+restart
+  │
+  ▼
+process again</code></pre>
+<p>Therefore application operations should ideally be idempotent when duplicate processing is possible.</p>
+<hr>
+</section>
+<section id="at-most-once-semantics" class="level2">
+<h2 class="anchored" data-anchor-id="at-most-once-semantics">17. At-Most-Once Semantics</h2>
+<p>At-most-once processing prioritizes avoiding duplicates at the cost of potential loss.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>commit
+  ↓
+process</code></pre>
+<p>If the consumer crashes after commit but before processing:</p>
+<pre class="text"><code>offset advanced
+record not processed</code></pre>
+<p>The application can lose the record from its processing perspective.</p>
+<hr>
+</section>
+<section id="exactly-once" class="level2">
+<h2 class="anchored" data-anchor-id="exactly-once">18. Exactly-Once</h2>
+<p>Exactly-once processing requires more than simply choosing when to commit.</p>
+<p>For Kafka-to-Kafka processing, transactions can coordinate:</p>
+<pre class="text"><code>consumed offsets
++
+produced records</code></pre>
+<p>atomically.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Input
+  │
+  ▼
+Consumer
+  │
+  ▼
+Process
+  │
+  ├──► Output records
+  │
+  └──► Consumed offsets
+          │
+          ▼
+      Transaction</code></pre>
+<hr>
+</section>
+<section id="consumer-poll-loop" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-poll-loop">19. Consumer Poll Loop</h2>
+<p>A typical consumer loop looks conceptually like:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>running<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    records <span class="op">=</span> consumer<span class="op">.</span><span class="fu">poll</span><span class="op">(</span><span class="kw">...</span><span class="op">);</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="kw">record</span> <span class="op">:</span> records<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">process</span><span class="op">(</span><span class="kw">record</span><span class="op">);</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    consumer<span class="op">.</span><span class="fu">commitSync</span><span class="op">();</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The exact implementation depends on the application’s failure and delivery requirements.</p>
+<p>The important lifecycle is:</p>
+<pre class="text"><code>poll
+  ↓
+process
+  ↓
+commit
+  ↓
+poll again</code></pre>
+<hr>
+</section>
+<section id="why-poll-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-poll-matters">20. Why Poll Matters</h2>
+<p>The consumer must continue polling.</p>
+<p>The poll loop is not merely:</p>
+<pre class="text"><code>fetch messages</code></pre>
+<p>It also participates in consumer group liveness and coordination.</p>
+<p>If application processing blocks for too long, the consumer can be considered unhealthy depending on the configured timing constraints.</p>
+<hr>
+</section>
+<section id="max.poll.interval.ms" class="level2">
+<h2 class="anchored" data-anchor-id="max.poll.interval.ms">21. <code>max.poll.interval.ms</code></h2>
+<p>This configuration limits the maximum delay between successful calls to <code>poll()</code> before the consumer is considered to have failed its group-level processing interval.</p>
+<p>Example:</p>
+<pre class="properties"><code>max.poll.interval.ms=300000</code></pre>
+<p>If application processing takes too long between polls, the consumer can leave the group and partitions can be reassigned.</p>
+<hr>
+</section>
+<section id="long-processing-problem" class="level2">
+<h2 class="anchored" data-anchor-id="long-processing-problem">22. Long Processing Problem</h2>
+<p>Suppose:</p>
+<pre class="text"><code>poll()
+   │
+   ▼
+10-minute processing
+   │
+   ▼
+poll()</code></pre>
+<p>but:</p>
+<pre class="properties"><code>max.poll.interval.ms=5 minutes</code></pre>
+<p>The consumer can exceed the allowed interval.</p>
+<p>Result:</p>
+<pre class="text"><code>consumer considered failed
+        │
+        ▼
+rebalance
+        │
+        ▼
+partitions reassigned</code></pre>
+<p>This is a classic source of unexpected rebalances.</p>
+<hr>
+</section>
+<section id="max.poll.records" class="level2">
+<h2 class="anchored" data-anchor-id="max.poll.records">23. <code>max.poll.records</code></h2>
+<p>This configuration limits the number of records returned by a poll.</p>
+<p>Example:</p>
+<pre class="properties"><code>max.poll.records=100</code></pre>
+<p>If processing one record takes:</p>
+<pre class="text"><code>200 ms</code></pre>
+<p>then processing 100 records sequentially could take approximately:</p>
+<pre class="text"><code>100 × 200 ms
+= 20 seconds</code></pre>
+<p>This helps estimate whether the application can stay within:</p>
+<pre class="text"><code>max.poll.interval.ms</code></pre>
+<hr>
+</section>
+<section id="poll-interval-sizing" class="level2">
+<h2 class="anchored" data-anchor-id="poll-interval-sizing">24. Poll Interval Sizing</h2>
+<p>A useful reasoning model is:</p>
+<pre class="text"><code>maximum records per poll
+×
+worst-case processing time per record
+&lt;
+max.poll.interval.ms</code></pre>
+<p>Leave substantial headroom.</p>
+<p>Do not design exactly at the limit.</p>
+<hr>
+</section>
+<section id="heartbeats" class="level2">
+<h2 class="anchored" data-anchor-id="heartbeats">25. Heartbeats</h2>
+<p>Consumer group membership also involves heartbeats.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Consumer
+   │
+   │ heartbeat
+   ▼
+Group Coordinator</code></pre>
+<p>Heartbeats tell the group coordinator that the consumer is alive.</p>
+<hr>
+</section>
+<section id="session.timeout.ms" class="level2">
+<h2 class="anchored" data-anchor-id="session.timeout.ms">26. <code>session.timeout.ms</code></h2>
+<p>If the coordinator does not receive heartbeats within the configured session timeout, the consumer can be considered dead.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Heartbeat
+   │
+   ▼
+Coordinator
+   │
+   X
+No heartbeat
+   │
+   ▼
+Session timeout
+   │
+   ▼
+Consumer removed</code></pre>
+<p>This can trigger a rebalance.</p>
+<hr>
+</section>
+<section id="heartbeat.interval.ms" class="level2">
+<h2 class="anchored" data-anchor-id="heartbeat.interval.ms">27. <code>heartbeat.interval.ms</code></h2>
+<p>This controls the approximate heartbeat frequency.</p>
+<p>A common design relationship is:</p>
+<pre class="text"><code>heartbeat.interval.ms
+&lt;
+session.timeout.ms</code></pre>
+<p>The consumer sends heartbeats regularly enough to maintain membership.</p>
+<p>The exact recommended values depend on the Kafka version and deployment.</p>
+<hr>
+</section>
+<section id="group-coordinator" class="level2">
+<h2 class="anchored" data-anchor-id="group-coordinator">28. Group Coordinator</h2>
+<p>Each consumer group has a broker acting as its group coordinator.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Consumer C1 ─┐
+Consumer C2 ─┼──► Group Coordinator
+Consumer C3 ─┘</code></pre>
+<p>The coordinator manages group membership and coordination.</p>
+<p>It is not necessarily the leader of the partitions being consumed.</p>
+<hr>
+</section>
+<section id="group-membership" class="level2">
+<h2 class="anchored" data-anchor-id="group-membership">29. Group Membership</h2>
+<p>When a consumer joins:</p>
+<pre class="text"><code>Consumer starts
+     │
+     ▼
+Join group
+     │
+     ▼
+Group coordination
+     │
+     ▼
+Partition assignment</code></pre>
+<p>When a consumer leaves or fails:</p>
+<pre class="text"><code>Member disappears
+      │
+      ▼
+Group detects change
+      │
+      ▼
+Rebalance
+      │
+      ▼
+New assignment</code></pre>
+<hr>
+</section>
+<section id="rebalancing" class="level2">
+<h2 class="anchored" data-anchor-id="rebalancing">30. Rebalancing</h2>
+<p>A rebalance redistributes partitions among group members.</p>
+<p>Before:</p>
+<pre class="text"><code>C1 → P0 P1
+C2 → P2 P3</code></pre>
+<p>C2 leaves.</p>
+<p>After:</p>
+<pre class="text"><code>C1 → P0 P1 P2 P3</code></pre>
+<p>If C3 joins:</p>
+<pre class="text"><code>C1 → P0 P1
+C3 → P2 P3</code></pre>
+<p>depending on the assignment strategy.</p>
+<hr>
+</section>
+<section id="why-rebalances-matter" class="level2">
+<h2 class="anchored" data-anchor-id="why-rebalances-matter">31. Why Rebalances Matter</h2>
+<p>Rebalances can temporarily disrupt processing.</p>
+<p>During a rebalance:</p>
+<pre class="text"><code>old assignment
+      │
+      ▼
+revoke / transition
+      │
+      ▼
+new assignment
+      │
+      ▼
+resume processing</code></pre>
+<p>Frequent rebalances can reduce throughput and increase latency.</p>
+<hr>
+</section>
+<section id="common-rebalance-causes" class="level2">
+<h2 class="anchored" data-anchor-id="common-rebalance-causes">32. Common Rebalance Causes</h2>
+<ul>
+<li>consumer starts</li>
+<li>consumer stops</li>
+<li>consumer crashes</li>
+<li>consumer misses group timing constraints</li>
+<li>topic partition count changes</li>
+<li>subscription changes</li>
+<li>group membership changes</li>
+</ul>
+<hr>
+</section>
+<section id="eager-rebalancing" class="level2">
+<h2 class="anchored" data-anchor-id="eager-rebalancing">33. Eager Rebalancing</h2>
+<p>Traditional eager rebalancing can revoke partitions from consumers and redistribute the entire assignment.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Before:
+
+C1 → P0 P1
+C2 → P2 P3
+
+Rebalance
+
+C1 → nothing
+C2 → nothing
+
+Reassign
+
+C1 → P0 P2
+C2 → P1 P3</code></pre>
+<p>This can cause a stop-the-world effect for the group.</p>
+<hr>
+</section>
+<section id="cooperative-rebalancing" class="level2">
+<h2 class="anchored" data-anchor-id="cooperative-rebalancing">34. Cooperative Rebalancing</h2>
+<p>Cooperative rebalancing aims to reduce disruption.</p>
+<p>Instead of revoking everything, partitions can transition incrementally.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Current assignment
+       │
+       ▼
+minimal revocation
+       │
+       ▼
+incremental reassignment</code></pre>
+<p>This can reduce unnecessary pauses.</p>
+<hr>
+</section>
+<section id="static-membership" class="level2">
+<h2 class="anchored" data-anchor-id="static-membership">35. Static Membership</h2>
+<p>Kafka supports static group membership using:</p>
+<pre class="properties"><code>group.instance.id</code></pre>
+<p>A stable identity can reduce unnecessary rebalances when a consumer restarts temporarily.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Consumer instance A
+      │
+      ▼
+stable identity
+      │
+      ▼
+temporary restart
+      │
+      ▼
+return</code></pre>
+<p>This is especially useful for long-lived consumer instances.</p>
+<hr>
+</section>
+<section id="partition-assignment-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="partition-assignment-strategies">36. Partition Assignment Strategies</h2>
+<p>Kafka supports different assignment approaches.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Partitions
+    │
+    ▼
+Assignment Strategy
+    │
+    ├── Range
+    ├── RoundRobin
+    ├── Sticky
+    └── CooperativeSticky</code></pre>
+<p>The objective is to distribute partitions among consumers.</p>
+<p>Different strategies optimize different properties.</p>
+<hr>
+</section>
+<section id="range-assignment" class="level2">
+<h2 class="anchored" data-anchor-id="range-assignment">37. Range Assignment</h2>
+<p>Range assignment considers partitions by topic and assigns contiguous ranges.</p>
+<p>For example:</p>
+<pre class="text"><code>Partitions:
+P0 P1 P2 P3 P4 P5
+
+Consumers:
+C1 C2
+
+Possible:
+C1 → P0 P1 P2
+C2 → P3 P4 P5</code></pre>
+<p>With multiple topics, range assignment can sometimes produce uneven distributions.</p>
+<hr>
+</section>
+<section id="round-robin" class="level2">
+<h2 class="anchored" data-anchor-id="round-robin">38. Round Robin</h2>
+<p>Round-robin assignment distributes partitions cyclically.</p>
+<p>Example:</p>
+<pre class="text"><code>Partitions:
+P0 P1 P2 P3 P4 P5
+
+C1 → P0 P2 P4
+C2 → P1 P3 P5</code></pre>
+<p>This can provide more even distribution across topics depending on subscriptions.</p>
+<hr>
+</section>
+<section id="sticky-assignment" class="level2">
+<h2 class="anchored" data-anchor-id="sticky-assignment">39. Sticky Assignment</h2>
+<p>Sticky assignment attempts to:</p>
+<pre class="text"><code>balance partitions
++
+minimize unnecessary movement</code></pre>
+<p>This is useful because moving partitions during every rebalance can be expensive.</p>
+<hr>
+</section>
+<section id="cooperative-sticky" class="level2">
+<h2 class="anchored" data-anchor-id="cooperative-sticky">40. Cooperative Sticky</h2>
+<p>Cooperative sticky combines:</p>
+<pre class="text"><code>sticky assignment
++
+cooperative rebalance behavior</code></pre>
+<p>The goal is:</p>
+<pre class="text"><code>balanced assignment
++
+minimal disruption</code></pre>
+<p>This is an important modern Kafka consumer concept.</p>
+<hr>
+</section>
+<section id="consumer-lag" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-lag">41. Consumer Lag</h2>
+<p>Consumer lag represents how far a consumer/group is behind the partition’s current end.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>Log End Offset = 1000
+Consumer position/committed progress = 850
+
+Lag ≈ 150</code></pre>
+<p>The exact metric interpretation depends on whether you are looking at committed offset, current position, or monitoring-system semantics.</p>
+<hr>
+</section>
+<section id="lag-is-not-always-bad" class="level2">
+<h2 class="anchored" data-anchor-id="lag-is-not-always-bad">42. Lag Is Not Always Bad</h2>
+<p>A small or temporary lag can be normal.</p>
+<p>Example:</p>
+<pre class="text"><code>Traffic spike
+     │
+     ▼
+Producer rate &gt; consumer rate
+     │
+     ▼
+lag increases
+     │
+     ▼
+consumer catches up
+     │
+     ▼
+lag decreases</code></pre>
+<p>The important signal is often:</p>
+<pre class="text"><code>lag trend</code></pre>
+<p>rather than a single number.</p>
+<hr>
+</section>
+<section id="persistent-lag" class="level2">
+<h2 class="anchored" data-anchor-id="persistent-lag">43. Persistent Lag</h2>
+<p>Persistent increasing lag can indicate:</p>
+<pre class="text"><code>consumer too slow
+too few partitions
+too few consumers
+downstream dependency slow
+CPU bottleneck
+I/O bottleneck
+GC pressure
+serialization cost
+external API latency</code></pre>
+<p>Kafka itself may not be the root cause.</p>
+<hr>
+</section>
+<section id="consumer-scaling" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-scaling">44. Consumer Scaling</h2>
+<p>Suppose:</p>
+<pre class="text"><code>12 partitions</code></pre>
+<p>Start:</p>
+<pre class="text"><code>3 consumers</code></pre>
+<p>Average:</p>
+<pre class="text"><code>4 partitions/consumer</code></pre>
+<p>Scale to:</p>
+<pre class="text"><code>6 consumers</code></pre>
+<p>Average:</p>
+<pre class="text"><code>2 partitions/consumer</code></pre>
+<p>Scale to:</p>
+<pre class="text"><code>12 consumers</code></pre>
+<p>Potentially:</p>
+<pre class="text"><code>1 partition/consumer</code></pre>
+<p>Scale to:</p>
+<pre class="text"><code>20 consumers</code></pre>
+<p>Eight consumers may be idle.</p>
+<hr>
+</section>
+<section id="consumer-scaling-is-partition-bounded" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-scaling-is-partition-bounded">45. Consumer Scaling Is Partition-Bounded</h2>
+<p>The rule:</p>
+<pre class="text"><code>active consumers ≤ partitions</code></pre>
+<p>within a consumer group.</p>
+<p>Therefore if you need 20-way consumer parallelism:</p>
+<pre class="text"><code>topic must have enough partitions</code></pre>
+<p>This is why partition count is also a consumer architecture decision.</p>
+<hr>
+</section>
+<section id="poison-message" class="level2">
+<h2 class="anchored" data-anchor-id="poison-message">46. Poison Message</h2>
+<p>A poison message is a record that repeatedly fails processing.</p>
+<p>Example:</p>
+<pre class="text"><code>P0
+
+100 → good
+101 → poison
+102 → good</code></pre>
+<p>If the consumer always retries 101 synchronously:</p>
+<pre class="text"><code>101
+ ↓
+failure
+ ↓
+101
+ ↓
+failure
+ ↓
+101</code></pre>
+<p>The partition can stop making progress.</p>
+<hr>
+</section>
+<section id="poison-message-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="poison-message-strategies">47. Poison Message Strategies</h2>
+<p>Possible patterns include:</p>
+<pre class="text"><code>retry topic
+dead-letter topic
+bounded retry
+error topic
+parking lot topic
+manual intervention</code></pre>
+<p>A common architecture:</p>
+<pre class="text"><code>Main Topic
+    │
+    ▼
+Consumer
+    │
+    ├── success ──► business processing
+    │
+    └── failure ──► Retry/DLT</code></pre>
+<hr>
+</section>
+<section id="why-dlt-is-not-a-kafka-native-guarantee" class="level2">
+<h2 class="anchored" data-anchor-id="why-dlt-is-not-a-kafka-native-guarantee">48. Why DLT Is Not a Kafka Native Guarantee</h2>
+<p>A dead-letter topic is an application architecture pattern.</p>
+<p>Kafka does not automatically provide a universal DLT behavior for every consumer.</p>
+<p>The application/framework must implement the policy.</p>
+<p>This is a common certification/interview distinction.</p>
+<hr>
+</section>
+<section id="consumer-failure-scenario" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-failure-scenario">49. Consumer Failure Scenario</h2>
+<p>Suppose:</p>
+<pre class="text"><code>Consumer C1 → P0</code></pre>
+<p>C1 crashes.</p>
+<p>The group coordinator detects the failure.</p>
+<p>Then:</p>
+<pre class="text"><code>C1 leaves group
+     │
+     ▼
+rebalance
+     │
+     ▼
+P0 assigned to C2</code></pre>
+<p>C2 resumes from the group’s committed offset.</p>
+<hr>
+</section>
+<section id="failure-scenario-processing-before-commit" class="level2">
+<h2 class="anchored" data-anchor-id="failure-scenario-processing-before-commit">50. Failure Scenario — Processing Before Commit</h2>
+<p>Suppose:</p>
+<pre class="text"><code>offset 100 → record A</code></pre>
+<p>Consumer processes A.</p>
+<p>Before commit:</p>
+<pre class="text"><code>consumer crashes</code></pre>
+<p>After restart:</p>
+<pre class="text"><code>offset 100</code></pre>
+<p>A is processed again.</p>
+<p>This is expected under at-least-once processing.</p>
+<hr>
+</section>
+<section id="failure-scenario-commit-before-processing" class="level2">
+<h2 class="anchored" data-anchor-id="failure-scenario-commit-before-processing">51. Failure Scenario — Commit Before Processing</h2>
+<p>Suppose:</p>
+<pre class="text"><code>offset 100 → A</code></pre>
+<p>Consumer commits:</p>
+<pre class="text"><code>101</code></pre>
+<p>Then crashes before processing A.</p>
+<p>After restart:</p>
+<pre class="text"><code>starts at 101</code></pre>
+<p>A may never be processed.</p>
+<p>This demonstrates the tradeoff between:</p>
+<pre class="text"><code>at-least-once</code></pre>
+<p>and:</p>
+<pre class="text"><code>at-most-once</code></pre>
+<hr>
+</section>
+<section id="manual-commit-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="manual-commit-patterns">52. Manual Commit Patterns</h2>
+<section id="pattern-a" class="level3">
+<h3 class="anchored" data-anchor-id="pattern-a">Pattern A</h3>
+<pre class="text"><code>poll
+process
+commit</code></pre>
+<p>Usually favors at-least-once.</p>
+</section>
+<section id="pattern-b" class="level3">
+<h3 class="anchored" data-anchor-id="pattern-b">Pattern B</h3>
+<pre class="text"><code>poll
+commit
+process</code></pre>
+<p>Can favor at-most-once but risks loss.</p>
+</section>
+<section id="pattern-c" class="level3">
+<h3 class="anchored" data-anchor-id="pattern-c">Pattern C</h3>
+<pre class="text"><code>poll
+process transactionally
+commit offsets as part of transaction</code></pre>
+<p>Can support Kafka-to-Kafka exactly-once processing.</p>
+<hr>
+</section>
+</section>
+<section id="commitsync" class="level2">
+<h2 class="anchored" data-anchor-id="commitsync">53. <code>commitSync</code></h2>
+<p>A synchronous commit waits for the commit result.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>process
+   │
+   ▼
+commitSync()
+   │
+   ▼
+wait for response</code></pre>
+<p>This gives stronger control but can add latency.</p>
+<hr>
+</section>
+<section id="commitasync" class="level2">
+<h2 class="anchored" data-anchor-id="commitasync">54. <code>commitAsync</code></h2>
+<p>An asynchronous commit does not block in the same way.</p>
+<p>Conceptually:</p>
+<pre class="text"><code>process
+   │
+   ▼
+commitAsync()
+   │
+   └── continue</code></pre>
+<p>It can improve throughput but requires careful handling of commit ordering and failures.</p>
+<hr>
+</section>
+<section id="async-commit-hazard" class="level2">
+<h2 class="anchored" data-anchor-id="async-commit-hazard">55. Async Commit Hazard</h2>
+<p>Suppose:</p>
+<pre class="text"><code>commit offset 100
+commit offset 200</code></pre>
+<p>If asynchronous operations complete in an unexpected order, careless handling can create incorrect progress.</p>
+<p>A common pattern is:</p>
+<pre class="text"><code>commitAsync()
+...
+commitSync()</code></pre>
+<p>before shutdown or critical ownership transitions.</p>
+<p>The exact strategy should match the application’s processing model.</p>
+<hr>
+</section>
+<section id="offset-commit-per-record-vs-batch" class="level2">
+<h2 class="anchored" data-anchor-id="offset-commit-per-record-vs-batch">56. Offset Commit Per Record vs Batch</h2>
+<p>Committing every record:</p>
+<pre class="text"><code>process A → commit
+process B → commit
+process C → commit</code></pre>
+<p>can increase overhead.</p>
+<p>Batch committing:</p>
+<pre class="text"><code>process A
+process B
+process C
+commit</code></pre>
+<p>reduces commit frequency.</p>
+<p>But more records may need to be replayed after a crash.</p>
+<p>This is a classic throughput vs duplicate-processing tradeoff.</p>
+<hr>
+</section>
+<section id="consumer-fetching" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-fetching">57. Consumer Fetching</h2>
+<p>Consumers use fetch-related configurations to control how much data is retrieved.</p>
+<p>Important concepts include:</p>
+<pre class="text"><code>fetch.min.bytes
+fetch.max.wait.ms
+max.partition.fetch.bytes
+fetch.max.bytes</code></pre>
+<p>These affect:</p>
+<ul>
+<li>throughput</li>
+<li>latency</li>
+<li>memory</li>
+<li>network efficiency</li>
+</ul>
+<hr>
+</section>
+<section id="fetch.min.bytes" class="level2">
+<h2 class="anchored" data-anchor-id="fetch.min.bytes">58. <code>fetch.min.bytes</code></h2>
+<p>The broker can wait until at least the configured amount of data is available before responding, subject to the relevant timing behavior.</p>
+<p>Higher values can improve throughput by returning larger fetches.</p>
+<p>But they can also increase latency when traffic is low.</p>
+<hr>
+</section>
+<section id="fetch.max.wait.ms" class="level2">
+<h2 class="anchored" data-anchor-id="fetch.max.wait.ms">59. <code>fetch.max.wait.ms</code></h2>
+<p>This limits how long the broker may wait to satisfy the fetch conditions.</p>
+<p>Think:</p>
+<pre class="text"><code>fetch request
+      │
+      ▼
+wait for enough data
+      │
+      ├── enough data
+      └── timeout threshold</code></pre>
+<p>It interacts with <code>fetch.min.bytes</code>.</p>
+<hr>
+</section>
+<section id="max.partition.fetch.bytes" class="level2">
+<h2 class="anchored" data-anchor-id="max.partition.fetch.bytes">60. <code>max.partition.fetch.bytes</code></h2>
+<p>This limits the amount of data returned for a partition in a fetch response.</p>
+<p>This is important when records are large.</p>
+<p>If a single record is larger than the configured fetch size, Kafka has specific behavior to ensure progress rather than simply making the record permanently unreadable.</p>
+<p>The important operational lesson is:</p>
+<blockquote class="blockquote">
+<p>Large record sizes require coordinated producer, broker and consumer configuration.</p>
+</blockquote>
+<hr>
+</section>
+<section id="fetch.max.bytes" class="level2">
+<h2 class="anchored" data-anchor-id="fetch.max.bytes">61. <code>fetch.max.bytes</code></h2>
+<p>This controls the maximum amount of data returned for a fetch request across partitions, subject to Kafka’s handling of individual records and partition fetch limits.</p>
+<p>Think:</p>
+<pre class="text"><code>FetchRequest
+   │
+   ├── P0
+   ├── P1
+   ├── P2
+   └── P3
+        │
+        ▼
+  response bounded by fetch limits</code></pre>
+<hr>
+</section>
+<section id="consumer-memory" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-memory">62. Consumer Memory</h2>
+<p>Consumer configuration affects memory usage.</p>
+<p>Potential contributors include:</p>
+<pre class="text"><code>fetch buffers
+application queues
+deserialized objects
+processing batches
+downstream buffers</code></pre>
+<p>If the application polls huge amounts of data and processes slowly, memory pressure can become severe.</p>
+<hr>
+</section>
+<section id="backpressure-in-consumers" class="level2">
+<h2 class="anchored" data-anchor-id="backpressure-in-consumers">63. Backpressure in Consumers</h2>
+<p>Suppose:</p>
+<pre class="text"><code>Kafka → 1000 records/sec
+Application → 500 records/sec</code></pre>
+<p>Then:</p>
+<pre class="text"><code>lag increases</code></pre>
+<p>Possible solutions:</p>
+<pre class="text"><code>increase consumers
+increase partitions
+optimize processing
+batch downstream calls
+remove slow dependencies
+increase processing concurrency</code></pre>
+<p>But simply increasing consumer threads does not help if the topic has too few partitions.</p>
+<hr>
+</section>
+<section id="multi-threaded-consumer-design" class="level2">
+<h2 class="anchored" data-anchor-id="multi-threaded-consumer-design">64. Multi-Threaded Consumer Design</h2>
+<p>KafkaConsumer is not generally designed to be shared arbitrarily across application threads.</p>
+<p>A common model is:</p>
+<pre class="text"><code>Consumer thread
+      │
+      ▼
+poll()
+      │
+      ▼
+worker pool
+      │
+      ▼
+processing</code></pre>
+<p>But if using asynchronous processing, you must carefully manage:</p>
+<ul>
+<li>ordering</li>
+<li>offset commits</li>
+<li>partition ownership</li>
+<li>rebalance events</li>
+<li>processing completion</li>
+</ul>
+<p>This is an advanced design area.</p>
+<hr>
+</section>
+<section id="partition-level-ordering-with-parallel-processing" class="level2">
+<h2 class="anchored" data-anchor-id="partition-level-ordering-with-parallel-processing">65. Partition-Level Ordering with Parallel Processing</h2>
+<p>Suppose:</p>
+<pre class="text"><code>P0:
+A
+B
+C</code></pre>
+<p>If the application processes:</p>
+<pre class="text"><code>A → worker 1
+B → worker 2
+C → worker 3</code></pre>
+<p>completion could become:</p>
+<pre class="text"><code>B
+C
+A</code></pre>
+<p>Kafka delivered records in order, but the application destroyed processing order.</p>
+<p>Therefore:</p>
+<blockquote class="blockquote">
+<p>Kafka partition ordering does not automatically guarantee application-level completion ordering.</p>
+</blockquote>
+<hr>
+</section>
+<section id="preserving-ordering" class="level2">
+<h2 class="anchored" data-anchor-id="preserving-ordering">66. Preserving Ordering</h2>
+<p>If strict ordering is required:</p>
+<pre class="text"><code>partition
+    │
+    ▼
+ordered processing</code></pre>
+<p>or use partition-aware worker serialization:</p>
+<pre class="text"><code>P0 → Worker A
+P1 → Worker B
+P2 → Worker C</code></pre>
+<p>The application architecture must preserve the required ordering semantics.</p>
+<hr>
+</section>
+<section id="consumer-group-coordinator-vs-partition-leader" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-group-coordinator-vs-partition-leader">67. Consumer Group Coordinator vs Partition Leader</h2>
+<p>These are different concepts.</p>
+<pre class="text"><code>Group Coordinator
+    ↓
+manages consumer group membership/offset coordination
+
+Partition Leader
+    ↓
+serves reads/writes for a partition</code></pre>
+<p>The same broker can perform both roles, but they are conceptually distinct.</p>
+<hr>
+</section>
+<section id="certification-trap-one-group" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-one-group">68. Certification Trap — One Group</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>If two applications use the same <code>group.id</code>, will both receive every record?</p>
+</blockquote>
+<p>No.</p>
+<p>They cooperate as one group.</p>
+<p>Partitions are divided among them.</p>
+<p>If both applications must independently receive every event, they should use different group IDs.</p>
+<hr>
+</section>
+<section id="certification-trap-different-groups" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-different-groups">69. Certification Trap — Different Groups</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>If two consumer groups read the same topic, does consuming by group A advance group B’s offsets?</p>
+</blockquote>
+<p>No.</p>
+<p>Offsets are maintained independently per group.</p>
+<hr>
+</section>
+<section id="certification-trap-more-consumers" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-more-consumers">70. Certification Trap — More Consumers</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>A topic has 3 partitions. You add 10 consumers. Will throughput increase tenfold?</p>
+</blockquote>
+<p>No.</p>
+<p>At most 3 consumers can actively consume those 3 partitions within that group.</p>
+<hr>
+</section>
+<section id="certification-trap-commit" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-commit">71. Certification Trap — Commit</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>If a consumer commits offset 500, what record does it resume from?</p>
+</blockquote>
+<p>Conceptually:</p>
+<pre class="text"><code>offset 500</code></pre>
+<p>The committed offset represents the next position.</p>
+<p>Records before 500 are considered processed from the group’s perspective.</p>
+<hr>
+</section>
+<section id="certification-trap-crash" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-crash">72. Certification Trap — Crash</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>Consumer processes a record successfully but crashes before committing.</p>
+</blockquote>
+<p>What happens?</p>
+<p>The record can be processed again after restart.</p>
+<p>This is normal at-least-once behavior.</p>
+<hr>
+</section>
+<section id="certification-trap-poll" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-poll">73. Certification Trap — Poll</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>Why can a consumer that is still running be removed from its group?</p>
+</blockquote>
+<p>Because application processing can prevent timely polling and violate group timing constraints such as <code>max.poll.interval.ms</code>.</p>
+<p>Running as a process is not sufficient.</p>
+<p>The consumer must maintain group membership correctly.</p>
+<hr>
+</section>
+<section id="certification-trap-heartbeat" class="level2">
+<h2 class="anchored" data-anchor-id="certification-trap-heartbeat">74. Certification Trap — Heartbeat</h2>
+<p>Question:</p>
+<blockquote class="blockquote">
+<p>Are heartbeats the same thing as calls to <code>poll()</code>?</p>
+</blockquote>
+<p>No.</p>
+<p>They are related to consumer group liveness but serve different purposes.</p>
+<p>The application must also respect the poll interval and processing constraints.</p>
+<hr>
+</section>
+<section id="certification-scenario" class="level2">
+<h2 class="anchored" data-anchor-id="certification-scenario">75. Certification Scenario</h2>
+<p>Configuration:</p>
+<pre class="properties"><code>max.poll.records=500
+max.poll.interval.ms=300000</code></pre>
+<p>Worst-case processing time:</p>
+<pre class="text"><code>1 second per record</code></pre>
+<p>Potential processing time:</p>
+<pre class="text"><code>500 × 1 second
+= 500 seconds</code></pre>
+<p>But:</p>
+<pre class="text"><code>max.poll.interval.ms = 300 seconds</code></pre>
+<p>Therefore the consumer can exceed the poll interval.</p>
+<p>Possible result:</p>
+<pre class="text"><code>rebalance</code></pre>
+<p>A better approach may be:</p>
+<pre class="text"><code>reduce max.poll.records</code></pre>
+<p>or:</p>
+<pre class="text"><code>increase max.poll.interval.ms</code></pre>
+<p>or:</p>
+<pre class="text"><code>optimize processing</code></pre>
+<p>depending on requirements.</p>
+<hr>
+</section>
+<section id="certification-scenario-consumer-lag" class="level2">
+<h2 class="anchored" data-anchor-id="certification-scenario-consumer-lag">76. Certification Scenario — Consumer Lag</h2>
+<p>Metrics:</p>
+<pre class="text"><code>Producer rate = 20,000 records/sec
+Consumer rate = 15,000 records/sec</code></pre>
+<p>Lag will tend to increase.</p>
+<p>Possible responses:</p>
+<pre class="text"><code>1. Add consumers if partitions permit.
+2. Increase partition count if necessary for future scaling.
+3. Optimize consumer processing.
+4. Investigate downstream dependencies.
+5. Check broker/fetch performance.</code></pre>
+<hr>
+</section>
+<section id="administrator-scenario-rebalance-storm" class="level2">
+<h2 class="anchored" data-anchor-id="administrator-scenario-rebalance-storm">77. Administrator Scenario — Rebalance Storm</h2>
+<p>Symptoms:</p>
+<pre class="text"><code>frequent rebalances
+consumer lag spikes
+processing pauses
+group members constantly changing</code></pre>
+<p>Investigate:</p>
+<pre class="text"><code>consumer crashes
+GC pauses
+slow processing
+max.poll.interval.ms
+session.timeout.ms
+heartbeat configuration
+network instability
+deployment churn</code></pre>
+<p>Do not immediately blame Kafka brokers.</p>
+<hr>
+</section>
+<section id="administrator-scenario-one-consumer-slow" class="level2">
+<h2 class="anchored" data-anchor-id="administrator-scenario-one-consumer-slow">78. Administrator Scenario — One Consumer Slow</h2>
+<p>Suppose:</p>
+<pre class="text"><code>P0 → Consumer C1
+P1 → Consumer C2
+P2 → Consumer C3</code></pre>
+<p>Lag:</p>
+<pre class="text"><code>P0 = 2,000,000
+P1 = 10
+P2 = 5</code></pre>
+<p>This suggests a partition-specific or consumer-specific problem.</p>
+<p>Investigate:</p>
+<pre class="text"><code>C1 CPU
+C1 GC
+downstream dependency
+hot key
+large records
+partition workload</code></pre>
+<p>Adding a fourth consumer may not help because P0 is still a single partition.</p>
+<hr>
+</section>
+<section id="administrator-scenario-rebalance-after-slow-processing" class="level2">
+<h2 class="anchored" data-anchor-id="administrator-scenario-rebalance-after-slow-processing">79. Administrator Scenario — Rebalance After Slow Processing</h2>
+<p>Suppose:</p>
+<pre class="text"><code>poll()
+processing starts
+processing takes 8 minutes</code></pre>
+<p>Configuration:</p>
+<pre class="text"><code>max.poll.interval.ms = 5 minutes</code></pre>
+<p>The consumer may be removed from the group.</p>
+<p>Then:</p>
+<pre class="text"><code>rebalance</code></pre>
+<p>When the consumer returns:</p>
+<pre class="text"><code>another rebalance</code></pre>
+<p>This can create a cycle:</p>
+<pre class="text"><code>slow processing
+   ↓
+rebalance
+   ↓
+reassignment
+   ↓
+duplicate/replayed work
+   ↓
+more processing delay
+   ↓
+rebalance</code></pre>
+<p>This is a serious production failure mode.</p>
+<hr>
+</section>
+<section id="consumer-design-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-design-checklist">80. Consumer Design Checklist</h2>
+<p>Before deploying a consumer, answer:</p>
+<pre class="text"><code>1. What delivery guarantee is required?
+2. When is processing considered successful?
+3. When should offsets be committed?
+4. Can processing be repeated safely?
+5. How long can one poll batch take?
+6. What is max.poll.interval.ms?
+7. How many partitions exist?
+8. How many consumers are required?
+9. What happens when a consumer crashes?
+10. What happens when a record repeatedly fails?
+11. Is ordering required?
+12. How is lag monitored?
+13. What happens during rebalance?
+14. Are downstream calls idempotent?
+15. Is Kafka-to-Kafka exactly-once required?</code></pre>
+<hr>
+</section>
+<section id="consumer-troubleshooting-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-troubleshooting-matrix">81. Consumer Troubleshooting Matrix</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Symptom</th>
+<th>Likely Areas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Increasing lag</td>
+<td>Processing too slow, insufficient parallelism</td>
+</tr>
+<tr class="even">
+<td>Frequent rebalances</td>
+<td>Poll interval, crashes, network, deployments</td>
+</tr>
+<tr class="odd">
+<td>Duplicate processing</td>
+<td>Commit timing, crashes, retries</td>
+</tr>
+<tr class="even">
+<td>Missing records</td>
+<td>Commit before processing, retention</td>
+</tr>
+<tr class="odd">
+<td>One partition lagging</td>
+<td>Hot partition, slow consumer</td>
+</tr>
+<tr class="even">
+<td>Consumer kicked from group</td>
+<td><code>max.poll.interval.ms</code>, session timeout</td>
+</tr>
+<tr class="odd">
+<td>High fetch latency</td>
+<td>Broker/network/fetch configuration</td>
+</tr>
+<tr class="even">
+<td>High memory</td>
+<td>Large fetches, application queues, object retention</td>
+</tr>
+<tr class="odd">
+<td>Processing pauses</td>
+<td>Rebalance or downstream dependency</td>
+</tr>
+<tr class="even">
+<td>Uneven assignment</td>
+<td>Assignment strategy/subscription topology</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="hands-on-lab-consumer-group-basics" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-consumer-group-basics">82. Hands-On Lab — Consumer Group Basics</h2>
+<p>Create:</p>
+<pre class="text"><code>certification-consumer</code></pre>
+<p>with:</p>
+<pre class="text"><code>6 partitions</code></pre>
+<p>Start:</p>
+<pre class="text"><code>3 consumers</code></pre>
+<p>Use the same:</p>
+<pre class="text"><code>group.id=certification-group</code></pre>
+<p>Observe assignments.</p>
+<p>Expected conceptual result:</p>
+<pre class="text"><code>C1 → P0 P3
+C2 → P1 P4
+C3 → P2 P5</code></pre>
+<p>The exact assignment can differ by strategy.</p>
+<hr>
+</section>
+<section id="hands-on-lab-add-consumers" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-add-consumers">83. Hands-On Lab — Add Consumers</h2>
+<p>Start:</p>
+<pre class="text"><code>3 consumers</code></pre>
+<p>Then add:</p>
+<pre class="text"><code>C4
+C5
+C6</code></pre>
+<p>Observe:</p>
+<pre class="text"><code>rebalance</code></pre>
+<p>Then add:</p>
+<pre class="text"><code>C7</code></pre>
+<p>Observe that there are no more partitions available for another active consumer.</p>
+<hr>
+</section>
+<section id="hands-on-lab-different-group-ids" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-different-group-ids">84. Hands-On Lab — Different Group IDs</h2>
+<p>Start:</p>
+<pre class="text"><code>group-A
+group-B</code></pre>
+<p>against the same topic.</p>
+<p>Produce:</p>
+<pre class="text"><code>100 records</code></pre>
+<p>Observe that both groups independently consume the records.</p>
+<p>This demonstrates:</p>
+<pre class="text"><code>topic
+ │
+ ├── group-A
+ │
+ └── group-B</code></pre>
+<p>with independent offsets.</p>
+<hr>
+</section>
+<section id="hands-on-lab-crash-before-commit" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-crash-before-commit">85. Hands-On Lab — Crash Before Commit</h2>
+<p>Design:</p>
+<pre class="text"><code>poll
+ ↓
+process
+ ↓
+pause before commit
+ ↓
+kill consumer</code></pre>
+<p>Restart it.</p>
+<p>Observe that the record can be delivered again.</p>
+<p>This demonstrates at-least-once processing.</p>
+<hr>
+</section>
+<section id="hands-on-lab-commit-before-processing" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-commit-before-processing">86. Hands-On Lab — Commit Before Processing</h2>
+<p>Reverse the sequence:</p>
+<pre class="text"><code>poll
+ ↓
+commit
+ ↓
+crash
+ ↓
+process never happens</code></pre>
+<p>Observe the consequence.</p>
+<p>This demonstrates the danger of advancing offsets before business processing completes.</p>
+<hr>
+</section>
+<section id="hands-on-lab-rebalance" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-rebalance">87. Hands-On Lab — Rebalance</h2>
+<p>Run:</p>
+<pre class="text"><code>C1
+C2
+C3</code></pre>
+<p>Then terminate C2.</p>
+<p>Observe:</p>
+<pre class="text"><code>C2 leaves
+   ↓
+rebalance
+   ↓
+P partitions redistributed</code></pre>
+<p>Then restart C2 and observe another rebalance.</p>
+<hr>
+</section>
+<section id="hands-on-lab-poll-interval" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-poll-interval">88. Hands-On Lab — Poll Interval</h2>
+<p>Configure a deliberately small:</p>
+<pre class="properties"><code>max.poll.interval.ms</code></pre>
+<p>Make processing sleep longer than the configured interval.</p>
+<p>Observe:</p>
+<pre class="text"><code>consumer leaves group
+rebalance
+partition reassignment</code></pre>
+<p>This is one of the most valuable consumer labs for certification preparation.</p>
+<hr>
+</section>
+<section id="hands-on-lab-lag" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-lag">89. Hands-On Lab — Lag</h2>
+<p>Generate records faster than the consumer can process.</p>
+<p>Observe:</p>
+<pre class="text"><code>producer rate
+consumer rate
+lag</code></pre>
+<p>Then increase consumer parallelism.</p>
+<p>Determine whether lag decreases.</p>
+<p>Repeat with too few partitions and demonstrate that adding consumers eventually stops helping.</p>
+<hr>
+</section>
+<section id="hands-on-lab-poison-record" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-lab-poison-record">90. Hands-On Lab — Poison Record</h2>
+<p>Create:</p>
+<pre class="text"><code>P0:
+
+A
+B
+POISON
+C
+D</code></pre>
+<p>Make processing of <code>POISON</code> fail.</p>
+<p>Observe how repeatedly retrying the record can prevent progress.</p>
+<p>Then implement:</p>
+<pre class="text"><code>retry topic</code></pre>
+<p>or:</p>
+<pre class="text"><code>dead-letter topic</code></pre>
+<p>and compare the behavior.</p>
+<hr>
+</section>
+<section id="senior-design-scenario" class="level2">
+<h2 class="anchored" data-anchor-id="senior-design-scenario">91. Senior Design Scenario</h2>
+<p>You operate:</p>
+<pre class="text"><code>Topic: orders
+Partitions: 48
+RF: 3
+
+Consumer group:
+orders-service
+
+Consumers: 12</code></pre>
+<p>Each consumer owns approximately:</p>
+<pre class="text"><code>4 partitions</code></pre>
+<p>Processing time:</p>
+<pre class="text"><code>average = 20 ms
+p99 = 2 seconds</code></pre>
+<p>Occasionally, downstream payment processing takes:</p>
+<pre class="text"><code>8 minutes</code></pre>
+<p>Current:</p>
+<pre class="text"><code>max.poll.interval.ms = 5 minutes</code></pre>
+<p>Question:</p>
+<p>What can happen?</p>
+<section id="answer" class="level3">
+<h3 class="anchored" data-anchor-id="answer">Answer</h3>
+<p>A consumer can exceed its allowed poll interval and be removed from the group, causing a rebalance.</p>
+<p>Potential consequences:</p>
+<pre class="text"><code>partition movement
+duplicate processing
+lag spikes
+processing interruptions
+additional downstream load</code></pre>
+<p>Possible design options:</p>
+<pre class="text"><code>increase max.poll.interval.ms
+reduce records processed per poll
+decouple long-running work
+use controlled worker concurrency
+make processing idempotent</code></pre>
+<p>The correct solution depends on the application’s ordering and delivery requirements.</p>
+<hr>
+</section>
+</section>
+<section id="senior-design-scenario-100-consumers" class="level2">
+<h2 class="anchored" data-anchor-id="senior-design-scenario-100-consumers">92. Senior Design Scenario — 100 Consumers</h2>
+<p>Topic:</p>
+<pre class="text"><code>12 partitions</code></pre>
+<p>Consumer group:</p>
+<pre class="text"><code>100 consumers</code></pre>
+<p>Question:</p>
+<p>Why might this be a poor architecture?</p>
+<p>Because:</p>
+<pre class="text"><code>12 partitions</code></pre>
+<p>can provide at most:</p>
+<pre class="text"><code>12 active consumers</code></pre>
+<p>within the group.</p>
+<p>The remaining consumers are idle.</p>
+<p>The correct solution may be:</p>
+<pre class="text"><code>increase partition count</code></pre>
+<p>but only after evaluating:</p>
+<pre class="text"><code>ordering
+storage
+broker capacity
+recovery
+metadata
+future growth</code></pre>
+<hr>
+</section>
+<section id="senior-design-scenario-ordering" class="level2">
+<h2 class="anchored" data-anchor-id="senior-design-scenario-ordering">93. Senior Design Scenario — Ordering</h2>
+<p>Requirement:</p>
+<blockquote class="blockquote">
+<p>All events for the same account must be processed in order, but different accounts should be processed concurrently.</p>
+</blockquote>
+<p>Design:</p>
+<pre class="text"><code>key = accountId</code></pre>
+<p>Then:</p>
+<pre class="text"><code>Account A → P0
+Account B → P3
+Account C → P1
+Account D → P0</code></pre>
+<p>Account A events remain ordered within P0, while different accounts can execute concurrently.</p>
+<p>This is one of the most important Kafka design patterns.</p>
+<hr>
+</section>
+<section id="consumer-mental-model" class="level2">
+<h2 class="anchored" data-anchor-id="consumer-mental-model">94. Consumer Mental Model</h2>
+<p>Memorize:</p>
+<pre class="text"><code>Consumer
+   │
+   ▼
+Join Group
+   │
+   ▼
+Assignment
+   │
+   ▼
+Poll
+   │
+   ▼
+Process
+   │
+   ▼
+Commit
+   │
+   ▼
+Poll again</code></pre>
+<p>Failure:</p>
+<pre class="text"><code>Consumer failure
+      │
+      ▼
+Coordinator detects failure
+      │
+      ▼
+Rebalance
+      │
+      ▼
+New assignment
+      │
+      ▼
+Resume from committed offsets</code></pre>
+<hr>
+</section>
+<section id="certification-summary" class="level2">
+<h2 class="anchored" data-anchor-id="certification-summary">95. Certification Summary</h2>
+<p>You should now be able to explain:</p>
+<section id="consumer-groups" class="level3">
+<h3 class="anchored" data-anchor-id="consumer-groups">Consumer groups</h3>
+<pre class="text"><code>group.id
+partition assignment
+parallelism
+independent offsets</code></pre>
+</section>
+<section id="offset-management" class="level3">
+<h3 class="anchored" data-anchor-id="offset-management">Offset management</h3>
+<pre class="text"><code>position
+committed offset
+auto commit
+manual commit
+sync commit
+async commit</code></pre>
+</section>
+<section id="rebalancing-1" class="level3">
+<h3 class="anchored" data-anchor-id="rebalancing-1">Rebalancing</h3>
+<pre class="text"><code>group membership
+eager
+cooperative
+sticky
+static membership</code></pre>
+</section>
+<section id="liveness" class="level3">
+<h3 class="anchored" data-anchor-id="liveness">Liveness</h3>
+<pre class="text"><code>heartbeats
+session timeout
+poll interval</code></pre>
+</section>
+<section id="processing-guarantees" class="level3">
+<h3 class="anchored" data-anchor-id="processing-guarantees">Processing guarantees</h3>
+<pre class="text"><code>at-most-once
+at-least-once
+exactly-once</code></pre>
+</section>
+<section id="performance" class="level3">
+<h3 class="anchored" data-anchor-id="performance">Performance</h3>
+<pre class="text"><code>fetch sizes
+poll batch size
+consumer concurrency
+lag</code></pre>
+</section>
+<section id="failure-handling" class="level3">
+<h3 class="anchored" data-anchor-id="failure-handling">Failure handling</h3>
+<pre class="text"><code>crash
+duplicate
+poison record
+rebalance
+slow processing</code></pre>
+<hr>
+</section>
+</section>
+<section id="final-exam-mental-model" class="level2">
+<h2 class="anchored" data-anchor-id="final-exam-mental-model">96. Final Exam Mental Model</h2>
+<p>If you remember only one diagram from this chapter, remember this:</p>
+<pre class="text"><code>                         TOPIC
+                           │
+                ┌──────────┼──────────┐
+                ▼          ▼          ▼
+               P0         P1         P2
+                │          │          │
+                └──────┬───┴───┬──────┘
+                       │
+                       ▼
+                 CONSUMER GROUP
+                       │
+             ┌─────────┼─────────┐
+             ▼         ▼         ▼
+            C1        C2        C3
+             │         │         │
+             ▼         ▼         ▼
+          process   process   process
+             │         │         │
+             └─────────┼─────────┘
+                       ▼
+                   COMMIT
+                       │
+                       ▼
+                 GROUP OFFSETS</code></pre>
+<p>The critical principle is:</p>
+<blockquote class="blockquote">
+<p><strong>Kafka consumers do not delete records after processing. They track progress using offsets. Consumer groups divide partitions among members, and failures or membership changes can trigger rebalances.</strong></p>
+</blockquote>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

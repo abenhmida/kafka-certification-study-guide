@@ -1,23 +1,11 @@
-# Apache Kafka Certification Mastery
-
-## Table of Contents
-
-- [Chapter 3 — Topics, Partitions, Offsets and Log Internals](#chapter-3-topics-partitions-offsets-and-log-internals)
-- [Scalability](#scalability)
-- [Parallelism](#parallelism)
-  - [Delete retention](#delete-retention)
-  - [Compaction](#compaction)
-  - [Why not simply create thousands of partitions?](#why-not-simply-create-thousands-of-partitions)
-
----
-## Chapter 3 — Topics, Partitions, Offsets and Log Internals
+# Chapter 3 — Topics, Partitions, Offsets and Log Internals
 
 > Certification track: CCDAK + CCAAK  
 > Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
 
 ---
 
-# 1. Why This Chapter Matters
+## 1. Why This Chapter Matters
 
 Topics and partitions are the foundation of Kafka.
 

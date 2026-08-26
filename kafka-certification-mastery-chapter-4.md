@@ -1,46 +1,11 @@
-# Apache Kafka Certification Mastery
-
-## Table of Contents
-
-- [Chapter 4 — Producers Deep Dive](#chapter-4-producers-deep-dive)
-  - [Idempotence](#idempotence)
-  - [Transactions](#transactions)
-  - [`read_uncommitted`](#readuncommitted)
-  - [`read_committed`](#readcommitted)
-- [Question 1](#question-1)
-  - [Answer](#answer)
-- [Question 2](#question-2)
-  - [Answer](#answer)
-- [Question 3](#question-3)
-  - [Answer](#answer)
-- [Question 4](#question-4)
-  - [Answer](#answer)
-- [Question 5](#question-5)
-  - [Answer](#answer)
-- [Question 6](#question-6)
-  - [Answer](#answer)
-- [Question 7](#question-7)
-  - [Answer](#answer)
-- [Question 8](#question-8)
-  - [Answer](#answer)
-- [Question 9](#question-9)
-  - [Answer](#answer)
-- [Question 10](#question-10)
-  - [Answer](#answer)
-  - [Answer](#answer)
-  - [Answer](#answer)
-- [Chapter 5 — Consumers and Consumer Groups Deep Dive](#chapter-5-consumers-and-consumer-groups-deep-dive)
-
----
-
-## Chapter 4 — Producers Deep Dive
+# Chapter 4 — Producers Deep Dive
 
 > Certification track: CCDAK + CCAAK  
 > Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
 
 ---
 
-# 1. Why Producers Matter
+## 1. Why Producers Matter
 
 The Kafka producer is responsible for transforming application records into requests sent to Kafka brokers.
 
@@ -82,19 +47,9 @@ Acknowledgment
 
 For certification preparation, you must understand both:
 
-```text
-producer correctness
-```
+`producer correctness` and `producer performance`
 
-and:
-
-```text
-producer performance
-```
-
----
-
-# 2. Producer Responsibilities
+## 2. Producer Responsibilities
 
 A Kafka producer is responsible for:
 
@@ -110,17 +65,11 @@ A Kafka producer is responsible for:
 - supporting transactions
 - exposing delivery errors
 
-It does **not** simply perform:
-
-```text
-send(record)
-```
+It does **not** simply perform `send(record)`.
 
 Internally, many things happen before the record reaches Kafka.
 
----
-
-# 3. ProducerRecord
+## 3. ProducerRecord
 
 A producer record conceptually contains:
 
@@ -147,27 +96,21 @@ ProducerRecord<String, Order> record =
 
 If the partition is not explicitly provided, the producer's partitioner determines it.
 
----
+## 4. Serialization
 
-# 4. Serialization
-
-Kafka brokers store bytes.
-
-Applications work with objects.
-
-Therefore:
+Kafka brokers store bytes. Applications work with objects.
 
 ```text
 Application Object
         │
         ▼
-Serializer
+    Serializer
         │
         ▼
-byte[]
+      byte[]
         │
         ▼
-Kafka
+      Kafka
 ```
 
 For example:
@@ -194,16 +137,9 @@ Deserializer
 Order object
 ```
 
----
+## 5. Key Serializer and Value Serializer
 
-# 5. Key Serializer and Value Serializer
-
-Kafka producers can use different serializers for:
-
-```text
-key
-value
-```
+Kafka producers can use different serializers for `key` and `value`
 
 Example:
 
@@ -216,15 +152,9 @@ The key serializer affects how the key becomes bytes before partitioning.
 
 The value serializer converts the application payload into bytes.
 
----
+## 6. Why the Key Matters
 
-# 6. Why the Key Matters
-
-The key can determine:
-
-```text
-partition placement
-```
+The key can determine *partition placement*
 
 Suppose:
 
@@ -235,20 +165,18 @@ customerId = customer-42
 Using the customer ID as the key can provide:
 
 ```text
-customer-42
-      │
-      ▼
-same partition
-      │
-      ▼
+      customer-42
+          │
+          ▼
+     same partition
+          │
+          ▼
 ordered customer events
 ```
 
 This is one of the most important producer design decisions.
 
----
-
-# 7. Explicit Partition
+## 7. Explicit Partition
 
 The producer can explicitly specify a partition.
 
@@ -264,7 +192,6 @@ new ProducerRecord<>(
 ```
 
 The record goes directly to partition 3.
-
 This bypasses normal partition selection logic.
 
 Use explicit partitions carefully because they can create:
@@ -273,18 +200,16 @@ Use explicit partitions carefully because they can create:
 - poor load distribution
 - operational coupling
 
----
-
-# 8. Partitioner
+## 8. Partitioner
 
 If the partition is not explicitly specified, Kafka uses partitioning logic.
 
 Conceptually:
 
 ```text
-Record
-  │
-  ▼
+  Record
+    │
+    ▼
 Partitioner
   │
   ├── key present
@@ -300,21 +225,9 @@ Partitioner
 
 Modern Kafka producer behavior can use sticky partitioning for records without keys to improve batching.
 
----
+## 9. Keyed Records
 
-# 9. Keyed Records
-
-Suppose a topic has:
-
-```text
-4 partitions
-```
-
-and:
-
-```text
-key = customer-42
-```
+Suppose a topic has `text 4 partitions` and `key = customer-42`
 
 The partitioner determines the destination.
 
@@ -329,27 +242,17 @@ partition
 
 The exact partitioner implementation and configuration matter, so avoid assuming every producer version behaves identically in every keyless case.
 
----
+## 10. Keyless Records
 
-# 10. Keyless Records
-
-If no key is supplied:
-
-```text
-key = null
-```
+If no key is supplied `key = null`
 
 Kafka can distribute records across partitions.
 
-Modern producer behavior uses a sticky partitioning approach for keyless records to improve batch utilization.
-
-The important concept is:
+Modern producer behavior uses a sticky partitioning approach for keyless records to improve batch utilization. The important concept is:
 
 > Keyless records can be distributed for load balancing, while keyed records are normally used when partition affinity matters.
 
----
-
-# 11. Producer Batching
+## 11. Producer Batching
 
 Kafka does not necessarily send every record as an individual network request.
 
@@ -370,9 +273,7 @@ Record D ─┘
 
 Batching is fundamental to Kafka producer throughput.
 
----
-
-# 12. Why Batching Improves Performance
+## 12. Why Batching Improves Performance
 
 Without batching:
 
@@ -404,17 +305,9 @@ Batching reduces:
 
 It generally improves throughput.
 
----
+## 13. `batch.size`
 
-# 13. `batch.size`
-
-The producer has:
-
-```properties
-batch.size
-```
-
-This controls the target batch size in bytes for records going to the same partition.
+The producer has `batch.size` that controls the target batch size in bytes for records going to the same partition.
 
 Important:
 
@@ -422,9 +315,7 @@ Important:
 
 A batch can be sent earlier.
 
----
-
-# 14. `linger.ms`
+## 14. `linger.ms`
 
 The producer can wait briefly to accumulate additional records.
 
@@ -454,7 +345,7 @@ This can improve batching at the cost of some additional latency.
 
 ---
 
-# 15. `batch.size` vs `linger.ms`
+## 15. `batch.size` vs `linger.ms`
 
 A useful mental model:
 
@@ -480,7 +371,7 @@ other send conditions occur
 
 ---
 
-# 16. Throughput vs Latency
+## 16. Throughput vs Latency
 
 Producer tuning often involves a tradeoff.
 
@@ -502,7 +393,7 @@ Tune according to workload.
 
 ---
 
-# 17. Compression
+## 17. Compression
 
 Kafka producers can compress batches.
 
@@ -537,7 +428,7 @@ Compression can reduce network and storage usage.
 
 ---
 
-# 18. Compression Tradeoffs
+## 18. Compression Tradeoffs
 
 Compression can reduce:
 
@@ -563,7 +454,7 @@ Zstandard (`zstd`) is often attractive for modern workloads because of its compr
 
 ---
 
-# 19. Producer Acknowledgments
+## 19. Producer Acknowledgments
 
 The producer controls acknowledgment behavior using:
 
@@ -581,7 +472,7 @@ acks=all
 
 ---
 
-# 20. `acks=0`
+## 20. `acks=0`
 
 The producer does not wait for a broker acknowledgment.
 
@@ -609,7 +500,7 @@ Use only when the application can tolerate weaker guarantees.
 
 ---
 
-# 21. `acks=1`
+## 21. `acks=1`
 
 The leader acknowledges the record after the leader has written it according to the broker's handling.
 
@@ -633,7 +524,7 @@ Therefore:
 
 ---
 
-# 22. `acks=all`
+## 22. `acks=all`
 
 The producer waits for the leader to receive the record and for the required in-sync replica condition to be satisfied.
 
@@ -659,7 +550,7 @@ This is the strongest standard acknowledgment mode.
 
 ---
 
-# 23. `acks=all` Does Not Mean "Every Replica"
+## 23. `acks=all` Does Not Mean "Every Replica"
 
 This is a certification trap.
 
@@ -682,7 +573,7 @@ is critical.
 
 ---
 
-# 24. `min.insync.replicas`
+## 24. `min.insync.replicas`
 
 Suppose:
 
@@ -722,7 +613,7 @@ The producer cannot satisfy the configured durability requirement.
 
 ---
 
-# 25. Why This Configuration Is Powerful
+## 25. Why This Configuration Is Powerful
 
 A common production pattern is:
 
@@ -744,7 +635,7 @@ before accepting the write under `acks=all`.
 
 ---
 
-# 26. Producer Retries
+## 26. Producer Retries
 
 A request can fail transiently.
 
@@ -782,7 +673,7 @@ But retries introduce ordering and duplicate-delivery considerations.
 
 ---
 
-# 27. Retry Is Not Exactly-Once
+## 27. Retry Is Not Exactly-Once
 
 This is critical.
 
@@ -811,7 +702,7 @@ Therefore:
 
 ---
 
-# 28. Idempotent Producer
+## 28. Idempotent Producer
 
 Kafka supports idempotent production.
 
@@ -834,7 +725,7 @@ This prevents duplicate appends caused by retrying the same producer request und
 
 ---
 
-# 29. Producer ID
+## 29. Producer ID
 
 An idempotent producer is assigned a producer identity, commonly referred to as a PID.
 
@@ -856,7 +747,7 @@ The broker uses producer state to identify duplicates and ordering violations.
 
 ---
 
-# 30. Sequence Numbers
+## 30. Sequence Numbers
 
 Suppose:
 
@@ -885,7 +776,7 @@ This is a key mechanism behind idempotent producer semantics.
 
 ---
 
-# 31. Producer Ordering
+## 31. Producer Ordering
 
 Consider two in-flight requests:
 
@@ -915,7 +806,7 @@ must be considered together.
 
 ---
 
-# 32. `max.in.flight.requests.per.connection`
+## 32. `max.in.flight.requests.per.connection`
 
 This controls how many unacknowledged requests may be sent on a connection.
 
@@ -951,7 +842,7 @@ But ordering behavior under retries becomes more complex.
 
 ---
 
-# 33. Idempotence and In-Flight Requests
+## 33. Idempotence and In-Flight Requests
 
 Modern Kafka producer configurations can support safe idempotent behavior with multiple in-flight requests under the producer's supported constraints.
 
@@ -970,7 +861,7 @@ in-flight requests
 
 ---
 
-# 34. `enable.idempotence`
+## 34. `enable.idempotence`
 
 The producer configuration is:
 
@@ -984,7 +875,7 @@ When enabled, Kafka enforces compatible producer configuration constraints.
 
 ---
 
-# 35. Idempotence vs Transactions
+## 35. Idempotence vs Transactions
 
 These are related but different.
 
@@ -1017,7 +908,7 @@ record C ─┘
 
 ---
 
-# 36. Transactions
+## 36. Transactions
 
 A transactional producer can write multiple records atomically.
 
@@ -1046,7 +937,7 @@ A + B aborted
 
 ---
 
-# 37. Transactional Producer Configuration
+## 37. Transactional Producer Configuration
 
 A transactional producer requires a transactional identity:
 
@@ -1074,7 +965,7 @@ commitTransaction()
 
 ---
 
-# 38. Transaction Abort
+## 38. Transaction Abort
 
 If something fails:
 
@@ -1095,7 +986,7 @@ Consumers configured for appropriate isolation can avoid seeing aborted transact
 
 ---
 
-# 39. `isolation.level`
+## 39. `isolation.level`
 
 Consumers can use:
 
@@ -1121,7 +1012,7 @@ This is essential when building exactly-once pipelines.
 
 ---
 
-# 40. Exactly-Once Semantics
+## 40. Exactly-Once Semantics
 
 Exactly-once semantics are frequently misunderstood.
 
@@ -1160,7 +1051,7 @@ The output records and consumed offsets can be committed atomically.
 
 ---
 
-# 41. Exactly-Once Pipeline
+## 41. Exactly-Once Pipeline
 
 Conceptually:
 
@@ -1201,7 +1092,7 @@ When offsets and output participate in the same transaction, the system can avoi
 
 ---
 
-# 42. Producer Delivery Timeout
+## 42. Producer Delivery Timeout
 
 The producer has:
 
@@ -1229,7 +1120,7 @@ This is different from a single request timeout.
 
 ---
 
-# 43. `request.timeout.ms`
+## 43. `request.timeout.ms`
 
 This controls how long the client waits for a response to an individual request before considering it failed for retry/error handling purposes.
 
@@ -1249,7 +1140,7 @@ This distinction is frequently tested.
 
 ---
 
-# 44. Retries vs Delivery Timeout
+## 44. Retries vs Delivery Timeout
 
 Suppose:
 
@@ -1276,7 +1167,7 @@ delivery.timeout.ms
 
 ---
 
-# 45. `linger.ms` and Throughput
+## 45. `linger.ms` and Throughput
 
 Suppose the application sends:
 
@@ -1307,7 +1198,7 @@ The optimal value depends on workload.
 
 ---
 
-# 46. Compression and Batching
+## 46. Compression and Batching
 
 Compression works best when there is a batch to compress.
 
@@ -1327,7 +1218,7 @@ This is another reason batching matters.
 
 ---
 
-# 47. Producer Buffering
+## 47. Producer Buffering
 
 The producer buffers records before sending them.
 
@@ -1357,7 +1248,7 @@ Producer Buffer
 
 ---
 
-# 48. `max.block.ms`
+## 48. `max.block.ms`
 
 This configuration limits how long certain producer operations may block, including waiting for buffer allocation and metadata availability.
 
@@ -1378,7 +1269,7 @@ max.block.ms
 
 ---
 
-# 49. Producer Backpressure
+## 49. Producer Backpressure
 
 Suppose:
 
@@ -1420,7 +1311,7 @@ Do not blindly increase `buffer.memory`.
 
 ---
 
-# 50. Producer Metrics
+## 50. Producer Metrics
 
 Important metrics include:
 
@@ -1453,7 +1344,7 @@ may indicate broker/network instability.
 
 ---
 
-# 51. Producer Failure Scenario
+## 51. Producer Failure Scenario
 
 Suppose:
 
@@ -1497,7 +1388,7 @@ allows Kafka to recognize the duplicate retry.
 
 ---
 
-# 52. Failure Scenario — Leader Change
+## 52. Failure Scenario — Leader Change
 
 Suppose:
 
@@ -1539,7 +1430,7 @@ retry
 
 ---
 
-# 53. Failure Scenario — Out-of-Order Risk
+## 53. Failure Scenario — Out-of-Order Risk
 
 Imagine:
 
@@ -1564,7 +1455,7 @@ The certification lesson:
 
 ---
 
-# 54. Producer Configuration — Certification Baseline
+## 54. Producer Configuration — Certification Baseline
 
 A reasonable production starting point for a durability-oriented producer might resemble:
 
@@ -1591,7 +1482,7 @@ Do not treat these values as universal best practices.
 
 ---
 
-# 55. Durability-Oriented Producer
+## 55. Durability-Oriented Producer
 
 A conceptual configuration:
 
@@ -1620,7 +1511,7 @@ acks=1
 
 ---
 
-# 56. Latency-Oriented Producer
+## 56. Latency-Oriented Producer
 
 If latency is the highest priority, excessive batching can be undesirable.
 
@@ -1641,7 +1532,7 @@ Measure the actual workload.
 
 ---
 
-# 57. Throughput-Oriented Producer
+## 57. Throughput-Oriented Producer
 
 For throughput workloads, investigate:
 
@@ -1668,7 +1559,7 @@ parallel partitions
 
 ---
 
-# 58. Producer Ordering Requirement
+## 58. Producer Ordering Requirement
 
 Requirement:
 
@@ -1699,7 +1590,7 @@ All are ordered within the partition.
 
 ---
 
-# 59. Producer Anti-Pattern
+## 59. Producer Anti-Pattern
 
 Requirement:
 
@@ -1723,7 +1614,7 @@ Now Kafka cannot provide a single partition ordering guarantee for the customer'
 
 ---
 
-# 60. Producer Architecture Diagram
+## 60. Producer Architecture Diagram
 
 ```text
                     APPLICATION
@@ -1780,12 +1671,10 @@ It controls the acknowledgment requirement for producer writes and therefore inf
 
 Does `acks=all` mean every configured replica must acknowledge?
 
-### Answer
-
-No.
+**Answer:** No.
 
 It works with the in-sync replica model.
-
+</details>
 ---
 
 ### Question 3
