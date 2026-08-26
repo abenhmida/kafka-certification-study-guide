@@ -87,11 +87,11 @@ Example:
 
 ```java
 ProducerRecord<String, Order> record =
-    new ProducerRecord<>(
-        "orders",
-        "customer-42",
-        order
-    );
+        new ProducerRecord<>(
+                "orders",
+                "customer-42",
+                order
+        );
 ```
 
 If the partition is not explicitly provided, the producer's partitioner determines it.
@@ -183,16 +183,15 @@ The producer can explicitly specify a partition.
 Conceptually:
 
 ```java
-new ProducerRecord<>(
-    "orders",
-    3,
-    key,
-    value
+ProducerRecord record = new ProducerRecord<>(
+        "orders",
+        3,
+        key,
+        value
 );
 ```
 
-The record goes directly to partition 3.
-This bypasses normal partition selection logic.
+The record goes directly to partition 3. This bypasses normal partition selection logic.
 
 Use explicit partitions carefully because they can create:
 
@@ -240,7 +239,8 @@ hash(key)
 partition
 ```
 
-The exact partitioner implementation and configuration matter, so avoid assuming every producer version behaves identically in every keyless case.
+The exact partitioner implementation and configuration matter, so avoid assuming every producer version behaves
+identically in every keyless case.
 
 ## 10. Keyless Records
 
@@ -248,9 +248,11 @@ If no key is supplied `key = null`
 
 Kafka can distribute records across partitions.
 
-Modern producer behavior uses a sticky partitioning approach for keyless records to improve batch utilization. The important concept is:
+Modern producer behavior uses a sticky partitioning approach for keyless records to improve batch utilization. The
+important concept is:
 
-> Keyless records can be distributed for load balancing, while keyed records are normally used when partition affinity matters.
+> Keyless records can be distributed for load balancing, while keyed records are normally used when partition affinity
+> matters.
 
 ## 11. Producer Batching
 
@@ -343,8 +345,6 @@ wait briefly
 
 This can improve batching at the cost of some additional latency.
 
----
-
 ## 15. `batch.size` vs `linger.ms`
 
 A useful mental model:
@@ -353,23 +353,15 @@ A useful mental model:
 batch.size
     ↓
 How much data can accumulate?
+```
 
+```text
 linger.ms
     ↓
 How long can the producer wait for more records?
 ```
 
-A batch may be sent when:
-
-```text
-batch fills
-OR
-linger expires
-OR
-other send conditions occur
-```
-
----
+A batch may be sent when *batch fills* OR *linger expires* OR *other send conditions occur*.
 
 ## 16. Throughput vs Latency
 
@@ -387,11 +379,7 @@ Lower batching
       └── potentially lower throughput
 ```
 
-There is no universally optimal setting.
-
-Tune according to workload.
-
----
+There is no universally optimal setting *Tune according to workload*.
 
 ## 17. Compression
 
@@ -399,13 +387,11 @@ Kafka producers can compress batches.
 
 Common codecs include:
 
-```text
-none
-gzip
-snappy
-lz4
-zstd
-```
+- none
+- gzip
+- snappy
+- lz4
+- zstd
 
 Compression happens on batches.
 
@@ -426,8 +412,6 @@ Network
 
 Compression can reduce network and storage usage.
 
----
-
 ## 18. Compression Tradeoffs
 
 Compression can reduce:
@@ -440,39 +424,25 @@ But can increase:
 
 - CPU usage
 
-Therefore:
-
 ```text
-network constrained?
-    → compression may help
+network constrained? → compression may help
 
-CPU constrained?
-    → compression choice matters
+CPU constrained? → compression choice matters
 ```
 
 Zstandard (`zstd`) is often attractive for modern workloads because of its compression efficiency and tunability.
 
----
-
 ## 19. Producer Acknowledgments
 
-The producer controls acknowledgment behavior using:
-
-```properties
-acks
-```
+The producer controls acknowledgment behavior using *acks*
 
 The important conceptual values are:
 
-```text
-acks=0
-acks=1
-acks=all
-```
+1. acks=0
+2. acks=1
+3. acks=all
 
----
-
-## 20. `acks=0`
+### 20.1. `acks=0`
 
 The producer does not wait for a broker acknowledgment.
 
@@ -498,9 +468,7 @@ Risks:
 
 Use only when the application can tolerate weaker guarantees.
 
----
-
-## 21. `acks=1`
+### 21.2. `acks=1`
 
 The leader acknowledges the record after the leader has written it according to the broker's handling.
 
@@ -521,8 +489,6 @@ Followers may not yet have replicated the record when the producer receives the 
 Therefore:
 
 > `acks=1` provides weaker durability than `acks=all`.
-
----
 
 ## 22. `acks=all`
 
@@ -548,8 +514,6 @@ Leader
 
 This is the strongest standard acknowledgment mode.
 
----
-
 ## 23. `acks=all` Does Not Mean "Every Replica"
 
 This is a certification trap.
@@ -570,8 +534,6 @@ min.insync.replicas
 ```
 
 is critical.
-
----
 
 ## 24. `min.insync.replicas`
 
@@ -611,8 +573,6 @@ Now:
 
 The producer cannot satisfy the configured durability requirement.
 
----
-
 ## 25. Why This Configuration Is Powerful
 
 A common production pattern is:
@@ -632,8 +592,6 @@ Require at least 2 synchronized replicas
 ```
 
 before accepting the write under `acks=all`.
-
----
 
 ## 26. Producer Retries
 
@@ -671,8 +629,6 @@ Retries are essential for resilience.
 
 But retries introduce ordering and duplicate-delivery considerations.
 
----
-
 ## 27. Retry Is Not Exactly-Once
 
 This is critical.
@@ -700,8 +656,6 @@ Therefore:
 
 > Retries alone do not guarantee exactly-once producer behavior.
 
----
-
 ## 28. Idempotent Producer
 
 Kafka supports idempotent production.
@@ -723,8 +677,6 @@ deduplicate retry
 
 This prevents duplicate appends caused by retrying the same producer request under supported conditions.
 
----
-
 ## 29. Producer ID
 
 An idempotent producer is assigned a producer identity, commonly referred to as a PID.
@@ -744,8 +696,6 @@ Producer ID
 ```
 
 The broker uses producer state to identify duplicates and ordering violations.
-
----
 
 ## 30. Sequence Numbers
 
@@ -774,8 +724,6 @@ the broker can recognize it as a duplicate of an already accepted sequence.
 
 This is a key mechanism behind idempotent producer semantics.
 
----
-
 ## 31. Producer Ordering
 
 Consider two in-flight requests:
@@ -803,8 +751,6 @@ retries
 ```
 
 must be considered together.
-
----
 
 ## 32. `max.in.flight.requests.per.connection`
 
@@ -840,17 +786,16 @@ More in-flight requests can improve throughput.
 
 But ordering behavior under retries becomes more complex.
 
----
-
 ## 33. Idempotence and In-Flight Requests
 
-Modern Kafka producer configurations can support safe idempotent behavior with multiple in-flight requests under the producer's supported constraints.
+Modern Kafka producer configurations can support safe idempotent behavior with multiple in-flight requests under the
+producer's supported constraints.
 
 The key certification idea is:
 
 > Do not assume that `max.in.flight=1` is universally required for idempotent producers.
 
-Instead understand the relationship between:
+Instead, understand the relationship between:
 
 ```text
 idempotence
@@ -858,8 +803,6 @@ sequence numbers
 retries
 in-flight requests
 ```
-
----
 
 ## 34. `enable.idempotence`
 
@@ -872,8 +815,6 @@ enable.idempotence=true
 Idempotence is intended to prevent duplicate records caused by producer retries.
 
 When enabled, Kafka enforces compatible producer configuration constraints.
-
----
 
 ## 35. Idempotence vs Transactions
 
@@ -906,8 +847,6 @@ record B ─┼──► atomic transaction
 record C ─┘
 ```
 
----
-
 ## 36. Transactions
 
 A transactional producer can write multiple records atomically.
@@ -935,8 +874,6 @@ If it aborts:
 A + B aborted
 ```
 
----
-
 ## 37. Transactional Producer Configuration
 
 A transactional producer requires a transactional identity:
@@ -963,8 +900,6 @@ beginTransaction()
 commitTransaction()
 ```
 
----
-
 ## 38. Transaction Abort
 
 If something fails:
@@ -983,8 +918,6 @@ beginTransaction()
 The transaction is aborted.
 
 Consumers configured for appropriate isolation can avoid seeing aborted transactional records.
-
----
 
 ## 39. `isolation.level`
 
@@ -1009,8 +942,6 @@ Can read records from aborted transactions.
 Only returns committed transactional records.
 
 This is essential when building exactly-once pipelines.
-
----
 
 ## 40. Exactly-Once Semantics
 
@@ -1049,8 +980,6 @@ Process
 
 The output records and consumed offsets can be committed atomically.
 
----
-
 ## 41. Exactly-Once Pipeline
 
 Conceptually:
@@ -1088,9 +1017,8 @@ consumer offset not committed
 record processed again
 ```
 
-When offsets and output participate in the same transaction, the system can avoid duplicate externally visible output in the intended processing model.
-
----
+When offsets and output participate in the same transaction, the system can avoid duplicate externally visible output in
+the intended processing model.
 
 ## 42. Producer Delivery Timeout
 
@@ -1118,11 +1046,10 @@ delivery timeout
 
 This is different from a single request timeout.
 
----
-
 ## 43. `request.timeout.ms`
 
-This controls how long the client waits for a response to an individual request before considering it failed for retry/error handling purposes.
+This controls how long the client waits for a response to an individual request before considering it failed for
+retry/error handling purposes.
 
 Compare:
 
@@ -1137,8 +1064,6 @@ overall delivery lifecycle
 ```
 
 This distinction is frequently tested.
-
----
 
 ## 44. Retries vs Delivery Timeout
 
@@ -1164,8 +1089,6 @@ bounded by
    ▼
 delivery.timeout.ms
 ```
-
----
 
 ## 45. `linger.ms` and Throughput
 
@@ -1196,8 +1119,6 @@ Request
 
 The optimal value depends on workload.
 
----
-
 ## 46. Compression and Batching
 
 Compression works best when there is a batch to compress.
@@ -1216,8 +1137,6 @@ better compression opportunity
 
 This is another reason batching matters.
 
----
-
 ## 47. Producer Buffering
 
 The producer buffers records before sending them.
@@ -1228,7 +1147,8 @@ A relevant configuration is:
 buffer.memory
 ```
 
-If the producer's buffers become exhausted because records are arriving faster than they can be sent, the application can eventually experience blocking/failure behavior associated with buffer exhaustion and `max.block.ms`.
+If the producer's buffers become exhausted because records are arriving faster than they can be sent, the application
+can eventually experience blocking/failure behavior associated with buffer exhaustion and `max.block.ms`.
 
 Conceptually:
 
@@ -1246,11 +1166,10 @@ Producer Buffer
       block/fail
 ```
 
----
-
 ## 48. `max.block.ms`
 
-This configuration limits how long certain producer operations may block, including waiting for buffer allocation and metadata availability.
+This configuration limits how long certain producer operations may block, including waiting for buffer allocation and
+metadata availability.
 
 Think:
 
@@ -1266,8 +1185,6 @@ max.block.ms
        ├── success
        └── timeout/error
 ```
-
----
 
 ## 49. Producer Backpressure
 
@@ -1309,8 +1226,6 @@ Possible remedies include:
 
 Do not blindly increase `buffer.memory`.
 
----
-
 ## 50. Producer Metrics
 
 Important metrics include:
@@ -1341,8 +1256,6 @@ low broker throughput
 ```
 
 may indicate broker/network instability.
-
----
 
 ## 51. Producer Failure Scenario
 
@@ -1386,8 +1299,6 @@ PID + sequence
 
 allows Kafka to recognize the duplicate retry.
 
----
-
 ## 52. Failure Scenario — Leader Change
 
 Suppose:
@@ -1428,8 +1339,6 @@ B2
 retry
 ```
 
----
-
 ## 53. Failure Scenario — Out-of-Order Risk
 
 Imagine:
@@ -1452,8 +1361,6 @@ The exact outcome depends on producer idempotence and configuration.
 The certification lesson:
 
 > Understand retries together with sequence numbers and in-flight requests; do not reason about retries in isolation.
-
----
 
 ## 54. Producer Configuration — Certification Baseline
 
@@ -1479,8 +1386,6 @@ failure requirements
 ```
 
 Do not treat these values as universal best practices.
-
----
 
 ## 55. Durability-Oriented Producer
 
@@ -1509,8 +1414,6 @@ or:
 acks=1
 ```
 
----
-
 ## 56. Latency-Oriented Producer
 
 If latency is the highest priority, excessive batching can be undesirable.
@@ -1529,8 +1432,6 @@ But:
 > Lower latency does not automatically mean higher end-to-end performance.
 
 Measure the actual workload.
-
----
 
 ## 57. Throughput-Oriented Producer
 
@@ -1556,8 +1457,6 @@ efficient compression
 +
 parallel partitions
 ```
-
----
 
 ## 58. Producer Ordering Requirement
 
@@ -1588,8 +1487,6 @@ OrderCompleted
 
 All are ordered within the partition.
 
----
-
 ## 59. Producer Anti-Pattern
 
 Requirement:
@@ -1611,8 +1508,6 @@ customer-42 event C → P1
 ```
 
 Now Kafka cannot provide a single partition ordering guarantee for the customer's events.
-
----
 
 ## 60. Producer Architecture Diagram
 
@@ -1653,113 +1548,86 @@ Now Kafka cannot provide a single partition ordering guarantee for the customer'
                       ACK
 ```
 
----
-
 ## 61. Certification Questions
 
-### Question 1
+Question: **What is the main purpose of `acks`?**
 
-What is the main purpose of `acks`?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 It controls the acknowledgment requirement for producer writes and therefore influences delivery/durability behavior.
+</details>
 
----
+Question: **Does `acks=all` mean every configured replica must acknowledge?**
 
-### Question 2
-
-Does `acks=all` mean every configured replica must acknowledge?
-
-**Answer:** No.
+<details>
+<summary>Answer</summary>
+**No.** 
 
 It works with the in-sync replica model.
 </details>
----
 
-### Question 3
+Question: **What does `min.insync.replicas` control?**
 
-What does `min.insync.replicas` control?
+<details>
+<summary>Answer</summary>
+The minimum number of replicas that must be in sync for writes requiring the ISR condition, such as `acks=all`, to
+succeed.
+</details>
 
-### Answer
+Question: **What problem does idempotent production solve?**
 
-The minimum number of replicas that must be in sync for writes requiring the ISR condition, such as `acks=all`, to succeed.
-
----
-
-### Question 4
-
-What problem does idempotent production solve?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 It prevents duplicate records caused by retrying producer requests under the supported idempotent producer semantics.
+</details>
 
----
+Question: **Does idempotence alone implement a full read-process-write exactly-once pipeline?**
 
-### Question 5
-
-Does idempotence alone implement a full read-process-write exactly-once pipeline?
-
-### Answer
-
-No.
+<details>
+<summary>Answer</summary>
+**No.**
 
 Transactions and transactional offset handling are needed for the broader exactly-once processing model.
+</details>
 
----
 
-### Question 6
+Question: **What is `linger.ms` used for?**
 
-What is `linger.ms` used for?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 It allows the producer to wait briefly for additional records so that larger batches can be formed.
+</details>
 
----
+Question: **What is `batch.size`?**
 
-### Question 7
-
-What is `batch.size`?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 The target batch size in bytes for records destined for the same partition.
+</details>
 
----
+Question: **What is the difference between `request.timeout.ms` and `delivery.timeout.ms`?**
 
-### Question 8
-
-What is the difference between `request.timeout.ms` and `delivery.timeout.ms`?
-
-### Answer
+<details>
+<summary>Answer</summary>
 
 `request.timeout.ms` applies to an individual request-response cycle.
 
 `delivery.timeout.ms` bounds the overall time allowed to successfully deliver a record, including retries.
+</details>
 
----
+Question: **Why use compression?**
 
-### Question 9
-
-Why use compression?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 To reduce network and potentially storage usage, at the cost of CPU for compression/decompression.
+</details>
 
----
+Question: **Why is a key important?**
 
-### Question 10
-
-Why is a key important?
-
-### Answer
-
+<details>
+<summary>Answer</summary>
 It can determine partition placement and therefore provide partition affinity and per-key ordering.
-
----
+</details>
 
 ## 62. Certification Scenario
 
@@ -1807,8 +1675,6 @@ Yes.
 
 The ISR count remains 2, satisfying `min.insync.replicas=2`.
 
----
-
 ## 63. Certification Scenario
 
 Same configuration.
@@ -1833,9 +1699,8 @@ min.insync.replicas=2
 
 No.
 
-The producer should receive an insufficient-replicas style failure rather than silently accepting a write below the configured durability threshold.
-
----
+The producer should receive an insufficient-replicas style failure rather than silently accepting a write below the
+configured durability threshold.
 
 ## 64. Certification Scenario — ACK Lost
 
@@ -1866,8 +1731,6 @@ duplicate detected
 
 This is one of the most important producer failure scenarios to understand.
 
----
-
 ## 65. Certification Scenario — Batch vs Latency
 
 A team says:
@@ -1881,8 +1744,6 @@ No.
 Increasing linger can improve batching and throughput, but it can increase producer latency.
 
 Tune against actual workload requirements.
-
----
 
 ## 66. Certification Scenario — More Partitions
 
@@ -1908,8 +1769,6 @@ batching
 ```
 
 Increasing partitions can improve parallelism but is not a universal performance fix.
-
----
 
 ## 67. Senior Design Exercise
 
@@ -1939,24 +1798,20 @@ Design considerations:
 
 The correct architecture comes from measurement rather than arbitrary configuration values.
 
----
-
 ## 68. Producer Troubleshooting Matrix
 
-| Symptom | Possible Cause |
-| --- | --- |
-| High request latency | Broker, network or overload |
-| High retry rate | Transient broker/network failures |
-| Buffer exhaustion | Producer faster than Kafka |
-| Low throughput | Poor batching, compression, partitions or broker limits |
-| Uneven partition traffic | Key distribution |
-| Duplicate records | Non-idempotent retry scenario |
-| `NotEnoughReplicas` style failure | ISR below required minimum |
-| Timeout | Network, broker or request/delivery timeout |
-| High CPU | Serialization/compression |
-| High network usage | Large records or weak compression |
-
----
+| Symptom                           | Possible Cause                                          |
+|-----------------------------------|---------------------------------------------------------|
+| High request latency              | Broker, network or overload                             |
+| High retry rate                   | Transient broker/network failures                       |
+| Buffer exhaustion                 | Producer faster than Kafka                              |
+| Low throughput                    | Poor batching, compression, partitions or broker limits |
+| Uneven partition traffic          | Key distribution                                        |
+| Duplicate records                 | Non-idempotent retry scenario                           |
+| `NotEnoughReplicas` style failure | ISR below required minimum                              |
+| Timeout                           | Network, broker or request/delivery timeout             |
+| High CPU                          | Serialization/compression                               |
+| High network usage                | Large records or weak compression                       |
 
 ## 69. Producer Mental Model
 
@@ -2040,6 +1895,7 @@ Retry / idempotence / transaction handling
 
 The certification-level mental model is:
 >
+
 - **Partition choice determines where the record goes.**
 - **Batching determines how efficiently it is sent.**
 - **`acks` determines the acknowledgment requirement.**
