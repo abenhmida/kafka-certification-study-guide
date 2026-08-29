@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant B1 as "Broker 1<br>(Leader)<br>❌ FAILED"
+    participant B2 as "Broker 2<br>(Follower)"
+    participant B3 as "Broker 3<br>(Follower)"
+    participant KC as "KRaft Controller"
+
+    Note over B1: ❌ Broker 1 Failure
+    B1-->>KC: ❌ Heartbeat timeout
+    KC->>KC: Detect broker failure
+    KC->>KC: Elect new leader
+    KC->>B2: ⚡ Promote to leader
+    B2->>B2: Become leader
+    B2-->>KC: ✅ Acknowledged
+    KC->>B3: 📢 Update metadata (new leader: Broker 2)
+    KC->>B2: 📢 Update metadata (new leader: Broker 2)
+    Note over B2: ⭐ Broker 2<br>NEW LEADER
+    B3->>B2: 🔄 Sync data
+    Note over B1: ❌ Broker 1<br>(Failed)
