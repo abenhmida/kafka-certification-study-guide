@@ -1,0 +1,13 @@
+digraph LogSegment {
+    rankdir=TB;
+
+    Segment [label="LogSegment\nbaseOffset=1000"];
+
+    LogFile [label=".log\nRecord Batches"];
+    OffsetIndex [label=".index\nRelative Offset -> Position"];
+    TimeIndex [label=".timeindex\nTimestamp -> Offset"];
+
+    Segment -> LogFile;
+    Segment -> OffsetIndex;
+    Segment -> TimeIndex;
+}

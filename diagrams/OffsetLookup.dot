@@ -1,0 +1,16 @@
+digraph OffsetLookup {
+    rankdir=LR;
+
+    Offset [label="Requested Offset"];
+    SegmentLookup [label="Segment Lookup"];
+    Index [label="Sparse Offset Index"];
+    FilePosition [label="Approximate File Position"];
+    Scan [label="Sequential Scan"];
+    Record [label="Target Record"];
+
+    Offset -> SegmentLookup;
+    SegmentLookup -> Index;
+    Index -> FilePosition;
+    FilePosition -> Scan;
+    Scan -> Record;
+}

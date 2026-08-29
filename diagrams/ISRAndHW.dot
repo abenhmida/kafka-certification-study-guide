@@ -1,0 +1,18 @@
+digraph ISRAndHW {
+    rankdir=TB;
+
+    Leader [label="Leader\nLEO=100"];
+    Follower1 [label="Follower 1\nLEO=100"];
+    Follower2 [label="Follower 2\nLEO=98"];
+
+    ISR [label="ISR\nLeader + Follower 1"];
+
+    HW [label="High Watermark\n= 100"];
+
+    Leader -> Follower1 [label="replicate"];
+    Leader -> Follower2 [label="replicate"];
+
+    Leader -> ISR [label="membership"];
+
+    ISR -> HW [label="commit boundary"];
+}

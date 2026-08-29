@@ -1,0 +1,26 @@
+digraph FetchPath {
+    rankdir=LR;
+
+    Consumer [label="Consumer"];
+    Network [label="Network"];
+    KafkaApis [label="KafkaApis"];
+    ReplicaManager [label="ReplicaManager"];
+    Partition [label="Partition"];
+    Log [label="Log"];
+    PageCache [label="OS Page Cache"];
+    Disk [label="Disk"];
+
+    Consumer -> Network [label="FetchRequest"];
+    Network -> KafkaApis;
+    KafkaApis -> ReplicaManager;
+    ReplicaManager -> Partition;
+    Partition -> Log;
+
+    Log -> PageCache [label="read"];
+    PageCache -> Disk [label="cache miss"];
+
+    Log -> ReplicaManager [label="records"];
+    ReplicaManager -> KafkaApis;
+    KafkaApis -> Network;
+    Network -> Consumer [label="FetchResponse"];
+}

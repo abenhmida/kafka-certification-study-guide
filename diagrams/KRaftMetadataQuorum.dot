@@ -1,0 +1,21 @@
+digraph KRaftMetadataQuorum {
+    rankdir=LR;
+
+    Client [label="Admin / Broker Event"];
+
+    Leader [label="Active Controller\nLeader"];
+    Follower1 [label="Controller Follower"];
+    Follower2 [label="Controller Follower"];
+
+    MetadataLog [label="Replicated Metadata Log"];
+
+    Client -> Leader [label="metadata operation"];
+
+    Leader -> MetadataLog [label="append metadata record"];
+
+    Leader -> Follower1 [label="replicate"];
+    Leader -> Follower2 [label="replicate"];
+
+    Follower1 -> MetadataLog;
+    Follower2 -> MetadataLog;
+}

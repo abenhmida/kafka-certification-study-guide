@@ -1,0 +1,43 @@
+digraph KafkaProducerInternals {
+    rankdir=LR;
+
+    Application [label="Application"];
+
+    KafkaProducer [label="KafkaProducer"];
+    Serializer [label="Key / Value Serializer"];
+    Partitioner [label="Partitioner"];
+    Metadata [label="Metadata Cache"];
+
+    Accumulator [label="RecordAccumulator"];
+    Batch0 [label="ProducerBatch\nPartition 0"];
+    Batch1 [label="ProducerBatch\nPartition 1"];
+    Batch2 [label="ProducerBatch\nPartition 2"];
+
+    Sender [label="Sender Thread"];
+    NetworkClient [label="NetworkClient"];
+    Selector [label="Network Selector"];
+
+    Broker [label="Kafka Broker"];
+
+    Application -> KafkaProducer [label="send(record)"];
+
+    KafkaProducer -> Serializer;
+    KafkaProducer -> Metadata [label="partition metadata"];
+    KafkaProducer -> Partitioner;
+
+    Partitioner -> Accumulator;
+
+    Accumulator -> Batch0;
+    Accumulator -> Batch1;
+    Accumulator -> Batch2;
+
+    Batch0 -> Sender;
+    Batch1 -> Sender;
+    Batch2 -> Sender;
+
+    Sender -> NetworkClient;
+    NetworkClient -> Selector;
+    Selector -> Broker [label="ProduceRequest"];
+
+    Broker -> Selector [label="ProduceResponse"];
+}

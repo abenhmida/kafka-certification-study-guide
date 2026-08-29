@@ -1,0 +1,17 @@
+digraph ControllerFailure {
+    rankdir=LR;
+
+    C1 [label="Controller 1\nLEADER\nFAILED"];
+    C2 [label="Controller 2\nFOLLOWER"];
+    C3 [label="Controller 3\nFOLLOWER"];
+
+    Election [label="Quorum Election"];
+
+    NewLeader [label="Controller 2\nNEW LEADER"];
+
+    C1 -> Election [label="failure"];
+    C2 -> Election;
+    C3 -> Election;
+
+    Election -> NewLeader;
+}

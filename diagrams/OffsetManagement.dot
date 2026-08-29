@@ -1,0 +1,13 @@
+digraph OffsetManagement {
+    rankdir=LR;
+
+    Consumer [label="Consumer"];
+    GroupCoordinator [label="Group Coordinator"];
+    OffsetTopic [label="__consumer_offsets"];
+
+    Consumer -> GroupCoordinator [label="OffsetCommit"];
+    GroupCoordinator -> OffsetTopic [label="persist offset"];
+
+    OffsetTopic -> GroupCoordinator [label="load offset"];
+    GroupCoordinator -> Consumer [label="OffsetFetch"];
+}

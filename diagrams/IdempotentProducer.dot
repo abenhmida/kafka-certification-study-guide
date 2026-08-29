@@ -1,0 +1,28 @@
+digraph IdempotentProducer {
+    rankdir=LR;
+
+    Producer [label="Producer"];
+    PID [label="Producer ID"];
+    Sequence [label="Sequence Number"];
+
+    Request1 [label="Produce\nPID=10 Seq=42"];
+    Retry [label="Retry\nPID=10 Seq=42"];
+
+    Broker [label="Partition Leader"];
+    Dedup [label="Sequence Validation"];
+
+    Producer -> PID;
+    Producer -> Sequence;
+
+    PID -> Request1;
+    Sequence -> Request1;
+
+    Request1 -> Broker;
+    Broker -> Dedup;
+
+    Producer -> Retry;
+    Retry -> Broker;
+
+    Broker -> Dedup [label="same PID + sequence"];
+    Dedup -> Broker [label="detect duplicate"];
+}

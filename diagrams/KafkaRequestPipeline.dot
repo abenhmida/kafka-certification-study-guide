@@ -1,0 +1,41 @@
+digraph KafkaRequestPipeline {
+    rankdir=LR;
+
+    Client [label="Kafka Client"];
+
+    Acceptor [label="Acceptor"];
+    Processor [label="Processor"];
+    RequestQueue [label="RequestChannel"];
+
+    Handler [label="Kafka Request Handler"];
+    KafkaApis [label="KafkaApis"];
+
+    HandlerType [label="Request Type"];
+
+    ReplicaManager [label="ReplicaManager"];
+    GroupCoordinator [label="GroupCoordinator"];
+    TransactionCoordinator [label="TransactionCoordinator"];
+
+    ResponseQueue [label="Response Queue"];
+    ProcessorOut [label="Processor"];
+    ClientResponse [label="Client Response"];
+
+    Client -> Acceptor [label="TCP"];
+    Acceptor -> Processor [label="socket"];
+    Processor -> RequestQueue [label="Request"];
+    RequestQueue -> Handler [label="dequeue"];
+
+    Handler -> KafkaApis;
+    KafkaApis -> HandlerType;
+
+    HandlerType -> ReplicaManager [label="Produce / Fetch"];
+    HandlerType -> GroupCoordinator [label="Group APIs"];
+    HandlerType -> TransactionCoordinator [label="Transaction APIs"];
+
+    ReplicaManager -> ResponseQueue;
+    GroupCoordinator -> ResponseQueue;
+    TransactionCoordinator -> ResponseQueue;
+
+    ResponseQueue -> ProcessorOut;
+    ProcessorOut -> ClientResponse;
+}

@@ -1,0 +1,21 @@
+digraph LeaderElection {
+    rankdir=LR;
+
+    OldLeader [label="Broker 1\nOld Leader"];
+    Failure [label="Broker 1 Failure"];
+
+    Controller [label="KRaft Controller"];
+
+    Candidate1 [label="Broker 2\nReplica"];
+    Candidate2 [label="Broker 3\nReplica"];
+
+    NewLeader [label="New Leader\nBroker 2"];
+
+    OldLeader -> Failure;
+    Failure -> Controller;
+
+    Controller -> Candidate1 [label="elect"];
+    Controller -> Candidate2 [label="candidate"];
+
+    Candidate1 -> NewLeader;
+}

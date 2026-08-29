@@ -1,0 +1,24 @@
+digraph ProducePath {
+    rankdir=LR;
+
+    Client [label="Producer"];
+    Network [label="Network Layer"];
+    API [label="KafkaApis"];
+    ReplicaManager [label="ReplicaManager"];
+    Partition [label="Leader Partition"];
+    Log [label="Partition Log"];
+    PageCache [label="OS Page Cache"];
+    Disk [label="Disk"];
+
+    Client -> Network [label="ProduceRequest"];
+    Network -> API;
+    API -> ReplicaManager;
+    ReplicaManager -> Partition;
+    Partition -> Log [label="append"];
+    Log -> PageCache [label="write"];
+    PageCache -> Disk [label="eventual flush"];
+
+    Partition -> ReplicaManager [label="replication state"];
+    ReplicaManager -> Network [label="ProduceResponse"];
+    Network -> Client;
+}

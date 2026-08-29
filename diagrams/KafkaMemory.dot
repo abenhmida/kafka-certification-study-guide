@@ -1,0 +1,24 @@
+digraph KafkaMemory {
+    rankdir=TB;
+
+    JVM [label="JVM Process"];
+
+    Heap [label="JVM Heap"];
+    Direct [label="Direct / Native Buffers"];
+    PageCache [label="OS Page Cache"];
+
+    Producer [label="Producer Memory\nClient Side"];
+    BrokerBuffers [label="Network / Request Buffers"];
+
+    Logs [label="Kafka Log Files"];
+
+    JVM -> Heap;
+    JVM -> Direct;
+
+    Heap -> BrokerBuffers;
+
+    Logs -> PageCache;
+    PageCache -> Logs;
+
+    Producer -> JVM;
+}

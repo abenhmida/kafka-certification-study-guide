@@ -1,0 +1,24 @@
+digraph PartitionReplication {
+    rankdir=LR;
+
+    Producer [label="Producer"];
+
+    Leader [label="Broker 1\nPartition 0\nLEADER"];
+
+    Follower1 [label="Broker 2\nPartition 0\nFOLLOWER"];
+    Follower2 [label="Broker 3\nPartition 0\nFOLLOWER"];
+
+    LogLeader [label="P0 Log\nLEO=1000"];
+    LogFollower1 [label="P0 Log\nLEO=1000"];
+    LogFollower2 [label="P0 Log\nLEO=998"];
+
+    Producer -> Leader [label="Produce"];
+
+    Leader -> LogLeader [label="append"];
+
+    Leader -> Follower1 [label="replication"];
+    Leader -> Follower2 [label="replication"];
+
+    Follower1 -> LogFollower1;
+    Follower2 -> LogFollower2;
+}
