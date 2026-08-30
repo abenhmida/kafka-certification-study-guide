@@ -1,4 +1,4 @@
-# Chapter 11 — Kafka Performance, Tuning & Capacity Planning
+# Chapter 12 — Kafka Performance, Tuning & Capacity Planning
 
 ```text
 Certification focus: This chapter covers the performance model of Apache Kafka, 

@@ -1,4 +1,4 @@
-# Chapter 13 — Kafka Reliability, Fault Tolerance & Disaster Recovery Deep Dive
+# Chapter 14 — Kafka Reliability, Fault Tolerance & Disaster Recovery Deep Dive
 
 ### Kafka Developer & Administrator Certification Preparation
 

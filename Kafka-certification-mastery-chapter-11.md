@@ -1,4 +1,4 @@
-# Chapter 10 — Kafka Streams Deep Dive
+# Chapter 11 — Kafka Streams Deep Dive
 
 ```text
 Certification focus: This chapter covers Kafka Streams from fundamentals through production architecture, 

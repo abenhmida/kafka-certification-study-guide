@@ -1,4 +1,4 @@
-# Chapter 12 — Kafka Monitoring, Metrics & Troubleshooting Deep Dive
+# Chapter 13 — Kafka Monitoring, Metrics & Troubleshooting Deep Dive
 
 ```text
 Certification focus: This chapter covers Kafka observability, JMX metrics, broker/producer/consumer metrics, 

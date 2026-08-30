@@ -1,4 +1,4 @@
-# Chapter 9 — Kafka Connect Deep Dive
+# Chapter 10 — Kafka Connect Deep Dive
 
 This chapter focuses on Kafka Connect:
 
