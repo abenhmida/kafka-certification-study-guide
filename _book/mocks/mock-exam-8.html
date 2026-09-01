@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="90-Minute Simulation Recommended time: 90 minutes Questions: 60 Target: 80%&#43; This simulation emphasizes administration: cluster architecture, KRaft,…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Mock Exam 8 - Kafka Certification Study Guide">
+<meta property="og:description" content="90-Minute Simulation Recommended time: 90 minutes Questions: 60 Target: 80%&#43; This simulation emphasizes administration: cluster architecture, KRaft,…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Mock Exam 8 - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="../chapters/kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-1.html" data-file="mocks/mock-exam-1.html" data-group-link="false">Mock Exam 1</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-2.html" data-file="mocks/mock-exam-2.html" data-group-link="false">Mock Exam 2</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-3.html" data-file="mocks/mock-exam-3.html" data-group-link="false">Mock Exam 3</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-4.html" data-file="mocks/mock-exam-4.html" data-group-link="false">Mock Exam 4</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-5.html" data-file="mocks/mock-exam-5.html" data-group-link="false">Mock Exam 5</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-6.html" data-file="mocks/mock-exam-6.html" data-group-link="false">Mock Exam 6</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-7.html" data-file="mocks/mock-exam-7.html" data-group-link="false">Mock Exam 7</a></div></div>
+<div class="nav-group" data-group-file="mocks/mock-exam-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="mock-exam-8.html" data-file="mocks/mock-exam-8.html" data-group-link="false">Mock Exam 8</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="mock-exam-8.html">Mock Exam 8</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Mock Exam 8</h1>
+        <h2 id="90-minute-simulation">90-Minute Simulation</h2>
+<p><strong>Recommended time:</strong> 90 minutes<br>
+<strong>Questions:</strong> 60<br>
+<strong>Target:</strong> 80%+</p>
+<blockquote>
+<p>This simulation emphasizes administration: cluster architecture, KRaft, replication, partitions, configuration, security, monitoring, storage, capacity, and troubleshooting.</p>
+</blockquote>
+<h2 id="questions">Questions</h2>
+<h3 id="1">1.</h3>
+<p>What is the main purpose of replication?</p>
+<p>A. Fault tolerance<br>
+B. Schema validation<br>
+C. Consumer assignment<br>
+D. Compression</p>
+<h3 id="2">2.</h3>
+<p>What is ISR?</p>
+<p>A. In-Sync Replicas<br>
+B. Internal Storage Registry<br>
+C. Inter-Server Routing<br>
+D. Indexed Schema Record</p>
+<h3 id="3">3.</h3>
+<p>What does an offline partition mean?</p>
+<p>A. No leader is available<br>
+B. One consumer is slow<br>
+C. One schema is incompatible<br>
+D. One replica is delayed</p>
+<h3 id="4">4.</h3>
+<p>What does under-replication mean?</p>
+<p>A. ISR count is below assigned replica count<br>
+B. No consumers exist<br>
+C. Topic is compacted<br>
+D. Schema is invalid</p>
+<h3 id="5">5.</h3>
+<p>Which condition is most urgent?</p>
+<p>A. Offline partitions<br>
+B. One consumer with lag 10<br>
+C. One producer retry<br>
+D. One schema registration</p>
+<h3 id="6">6.</h3>
+<p>What does RF=3 mean?</p>
+<p>A. Three replicas per partition<br>
+B. Three consumers<br>
+C. Three brokers total<br>
+D. Three topics</p>
+<h3 id="7">7.</h3>
+<p>Does RF=3 mean a topic must have three partitions?</p>
+<p>A. No<br>
+B. Yes<br>
+C. Only in KRaft<br>
+D. Only with compaction</p>
+<h3 id="8">8.</h3>
+<p>What does <code>min.insync.replicas</code> control?</p>
+<p>A. Minimum ISR needed for writes under applicable acknowledgment semantics<br>
+B. Number of partitions<br>
+C. Number of consumers<br>
+D. Number of controllers</p>
+<h3 id="9">9.</h3>
+<p>Why pair <code>acks=all</code> with appropriate min ISR?</p>
+<p>A. Strengthen durability guarantees against insufficient ISR<br>
+B. Increase compression<br>
+C. Increase consumers<br>
+D. Change schema</p>
+<h3 id="10">10.</h3>
+<p>What happens when ISR falls below min ISR?</p>
+<p>A. Writes requiring that minimum can fail<br>
+B. Kafka always creates replicas<br>
+C. Consumer groups stop automatically<br>
+D. Topic is deleted</p>
+<h3 id="11">11.</h3>
+<p>What is KRaft?</p>
+<p>A. Kafka metadata quorum architecture<br>
+B. Kafka Connect<br>
+C. Avro<br>
+D. SASL</p>
+<h3 id="12">12.</h3>
+<p>What is a controller quorum responsible for?</p>
+<p>A. Cluster metadata and coordination<br>
+B. Application business logic<br>
+C. External database transactions<br>
+D. Consumer processing</p>
+<h3 id="13">13.</h3>
+<p>Why does KRaft require quorum majority?</p>
+<p>A. Consensus<br>
+B. Compression<br>
+C. Retention<br>
+D. Schema validation</p>
+<h3 id="14">14.</h3>
+<p>What tool inspects metadata quorum state?</p>
+<p>A. kafka-metadata-quorum.sh<br>
+B. kafka-consumer-groups.sh<br>
+C. kafka-console-producer.sh<br>
+D. kafka-topics.sh</p>
+<h3 id="15">15.</h3>
+<p>What tool inspects broker API support?</p>
+<p>A. kafka-broker-api-versions.sh<br>
+B. kafka-configs.sh<br>
+C. kafka-reassign-partitions.sh<br>
+D. kafka-console-consumer.sh</p>
+<h3 id="16">16.</h3>
+<p>What tool manages topics?</p>
+<p>A. kafka-topics.sh<br>
+B. kafka-configs.sh<br>
+C. kafka-storage.sh only<br>
+D. kafka-metadata-quorum.sh only</p>
+<h3 id="17">17.</h3>
+<p>What tool manages consumer groups?</p>
+<p>A. kafka-consumer-groups.sh<br>
+B. kafka-topics.sh<br>
+C. kafka-storage.sh<br>
+D. kafka-reassign-partitions.sh</p>
+<h3 id="18">18.</h3>
+<p>What tool manages configuration?</p>
+<p>A. kafka-configs.sh<br>
+B. kafka-topics.sh<br>
+C. kafka-console-consumer.sh<br>
+D. kafka-metadata-quorum.sh</p>
+<h3 id="19">19.</h3>
+<p>What tool handles partition reassignment?</p>
+<p>A. kafka-reassign-partitions.sh<br>
+B. kafka-configs.sh<br>
+C. kafka-topics.sh<br>
+D. kafka-console-producer.sh</p>
+<h3 id="20">20.</h3>
+<p>What does adding a broker do automatically?</p>
+<p>A. Provides capacity but does not necessarily redistribute existing partition assignments<br>
+B. Moves all data automatically<br>
+C. Deletes old brokers<br>
+D. Resets consumers</p>
+<h3 id="21">21.</h3>
+<p>What is partition reassignment?</p>
+<p>A. Moving replicas between brokers<br>
+B. Changing schemas<br>
+C. Resetting consumer offsets<br>
+D. Changing ACLs</p>
+<h3 id="22">22.</h3>
+<p>Why throttle reassignment?</p>
+<p>A. Protect production traffic<br>
+B. Improve schema compatibility<br>
+C. Reduce consumer count<br>
+D. Disable replication</p>
+<h3 id="23">23.</h3>
+<p>What is preferred leader election?</p>
+<p>A. Move leadership toward preferred replicas<br>
+B. Change schemas<br>
+C. Reset offsets<br>
+D. Delete partitions</p>
+<h3 id="24">24.</h3>
+<p>What is leader imbalance?</p>
+<p>A. Uneven distribution of partition leadership<br>
+B. Uneven schemas<br>
+C. Uneven consumer commits<br>
+D. Uneven certificates</p>
+<h3 id="25">25.</h3>
+<p>Why can leader imbalance hurt performance?</p>
+<p>A. Leaders handle partition requests and can become hotspots<br>
+B. Followers cannot store data<br>
+C. Schemas are deleted<br>
+D. Consumers stop</p>
+<h3 id="26">26.</h3>
+<p>What does retention control?</p>
+<p>A. Eligibility of old log data for deletion<br>
+B. Consumer membership<br>
+C. ACL permissions<br>
+D. Controller quorum</p>
+<h3 id="27">27.</h3>
+<p>What does compaction preserve?</p>
+<p>A. Latest state per key, subject to compaction semantics<br>
+B. All historical data forever<br>
+C. Consumer offsets<br>
+D. Broker configuration</p>
+<h3 id="28">28.</h3>
+<p>What is a tombstone?</p>
+<p>A. Null-valued record representing deletion of a key<br>
+B. Broker failure<br>
+C. Controller record<br>
+D. Consumer offset</p>
+<h3 id="29">29.</h3>
+<p>Why are segment sizes important?</p>
+<p>A. Retention/cleanup operates around log segments<br>
+B. They determine ACLs<br>
+C. They determine consumers<br>
+D. They determine schema compatibility</p>
+<h3 id="30">30.</h3>
+<p>Why monitor disk usage?</p>
+<p>A. Kafka stores partition logs on disk and recovery requires capacity<br>
+B. Disk controls authentication<br>
+C. Disk controls schemas<br>
+D. Disk controls consumer membership</p>
+<h3 id="31">31.</h3>
+<p>What is failure headroom?</p>
+<p>A. Spare capacity available to absorb failures/recovery<br>
+B. Extra schema versions<br>
+C. Extra consumers only<br>
+D. Extra ACLs</p>
+<h3 id="32">32.</h3>
+<p>Why is network capacity important?</p>
+<p>A. Kafka traffic includes producers, consumers, replication, recovery, and reassignment<br>
+B. Kafka never uses network for replication<br>
+C. Only schemas use network<br>
+D. Network does not affect latency</p>
+<h3 id="33">33.</h3>
+<p>What is a hot partition?</p>
+<p>A. Partition receiving disproportionate load<br>
+B. Partition with no leader<br>
+C. Partition with a tombstone<br>
+D. Partition with no records</p>
+<h3 id="34">34.</h3>
+<p>How can hot partitions be mitigated?</p>
+<p>A. Better key distribution when business ordering permits<br>
+B. Always increase RF<br>
+C. Disable replication<br>
+D. Delete consumers</p>
+<h3 id="35">35.</h3>
+<p>What does <code>advertised.listeners</code> control?</p>
+<p>A. Broker addresses returned to clients<br>
+B. Retention<br>
+C. Consumer offsets<br>
+D. ACLs</p>
+<h3 id="36">36.</h3>
+<p>A client bootstraps but cannot connect to the broker returned in metadata. Likely issue?</p>
+<p>A. Advertised listener/network configuration<br>
+B. Consumer lag<br>
+C. Schema version<br>
+D. Compaction</p>
+<h3 id="37">37.</h3>
+<p>What does dynamic configuration mean?</p>
+<p>A. Certain supported settings can be changed at runtime<br>
+B. Every setting can change without restart<br>
+C. Topics are automatically rebalanced<br>
+D. Consumer offsets are automatic</p>
+<h3 id="38">38.</h3>
+<p>Can every Kafka configuration be dynamically changed?</p>
+<p>A. No<br>
+B. Yes<br>
+C. Only with RF=3<br>
+D. Only in KRaft</p>
+<h3 id="39">39.</h3>
+<p>What are quotas for?</p>
+<p>A. Limit client resource usage<br>
+B. Increase partitions<br>
+C. Encrypt traffic<br>
+D. Register schemas</p>
+<h3 id="40">40.</h3>
+<p>What should you monitor for broker health?</p>
+<p>A. Request latency, traffic, ISR, disk, CPU, controller state, and availability<br>
+B. Only topic count<br>
+C. Only schema count<br>
+D. Only consumer count</p>
+<h3 id="41">41.</h3>
+<p>What should you monitor for consumer health?</p>
+<p>A. Lag, throughput, processing latency, errors, and rebalances<br>
+B. Only broker disk<br>
+C. Only schemas<br>
+D. Only replication</p>
+<h3 id="42">42.</h3>
+<p>What should you monitor for replication?</p>
+<p>A. Under-replicated partitions, ISR shrink/expand, recovery activity<br>
+B. Only consumer lag<br>
+C. Only topic names<br>
+D. Only schema compatibility</p>
+<h3 id="43">43.</h3>
+<p>What should you do if offline partitions appear?</p>
+<p>A. Investigate leader availability immediately<br>
+B. Increase retention<br>
+C. Add schemas<br>
+D. Change consumer count</p>
+<h3 id="44">44.</h3>
+<p>What should you do if persistent under-replication appears?</p>
+<p>A. Investigate broker/network/disk/resource/recovery issues<br>
+B. Ignore it<br>
+C. Delete the topic<br>
+D. Disable replication</p>
+<h3 id="45">45.</h3>
+<p>What should you do before changing production configuration?</p>
+<p>A. Establish current state and understand impact<br>
+B. Change multiple settings simultaneously<br>
+C. Restart every broker<br>
+D. Disable monitoring</p>
+<h3 id="46">46.</h3>
+<p>What is a good incident response sequence?</p>
+<p>A. Detect -&gt; assess -&gt; isolate -&gt; remediate -&gt; verify -&gt; document<br>
+B. Restart -&gt; delete -&gt; investigate<br>
+C. Ignore -&gt; wait -&gt; restart<br>
+D. Change all settings</p>
+<h3 id="47">47.</h3>
+<p>What is authentication?</p>
+<p>A. Establishing identity<br>
+B. Granting permissions<br>
+C. Partition assignment<br>
+D. Replication</p>
+<h3 id="48">48.</h3>
+<p>What is authorization?</p>
+<p>A. Deciding whether an authenticated principal may perform an operation<br>
+B. Establishing identity<br>
+C. Encrypting disks<br>
+D. Creating topics</p>
+<h3 id="49">49.</h3>
+<p>What is TLS used for?</p>
+<p>A. Secure network transport and certificate-based endpoint authentication<br>
+B. Consumer group assignment<br>
+C. Partition reassignment<br>
+D. Retention</p>
+<h3 id="50">50.</h3>
+<p>What is SASL used for?</p>
+<p>A. Authentication mechanisms<br>
+B. Replication<br>
+C. Compaction<br>
+D. Partition count</p>
+<h3 id="51">51.</h3>
+<p>What is an ACL?</p>
+<p>A. Authorization rule<br>
+B. Schema format<br>
+C. Partition<br>
+D. Consumer offset</p>
+<h3 id="52">52.</h3>
+<p>What is least privilege?</p>
+<p>A. Grant only required permissions<br>
+B. Give every application admin rights<br>
+C. Disable authentication<br>
+D. Use one shared identity</p>
+<h3 id="53">53.</h3>
+<p>What should be checked for TLS failures?</p>
+<p>A. Certificate chain, truststore, hostname, protocol, key material<br>
+B. Consumer offset only<br>
+C. Partition count only<br>
+D. Retention only</p>
+<h3 id="54">54.</h3>
+<p>What should be checked for authorization failures?</p>
+<p>A. Principal and ACL/resource/operation permissions<br>
+B. Disk latency only<br>
+C. Schema compatibility only<br>
+D. Consumer lag only</p>
+<h3 id="55">55.</h3>
+<p>What should be checked for authentication failures?</p>
+<p>A. Credentials, mechanism, security protocol, and broker configuration<br>
+B. Partition reassignment<br>
+C. Topic retention<br>
+D. Consumer offset</p>
+<h3 id="56">56.</h3>
+<p>Why is replication not equivalent to backup?</p>
+<p>A. Replicas are part of the live cluster and can share failure domains<br>
+B. Replication is always offline<br>
+C. Backup cannot contain Kafka data<br>
+D. Replicas are schemas</p>
+<h3 id="57">57.</h3>
+<p>Why is capacity planning essential?</p>
+<p>A. A failure can move workload to fewer brokers<br>
+B. Kafka never fails<br>
+C. Consumers determine disk capacity<br>
+D. Schemas determine CPU</p>
+<h3 id="58">58.</h3>
+<p>What is the best approach to troubleshooting?</p>
+<p>A. Layered diagnosis using evidence<br>
+B. Random tuning<br>
+C. Restart everything<br>
+D. Delete data</p>
+<h3 id="59">59.</h3>
+<p>What is the best approach to production changes?</p>
+<p>A. Small controlled changes with monitoring and rollback<br>
+B. Large simultaneous changes<br>
+C. No monitoring<br>
+D. Permanent emergency settings</p>
+<h3 id="60">60.</h3>
+<p>What is the strongest administrator mental model?</p>
+<p>A. Cluster state -&gt; metadata -&gt; partitions -&gt; replication -&gt; resources -&gt; clients -&gt; application impact<br>
+B. Consumers only<br>
+C. Topics only<br>
+D. Brokers only</p>
+<h1 id="answer-keys">Answer Keys</h1>
+<h2 id="mock-exam-h-full-ccaak">Mock Exam H — Full CCAAK</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">1 A
+</span></span><span class="line"><span class="cl">2 A
+</span></span><span class="line"><span class="cl">3 A
+</span></span><span class="line"><span class="cl">4 A
+</span></span><span class="line"><span class="cl">5 A
+</span></span><span class="line"><span class="cl">6 A
+</span></span><span class="line"><span class="cl">7 A
+</span></span><span class="line"><span class="cl">8 A
+</span></span><span class="line"><span class="cl">9 A
+</span></span><span class="line"><span class="cl">10 A
+</span></span><span class="line"><span class="cl">11 A
+</span></span><span class="line"><span class="cl">12 A
+</span></span><span class="line"><span class="cl">13 A
+</span></span><span class="line"><span class="cl">14 A
+</span></span><span class="line"><span class="cl">15 A
+</span></span><span class="line"><span class="cl">16 A
+</span></span><span class="line"><span class="cl">17 A
+</span></span><span class="line"><span class="cl">18 A
+</span></span><span class="line"><span class="cl">19 A
+</span></span><span class="line"><span class="cl">20 A
+</span></span><span class="line"><span class="cl">21 A
+</span></span><span class="line"><span class="cl">22 A
+</span></span><span class="line"><span class="cl">23 A
+</span></span><span class="line"><span class="cl">24 A
+</span></span><span class="line"><span class="cl">25 A
+</span></span><span class="line"><span class="cl">26 A
+</span></span><span class="line"><span class="cl">27 A
+</span></span><span class="line"><span class="cl">28 A
+</span></span><span class="line"><span class="cl">29 A
+</span></span><span class="line"><span class="cl">30 A
+</span></span><span class="line"><span class="cl">31 A
+</span></span><span class="line"><span class="cl">32 A
+</span></span><span class="line"><span class="cl">33 A
+</span></span><span class="line"><span class="cl">34 A
+</span></span><span class="line"><span class="cl">35 A
+</span></span><span class="line"><span class="cl">36 A
+</span></span><span class="line"><span class="cl">37 A
+</span></span><span class="line"><span class="cl">38 A
+</span></span><span class="line"><span class="cl">39 A
+</span></span><span class="line"><span class="cl">40 A
+</span></span><span class="line"><span class="cl">41 A
+</span></span><span class="line"><span class="cl">42 A
+</span></span><span class="line"><span class="cl">43 A
+</span></span><span class="line"><span class="cl">44 A
+</span></span><span class="line"><span class="cl">45 A
+</span></span><span class="line"><span class="cl">46 A
+</span></span><span class="line"><span class="cl">47 A
+</span></span><span class="line"><span class="cl">48 A
+</span></span><span class="line"><span class="cl">49 A
+</span></span><span class="line"><span class="cl">50 A
+</span></span><span class="line"><span class="cl">51 A
+</span></span><span class="line"><span class="cl">52 A
+</span></span><span class="line"><span class="cl">53 A
+</span></span><span class="line"><span class="cl">54 A
+</span></span><span class="line"><span class="cl">55 A
+</span></span><span class="line"><span class="cl">56 A
+</span></span><span class="line"><span class="cl">57 A
+</span></span><span class="line"><span class="cl">58 A
+</span></span><span class="line"><span class="cl">59 A
+</span></span><span class="line"><span class="cl">60 A
+</span></span></code></pre>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <a class="prev" href="mock-exam-7.html"><span class="nav-label">Previous</span><span class="nav-title">Mock Exam 7</span></a>
+          <span></span>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 24 of 24</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "mocks\/mock-exam-8.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

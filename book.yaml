@@ -52,7 +52,7 @@ chapters:
     file: chapters/kafka-certification-mastery-chapter-16.md
 
   - title: "Mock Exam 1"
-    file: mocks/mock-exam-1.mda
+    file: mocks/mock-exam-1.md
   - title: "Mock Exam 2"
     file: mocks/mock-exam-2.md
   - title: "Mock Exam 3"
