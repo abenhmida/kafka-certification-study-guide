@@ -1,4 +1,9 @@
-# Apache Kafka Certification Mastery
+# Chapter 2 — Kafka Architecture Deep Dive
+
+> Certification track: CCDAK + CCAAK  
+> Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
+
+---
 
 ## Table of Contents
 

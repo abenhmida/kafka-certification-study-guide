@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Kafka Developer &amp; Administrator Certification Preparation Based on the security concepts covered in Kafka: The Definitive Guide , with certification-oriented…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Chapter 9 — Kafka Security Deep Dive - Kafka Certification Study Guide">
+<meta property="og:description" content="Kafka Developer &amp; Administrator Certification Preparation Based on the security concepts covered in Kafka: The Definitive Guide , with certification-oriented…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Chapter 9 — Kafka Security Deep Dive - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="kafka-certification-mastery-chapter-9.html">Chapter 9 — Kafka Security Deep Dive</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Chapter 9 — Kafka Security Deep Dive</h1>
+        <blockquote>
+<p>Kafka Developer &amp; Administrator Certification Preparation</p>
+</blockquote>
+<blockquote>
+<p>Based on the security concepts covered in <em>Kafka: The Definitive Guide</em>, with certification-oriented explanations,
+operational examples, troubleshooting scenarios, and exam traps.</p>
+</blockquote>
+<hr>
+<h2 id="1-chapter-objectives">1. Chapter Objectives</h2>
+<p>By the end of this chapter, you should be able to:</p>
+<ul>
+<li>Explain Kafka's security model.</li>
+<li>Distinguish authentication, authorization, encryption, and auditing.</li>
+<li>Explain SSL/TLS and SASL in Kafka.</li>
+<li>Understand listeners and security protocols.</li>
+<li>Configure secure client-to-broker communication.</li>
+<li>Explain Kafka ACLs.</li>
+<li>Understand principals and authorization.</li>
+<li>Configure producer and consumer security properties.</li>
+<li>Explain inter-broker security.</li>
+<li>Understand ZooKeeper-era security versus KRaft-era security.</li>
+<li>Diagnose common authentication and authorization failures.</li>
+<li>Recognize security-related certification traps.</li>
+</ul>
+<hr>
+<h2 id="2-kafka-security-model">2. Kafka Security Model</h2>
+<p>Kafka security is built around four major capabilities:</p>
+<ul>
+<li><strong>Encryption</strong></li>
+<li><strong>Authentication</strong></li>
+<li><strong>Authorization</strong></li>
+<li><strong>Auditing / monitoring</strong></li>
+</ul>
+<p>A useful mental model is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                Kafka Security
+</span></span><span class="line"><span class="cl">                      |
+</span></span><span class="line"><span class="cl">       +--------------+--------------+
+</span></span><span class="line"><span class="cl">       |              |              |
+</span></span><span class="line"><span class="cl">   Encryption     Authentication   Authorization
+</span></span><span class="line"><span class="cl">       |              |              |
+</span></span><span class="line"><span class="cl">      TLS         Who are you?    What can you do?
+</span></span><span class="line"><span class="cl">       |              |              |
+</span></span><span class="line"><span class="cl"> data in transit   Principal       ACLs
+</span></span></code></pre><p>These capabilities solve different problems.</p>
+<h3 id="encryption">Encryption</h3>
+<p>Protects data from being read while traveling over the network.</p>
+<h3 id="authentication">Authentication</h3>
+<p>Determines the identity of the connecting client.</p>
+<h3 id="authorization">Authorization</h3>
+<p>Determines whether the authenticated identity is allowed to perform an operation.</p>
+<h3 id="auditing">Auditing</h3>
+<p>Provides visibility into security-relevant activity.</p>
+<h2 id="3-authentication-vs-authorization">3. Authentication vs Authorization</h2>
+<p>This distinction is one of the most important certification concepts.</p>
+<p>Suppose a client connects to Kafka.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | &#34;I am alice&#34;
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">    Authentication
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | authenticated identity = alice
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">    Authorization
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | &#34;Can alice READ topic orders?&#34;
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">ALLOW / DENY
+</span></span></code></pre><p><strong>Authentication answers</strong>: <strong><em>Who are you?</em></strong></p>
+<p><strong>Authorization answers</strong>: <strong><em>What are you allowed to do?</em></strong></p>
+<p>A client can successfully authenticate and still receive an authorization failure.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Authentication: SUCCESS
+</span></span><span class="line"><span class="cl">Authorization: FAILURE
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Principal:
+</span></span><span class="line"><span class="cl">User:alice
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Requested operation:
+</span></span><span class="line"><span class="cl">`READ`
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Resource:
+</span></span><span class="line"><span class="cl">Topic:orders
+</span></span></code></pre><p>This distinction is frequently tested.</p>
+<h2 id="4-encryption-with-tls">4. Encryption with TLS</h2>
+<p>TLS protects network traffic.</p>
+<p>Kafka can use TLS for:</p>
+<ul>
+<li>Client → Broker</li>
+<li>Broker → Broker</li>
+<li>Broker → Controller</li>
+<li>Client → Schema Registry</li>
+<li>Client → Connect</li>
+<li>Client → other Kafka ecosystem components</li>
+</ul>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">     Producer
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        | TLS encrypted
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">    +--------+
+</span></span><span class="line"><span class="cl">    | Broker |
+</span></span><span class="line"><span class="cl">    +--------+
+</span></span><span class="line"><span class="cl">        ^
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        | TLS encrypted
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">     Consumer
+</span></span></code></pre><p>TLS provides confidentiality and integrity.
+It can also participate in authentication through certificates.</p>
+<h2 id="5-tls-authentication">5. TLS Authentication</h2>
+<p>Kafka commonly uses Java KeyStores and TrustStores.</p>
+<p>A simplified model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">  Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | client certificate/private key
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Broker
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | trusts CA
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">TrustStore
+</span></span></code></pre><h3 id="keystore">KeyStore</h3>
+<p>Usually contains:</p>
+<ul>
+<li>private key</li>
+<li>certificate</li>
+<li>certificate chain</li>
+</ul>
+<h3 id="truststore">TrustStore</h3>
+<p>Contains certificates or certificate authorities that the application trusts.</p>
+<p>A common certification trap is confusing these two.</p>
+<p>Remember:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">KeyStore -&gt; &#34;Who am I?&#34;
+</span></span><span class="line"><span class="cl">TrustStore -&gt; &#34;Who do I trust?&#34;
+</span></span></code></pre><h2 id="6-one-way-tls">6. One-Way TLS</h2>
+<p>In one-way TLS:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Client -----------------&gt; Broker TLS
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker presents certificate. 
+</span></span><span class="line"><span class="cl">Client validates broker.
+</span></span></code></pre><p>The broker proves its identity to the client.
+The client does not necessarily present a certificate.
+This protects the client from connecting to an impersonating broker, assuming certificate validation is correctly
+configured.</p>
+<h2 id="7-mutual-tls">7. Mutual TLS</h2>
+<p>Mutual TLS is also called mTLS.</p>
+<p>Both sides authenticate using certificates.</p>
+<p>Client Broker</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">|                            |
+</span></span><span class="line"><span class="cl">| &lt;--- Broker certificate ---|
+</span></span><span class="line"><span class="cl">|                            |
+</span></span><span class="line"><span class="cl">| --- Client certificate --&gt; |
+</span></span><span class="line"><span class="cl">|                            |
+</span></span><span class="line"><span class="cl">+------ authenticated -------+
+</span></span></code></pre><p>This can provide strong identity for Kafka clients.
+Kafka can map certificate identities to principals.</p>
+<h2 id="8-sasl-authentication">8. SASL Authentication</h2>
+<p>SASL is used for authentication.</p>
+<p>Kafka supports several SASL mechanisms, including:</p>
+<ul>
+<li><code>PLAIN</code></li>
+<li><code>SCRAM-SHA-256</code></li>
+<li><code>SCRAM-SHA-512</code></li>
+<li><code>GSSAPI</code></li>
+<li><code>OAUTHBEARER</code></li>
+</ul>
+<p>The exact mechanisms available depend on Kafka version and deployment configuration.</p>
+<h2 id="9-saslplain">9. SASL/PLAIN</h2>
+<p>PLAIN uses username/password credentials.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">  Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | username + password
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Broker
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">Authentication
+</span></span></code></pre><p>Important:
+<strong>SASL/PLAIN should normally be used over TLS.</strong></p>
+<p>Otherwise, credentials can be exposed on the network.</p>
+<p>A common secure configuration is:</p>
+<ul>
+<li><code>SASL_SSL</code></li>
+</ul>
+<p>rather than:</p>
+<ul>
+<li><code>SASL_PLAINTEXT</code></li>
+</ul>
+<h2 id="10-saslscram">10. SASL/SCRAM</h2>
+<p>SCRAM provides password-based authentication without sending the password as plain text.</p>
+<p>Common mechanisms:</p>
+<ul>
+<li><code>SCRAM-SHA-256</code></li>
+<li><code>SCRAM-SHA-512</code></li>
+</ul>
+<p>Typical client configuration:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">security.protocol</span><span class="o">=</span><span class="s">SASL_SSL</span>
+</span></span><span class="line"><span class="cl"><span class="na">sasl.mechanism</span><span class="o">=</span><span class="s">SCRAM-SHA-512</span>
+</span></span></code></pre><p>SCRAM is frequently useful when certificate-based client authentication is not desired.</p>
+<h2 id="11-gssapi-kerberos">11. GSSAPI / Kerberos</h2>
+<p>GSSAPI is commonly associated with Kerberos.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">  Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | Kerberos authentication
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">    KDC
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | ticket
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">Kafka Broker
+</span></span></code></pre><p>Kerberos is particularly common in enterprise environments with centralized identity management.</p>
+<p>Important concepts include:</p>
+<ul>
+<li>principal</li>
+<li>keytab</li>
+<li>ticket</li>
+<li>KDC</li>
+<li>service</li>
+<li>principal</li>
+</ul>
+<h2 id="12-oauthbearer">12. OAUTHBEARER</h2>
+<p>OAuth-based authentication uses bearer tokens.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">  Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | authenticate
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">Identity Provider
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | access token
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Client
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | token
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">Kafka Broker
+</span></span></code></pre><p>Kafka validates the token according to the configured OAuth setup.</p>
+<p>This is useful in environments with centralized identity providers.</p>
+<h2 id="13-kafka-security-protocols">13. Kafka Security Protocols</h2>
+<p>Kafka combines transport and authentication mechanisms through security.protocol.</p>
+<p>Common values include:</p>
+<ul>
+<li><code>PLAINTEXT</code></li>
+<li><code>SSL</code></li>
+<li><code>SASL_PLAINTEXT</code></li>
+<li><code>SASL_SSL</code></li>
+</ul>
+<p>Meaning:</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Encryption</th>
+<th>SASL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PLAINTEXT</code></td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>SSL</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>SASL_PLAINTEXT</code></td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>SASL_SSL</code></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>The key point:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">SSL = TLS encryption 
+</span></span><span class="line"><span class="cl">SASL = authentication mechanism
+</span></span></code></pre><p>Therefore:</p>
+<ul>
+<li><code>SASL_SSL</code> means <strong>SASL</strong> authentication over <strong>TLS</strong>.</li>
+</ul>
+<h2 id="14-kafka-listeners">14. Kafka Listeners</h2>
+<p>Listeners are fundamental to Kafka security configuration.</p>
+<p>A broker can expose multiple listeners.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">listeners</span><span class="o">=</span><span class="s">INTERNAL://:9092,EXTERNAL://:9093</span>
+</span></span></code></pre><p>Advertised listeners tell clients how to connect:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">advertised.listeners</span><span class="o">=</span><span class="s">INTERNAL://kafka:9092,EXTERNAL://broker.example.com:9093</span>
+</span></span></code></pre><p>Security protocols can be mapped to listener names:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">listener.security.protocol.map</span><span class="o">=</span><span class="s">INTERNAL:SASL_SSL,EXTERNAL:SASL_SSL</span>
+</span></span></code></pre><p>This allows different listener endpoints to have different purposes.</p>
+<h2 id="15-why-advertised-listeners-matter">15. Why Advertised Listeners Matter</h2>
+<p>A client does not simply connect once and forget the broker address.</p>
+<p>Kafka returns metadata containing broker endpoints.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">        Client
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          | bootstrap connection
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">        Broker
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          | metadata
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">    Client learns:
+</span></span><span class="line"><span class="cl">    broker-1.example.com:9093
+</span></span><span class="line"><span class="cl">    broker-2.example.com:9093
+</span></span><span class="line"><span class="cl">    broker-3.example.com:9093
+</span></span></code></pre><p>If <code>advertised.listeners</code> contains an unreachable address, clients may authenticate successfully but then fail to
+communicate with the actual broker.</p>
+<p>Typical symptom:</p>
+<ul>
+<li>Connection refused</li>
+<li>Unknown host</li>
+<li>Network unreachable</li>
+</ul>
+<p>This is why security and networking must be considered together.</p>
+<h2 id="16-inter-broker-security">16. Inter-Broker Security</h2>
+<p>Kafka brokers communicate with each other.</p>
+<p>This traffic can be secured.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1 &lt;---- secure connection ----&gt; Broker 2
+</span></span><span class="line"><span class="cl">^                                      ^
+</span></span><span class="line"><span class="cl">|                                      |
+</span></span><span class="line"><span class="cl">+---------- Kafka cluster -------------+
+</span></span></code></pre><p>Depending on the deployment, inter-broker communication can use:</p>
+<ul>
+<li>TLS</li>
+<li>SASL</li>
+<li>SASL + TLS</li>
+</ul>
+<p>A cluster can therefore be configured so that client traffic and broker-to-broker traffic use secure listeners.</p>
+<h2 id="17-controller-security">17. Controller Security</h2>
+<p>Modern Kafka deployments using KRaft also have controller communication.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">              KRaft Controller Quorum
+</span></span><span class="line"><span class="cl">                       |
+</span></span><span class="line"><span class="cl">          +------------+------------+
+</span></span><span class="line"><span class="cl">          |            |            |
+</span></span><span class="line"><span class="cl">      Controller 1 Controller 2 Controller 3
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          | secure communication
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">       Brokers
+</span></span></code></pre><p>Security planning must therefore consider:</p>
+<ul>
+<li>client → broker</li>
+<li>broker → broker</li>
+<li>broker → controller</li>
+<li>controller → controller</li>
+</ul>
+<p>The exact listener and protocol configuration depends on the Kafka version and architecture.</p>
+<h2 id="18-authorization">18. Authorization</h2>
+<p>Authentication establishes the principal.</p>
+<p>Authorization determines what the principal can do.</p>
+<p>Kafka authorization commonly uses ACLs.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:alice
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +--&gt; READ orders
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +--&gt; DESCRIBE orders
+</span></span></code></pre><p>But:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:alice
+</span></span><span class="line"><span class="cl">    X--&gt; WRITE orders
+</span></span></code></pre><p>could be denied.</p>
+<h2 id="19-kafka-acls">19. Kafka ACLs</h2>
+<p>An ACL describes a permission associated with:</p>
+<ul>
+<li>Principal</li>
+<li>Operation</li>
+<li>Resource</li>
+<li>Permission</li>
+<li>Host</li>
+</ul>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">    ACL
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- Principal
+</span></span><span class="line"><span class="cl">     +-- Resource
+</span></span><span class="line"><span class="cl">     +-- Operation
+</span></span><span class="line"><span class="cl">     +-- Permission
+</span></span><span class="line"><span class="cl">     +-- Host
+</span></span></code></pre><p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Principal = User:alice 
+</span></span><span class="line"><span class="cl">Resource = Topic:orders 
+</span></span><span class="line"><span class="cl">Operation = READ 
+</span></span><span class="line"><span class="cl">Permission = ALLOW 
+</span></span><span class="line"><span class="cl">Host = *
+</span></span></code></pre><h2 id="20-kafka-resources">20. Kafka Resources</h2>
+<p>ACLs can apply to different Kafka resource types.</p>
+<p>Important resources include:</p>
+<ul>
+<li>Topic</li>
+<li>Group</li>
+<li>Cluster</li>
+<li>TransactionalId</li>
+<li>DelegationToken</li>
+</ul>
+<p>Examples:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic:orders 
+</span></span><span class="line"><span class="cl">Group:order-service 
+</span></span><span class="line"><span class="cl">TransactionalId:payments 
+</span></span><span class="line"><span class="cl">Cluster:kafka-cluster
+</span></span></code></pre><p>Certification questions often test which resource an operation applies to.</p>
+<h2 id="21-topic-permissions">21. Topic Permissions</h2>
+<p>Typical topic operations include:</p>
+<ul>
+<li><code>READ</code></li>
+<li><code>WRITE</code></li>
+<li><code>CREATE</code></li>
+<li><code>DELETE</code></li>
+<li><code>ALTER</code></li>
+<li><code>DESCRIBE</code></li>
+<li><code>DESCRIBE_CONFIGS</code></li>
+<li><code>ALTER_CONFIGS</code></li>
+</ul>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> User:producer-app
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        +--&gt; WRITE Topic:orders
+</span></span></code></pre><p>A producer normally needs permission to write to its topic.</p>
+<p>A consumer needs permission to read from its topic.</p>
+<h2 id="22-consumer-group-authorization">22. Consumer Group Authorization</h2>
+<p>Consumer groups are resources too. A consumer usually needs permission related to its group.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">    Consumer
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      +--&gt; READ Topic:orders
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      +--&gt; Group:order-service
+</span></span></code></pre><p>A very common troubleshooting mistake is granting topic access but forgetting group access.</p>
+<p>The result can be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic authorization: OK 
+</span></span><span class="line"><span class="cl">Group authorization: DENIED
+</span></span></code></pre><h2 id="23-cluster-level-permissions">23. Cluster-Level Permissions</h2>
+<p>Some operations are cluster-level.</p>
+<p>For example:</p>
+<ul>
+<li><code>DESCRIBE</code></li>
+<li><code>CLUSTER_ACTION</code></li>
+<li><code>CREATE</code></li>
+</ul>
+<p>may be associated with cluster operations depending on the specific Kafka API and authorization behavior. Do not assume
+every Kafka operation maps directly to a topic ACL.</p>
+<h2 id="24-principal">24. Principal</h2>
+<p>A principal represents the authenticated identity.</p>
+<p>Examples:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:alice 
+</span></span><span class="line"><span class="cl">User:order-service 
+</span></span><span class="line"><span class="cl">User:admin
+</span></span></code></pre><p>The principal can originate from:</p>
+<ul>
+<li>TLS certificate identity</li>
+<li>SASL username</li>
+<li>Kerberos principal</li>
+<li>OAuth identity</li>
+</ul>
+<p>Kafka authorization evaluates permissions against this identity.</p>
+<h2 id="25-acl-matching">25. ACL Matching</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:alice 
+</span></span><span class="line"><span class="cl">ALLOW READ 
+</span></span><span class="line"><span class="cl">Topic:orders
+</span></span></code></pre><p>Then:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">alice -&gt; READ orders
+</span></span></code></pre><p>is allowed.</p>
+<p>But:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">alice -&gt; WRITE orders
+</span></span></code></pre><p>may be denied.</p>
+<p>Similarly:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">bob -&gt; READ orders
+</span></span></code></pre><p>may be denied.</p>
+<h2 id="26-acl-command-example">26. ACL Command Example</h2>
+<p>Kafka's ACL tooling can be used to inspect permissions.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">kafka-acls.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server broker1:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--list
+</span></span></code></pre><p>Adding an ACL might look conceptually like:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">kafka-acls.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server broker1:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--add <span class="se">\
+</span></span></span><span class="line"><span class="cl">--allow-principal User:alice <span class="se">\
+</span></span></span><span class="line"><span class="cl">--operation READ <span class="se">\
+</span></span></span><span class="line"><span class="cl">--topic orders
+</span></span></code></pre><p>Exact command options vary by Kafka version and authentication setup.</p>
+<h2 id="27-consumer-security-configuration">27. Consumer Security Configuration</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">bootstrap.servers</span><span class="o">=</span><span class="s">broker1:9093,broker2:9093</span>
+</span></span><span class="line"><span class="cl"><span class="na">security.protocol</span><span class="o">=</span><span class="s">SASL_SSL</span>
+</span></span><span class="line"><span class="cl"><span class="na">sasl.mechanism</span><span class="o">=</span><span class="s">SCRAM-SHA-512</span>
+</span></span><span class="line"><span class="cl"><span class="na">sasl.jaas.config</span><span class="o">=</span><span class="s">org.apache.kafka.common.security.scram.ScramLoginModule required</span>
+</span></span><span class="line"><span class="cl"><span class="na">username</span><span class="o">=</span><span class="s">&#34;consumer-user&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="na">password</span><span class="o">=</span><span class="s">&#34;secret&#34;</span>
+</span></span></code></pre><p>TLS configuration would additionally include the appropriate trust configuration. Never place production credentials
+directly into source control.</p>
+<h2 id="28-producer-security-configuration">28. Producer Security Configuration</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">bootstrap.servers</span><span class="o">=</span><span class="s">broker1:9093,broker2:9093</span>
+</span></span><span class="line"><span class="cl"><span class="na">security.protocol</span><span class="o">=</span><span class="s">SASL_SSL</span>
+</span></span><span class="line"><span class="cl"><span class="na">sasl.mechanism</span><span class="o">=</span><span class="s">SCRAM-SHA-512</span>
+</span></span><span class="line"><span class="cl"><span class="na">sasl.jaas.config</span><span class="o">=</span><span class="s">org.apache.kafka.common.security.scram.ScramLoginModule required</span>
+</span></span><span class="line"><span class="cl"><span class="na">username</span><span class="o">=</span><span class="s">&#34;producer-user&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="na">password</span><span class="o">=</span><span class="s">&#34;secret&#34;</span>
+</span></span></code></pre><p>The producer's authenticated identity is then evaluated against Kafka ACLs.</p>
+<h2 id="29-security-is-not-just-kafka">29. Security Is Not Just Kafka</h2>
+<p>A production Kafka security architecture includes the surrounding ecosystem.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                  Identity Provider
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         v
+</span></span><span class="line"><span class="cl">        Producer ---&gt; TLS/SASL ---&gt; Kafka
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         +----&gt; Schema Registry
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         +----&gt; Kafka Connect
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         +----&gt; Kafka Streams
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         +----&gt; Monitoring
+</span></span></code></pre><p>Each component may require:</p>
+<ul>
+<li>TLS</li>
+<li>authentication</li>
+<li>authorization</li>
+<li>secret management</li>
+<li>network controls</li>
+</ul>
+<h2 id="30-secret-management">30. Secret Management</h2>
+<p>Avoid:</p>
+<pre class="chroma light" data-lang="properties"><code class="language-properties"><span class="line"><span class="cl"><span class="na">password</span><span class="o">=</span><span class="s">MyProductionPassword</span>
+</span></span></code></pre><p>inside:</p>
+<ul>
+<li>Git repositories</li>
+<li>Docker images</li>
+<li>public configuration</li>
+<li>source code</li>
+<li>logs</li>
+</ul>
+<p>Prefer:</p>
+<ul>
+<li>environment-based secret injection</li>
+<li>secret managers</li>
+<li>Kubernetes Secrets with appropriate controls</li>
+<li>cloud secret-management systems</li>
+<li>secured configuration stores</li>
+</ul>
+<p>The principle is <strong>Credentials should be treated as secrets, not configuration values that can be freely copied.</strong></p>
+<h2 id="31-network-security">31. Network Security</h2>
+<p>Kafka security should not rely only on authentication.</p>
+<p>A defense-in-depth architecture can look like:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">     Internet
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">     Firewall
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">     Load Balancer / Network Boundary
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">     Private Network
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">     Kafka
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        +-- TLS
+</span></span><span class="line"><span class="cl">        +-- Authentication
+</span></span><span class="line"><span class="cl">        +-- Authorization
+</span></span><span class="line"><span class="cl">        +-- Monitoring
+</span></span></code></pre><p>Network segmentation reduces the attack surface.</p>
+<h2 id="32-common-security-failure-modes">32. Common Security Failure Modes</h2>
+<h3 id="failure-1-authentication-failed">Failure 1 — Authentication failed</h3>
+<p>Example symptoms:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Authentication failed 
+</span></span><span class="line"><span class="cl">SASL authentication failed 
+</span></span><span class="line"><span class="cl">SSL handshake failed
+</span></span></code></pre><p>Investigate:</p>
+<ul>
+<li>username</li>
+<li>password</li>
+<li>SASL mechanism</li>
+<li>certificate</li>
+<li>truststore</li>
+<li>keystore</li>
+<li>TLS protocol</li>
+<li>listener configuration</li>
+</ul>
+<h3 id="failure-2-authorization-failed">Failure 2 — Authorization failed</h3>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">TopicAuthorizationException 
+</span></span><span class="line"><span class="cl">GroupAuthorizationException 
+</span></span><span class="line"><span class="cl">ClusterAuthorizationException
+</span></span></code></pre><p>Authentication may already be working.</p>
+<p>Check:</p>
+<ul>
+<li>principal</li>
+<li>ACL</li>
+<li>resource</li>
+<li>operation</li>
+<li>group</li>
+<li>host restrictions</li>
+</ul>
+<h2 id="33-tls-handshake-failures">33. TLS Handshake Failures</h2>
+<p>Typical causes:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">SSLHandshakeException 
+</span></span><span class="line"><span class="cl">PKIX path building failed 
+</span></span><span class="line"><span class="cl">certificate_unknown
+</span></span></code></pre><p>Possible causes:</p>
+<ul>
+<li>client does not trust broker CA</li>
+<li>expired certificate</li>
+<li>hostname mismatch</li>
+<li>wrong truststore</li>
+<li>wrong keystore</li>
+<li>incomplete certificate chain</li>
+<li>incompatible TLS configuration</li>
+</ul>
+<h2 id="34-hostname-verification">34. Hostname Verification</h2>
+<p>Suppose the broker certificate contains:</p>
+<p><code>DNS:kafka01.example.com</code> but the client connects to <code>10.20.30.40</code></p>
+<p>Depending on certificate configuration, hostname verification may fail. The certificate identity must correspond to the
+endpoint used by the client. This is a common production issue.</p>
+<h2 id="35-troubleshooting-method">35. Troubleshooting Method</h2>
+<p>When a secure Kafka client fails, troubleshoot in layers.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">    1. DNS
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">    2. text
+</span></span><span class="line"><span class="cl">        |  
+</span></span><span class="line"><span class="cl">    3. TCP connectivity
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">    4. TLS handshake**
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">    5. Authentication
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">    6. Authorization
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">    7. Kafka API operation**
+</span></span></code></pre><p>Do not start by changing ACLs if the client cannot establish a network connection.</p>
+<h2 id="36-example-troubleshooting">36. Example Troubleshooting</h2>
+<p>Problem:</p>
+<p><code>Producer cannot publish to orders.</code></p>
+<p>Check:</p>
+<ul>
+<li>Step 1: Can the host resolve the broker?</li>
+</ul>
+<p><code>getent hosts broker1</code></p>
+<ul>
+<li>Step 2: Can it connect to the port?</li>
+</ul>
+<p><code>nc -vz broker1 9093</code></p>
+<ul>
+<li>
+<p>Step 3: Does TLS work? Inspect broker/client TLS configuration.</p>
+</li>
+<li>
+<p>Step 4: Does authentication succeed?</p>
+</li>
+</ul>
+<p>Check:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">SASL mechanism 
+</span></span><span class="line"><span class="cl">credentials 
+</span></span><span class="line"><span class="cl">JAAS configuration
+</span></span></code></pre><ul>
+<li>Step 5: Does authorization succeed?</li>
+</ul>
+<p>Check:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:producer 
+</span></span><span class="line"><span class="cl">WRITE Topic:orders 
+</span></span></code></pre><ul>
+<li>Step 6: Does the Kafka API operation succeed? Only now investigate producer/application-level behavior.</li>
+</ul>
+<h2 id="37-security-logging">37. Security Logging</h2>
+<p>Security troubleshooting requires logs.</p>
+<p>Useful categories include:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Authentication failures 
+</span></span><span class="line"><span class="cl">Authorization failures 
+</span></span><span class="line"><span class="cl">SSL/TLS errors 
+</span></span><span class="line"><span class="cl">Connection failures 
+</span></span><span class="line"><span class="cl">Principal information 
+</span></span><span class="line"><span class="cl">ACL evaluation
+</span></span></code></pre><p>Centralized logging is strongly recommended for production clusters.</p>
+<h2 id="38-least-privilege">38. Least Privilege</h2>
+<p>Kafka applications should receive only the permissions they need.</p>
+<p>Bad:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:order-service 
+</span></span><span class="line"><span class="cl">ALLOW ALL 
+</span></span><span class="line"><span class="cl">ALL RESOURCES
+</span></span></code></pre><p>Better:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">User:order-service 
+</span></span><span class="line"><span class="cl">WRITE Topic:orders 
+</span></span><span class="line"><span class="cl">READ Topic:payments 
+</span></span><span class="line"><span class="cl">READ Group:order-service
+</span></span></code></pre><p>Least privilege reduces blast radius.</p>
+<h2 id="39-separate-application-identities">39. Separate Application Identities</h2>
+<p>Avoid using one Kafka identity for every service.</p>
+<p>Bad:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">all-services -&gt; kafka-user
+</span></span></code></pre><p>Better:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">order-service -&gt; User:order-service 
+</span></span><span class="line"><span class="cl">payment-service -&gt; User:payment-service 
+</span></span><span class="line"><span class="cl">billing-service -&gt; User:billing-service
+</span></span></code></pre><p>Then permissions can be independently controlled.</p>
+<h2 id="40-security-and-multi-tenancy">40. Security and Multi-Tenancy</h2>
+<p>For multiple teams or applications:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">      Team A
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        +--&gt; User:team-a
+</span></span><span class="line"><span class="cl">        +--&gt; topics: team-a.*
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">      Team B
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        +--&gt; User:team-b
+</span></span><span class="line"><span class="cl">        +--&gt; topics: team-b.*
+</span></span></code></pre><p>ACLs and naming conventions can help enforce boundaries.</p>
+<h2 id="41-certification-trap-tls-does-not-automatically-mean-authorization">41. Certification Trap: TLS Does Not Automatically Mean Authorization</h2>
+<p>A certificate can authenticate a client.</p>
+<p>It does not automatically mean <code>Client can READ everything</code>. Authentication and authorization remain separate.</p>
+<h2 id="42-certification-trap-sasl-does-not-mean-encryption">42. Certification Trap: SASL Does Not Mean Encryption</h2>
+<p>This is critical.</p>
+<ul>
+<li><code>SASL_PLAINTEXT</code></li>
+</ul>
+<p>means:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Authentication: Yes 
+</span></span><span class="line"><span class="cl">Encryption: No
+</span></span></code></pre><p>Whereas:</p>
+<ul>
+<li><code>SASL_SSL</code></li>
+</ul>
+<p>means:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Authentication: Yes 
+</span></span><span class="line"><span class="cl">Encryption: Yes
+</span></span></code></pre><h2 id="43-certification-trap-ssl-is-not-the-same-as-sasl">43. Certification Trap: SSL Is Not the Same as SASL</h2>
+<pre><code>SSL/TLS
+-&gt; encryption
+-&gt; certificate-based authentication can also be used
+
+SASL 
+-&gt; authentication framework
+</code></pre>
+<p>They can be combined.</p>
+<h2 id="44-certification-trap-topic-acl-is-not-always-enough">44. Certification Trap: Topic ACL Is Not Always Enough</h2>
+<p>A consumer can have <code>READ Topic:orders</code> but still fail because the consumer group permission is missing. Always inspect
+both <code>Topic</code> and <code>Group</code> when diagnosing consumer authorization.</p>
+<h2 id="45-security-architecture-example">45. Security Architecture Example</h2>
+<p>A production architecture could look like:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 Identity Provider
+</span></span><span class="line"><span class="cl">                        |
+</span></span><span class="line"><span class="cl">                        v
+</span></span><span class="line"><span class="cl">              +-------------------+
+</span></span><span class="line"><span class="cl">              |   Kafka Clients   |
+</span></span><span class="line"><span class="cl">              +-------------------+
+</span></span><span class="line"><span class="cl">                   |        |
+</span></span><span class="line"><span class="cl">                SASL_SSL   SASL_SSL
+</span></span><span class="line"><span class="cl">                   |        |
+</span></span><span class="line"><span class="cl">                   v        v
+</span></span><span class="line"><span class="cl">              +----------------+
+</span></span><span class="line"><span class="cl">              | Kafka Brokers  |
+</span></span><span class="line"><span class="cl">              +----------------+
+</span></span><span class="line"><span class="cl">                |            |
+</span></span><span class="line"><span class="cl">              TLS            TLS
+</span></span><span class="line"><span class="cl">                |            |
+</span></span><span class="line"><span class="cl">          Broker traffic   Controllers
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">              ACLs
+</span></span><span class="line"><span class="cl">                |
+</span></span><span class="line"><span class="cl">       +--------+---------+
+</span></span><span class="line"><span class="cl">       |        |         |
+</span></span><span class="line"><span class="cl">    Orders   Payments   Billing
+</span></span></code></pre><p>Security layers:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">        Network controls
+</span></span><span class="line"><span class="cl">                +
+</span></span><span class="line"><span class="cl">        TLS
+</span></span><span class="line"><span class="cl">                +
+</span></span><span class="line"><span class="cl">        Authentication
+</span></span><span class="line"><span class="cl">                +
+</span></span><span class="line"><span class="cl">        Authorization
+</span></span><span class="line"><span class="cl">                +
+</span></span><span class="line"><span class="cl">        Monitoring
+</span></span><span class="line"><span class="cl">                +
+</span></span><span class="line"><span class="cl">        Secret management
+</span></span></code></pre><h2 id="46-developer-certification-focus">46. Developer Certification Focus</h2>
+<p>For developer-oriented exams, know:</p>
+<ul>
+<li><code>security.protocol</code></li>
+<li>SASL mechanisms</li>
+<li>SSL/TLS basics</li>
+<li>client security properties</li>
+<li>authentication vs authorization</li>
+<li>ACL concepts</li>
+<li>consumer group permissions</li>
+<li>common exceptions</li>
+<li>secure producer/consumer configuration</li>
+</ul>
+<p>You should be able to reason from an error message to the likely security layer.</p>
+<h2 id="47-administrator-certification-focus">47. Administrator Certification Focus</h2>
+<p>For administrator-oriented exams, know additionally:</p>
+<ul>
+<li>broker listeners</li>
+<li>advertised listeners</li>
+<li>inter-broker security</li>
+<li>controller security</li>
+<li>ACL administration</li>
+<li>certificate management</li>
+<li>truststores and keystores</li>
+<li>SASL configuration</li>
+<li>principal mapping</li>
+<li>security troubleshooting</li>
+<li>least privilege</li>
+<li>secure cluster architecture</li>
+</ul>
+<h2 id="48-exam-oriented-mental-model">48. Exam-Oriented Mental Model</h2>
+<p>Memorize this sequence:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">         CONNECT
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">         NETWORK
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">           TLS
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">       AUTHENTICATION
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">        PRINCIPAL
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">        AUTHORIZATION
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">        KAFKA API
+</span></span></code></pre><p>When diagnosing a failure, identify the first layer that fails.</p>
+<h2 id="49-certification-questions">49. Certification Questions</h2>
+<h3 id="question-1">Question 1</h3>
+<p>A Kafka client receives:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">SASL authentication failed
+</span></span></code></pre><p><strong>What should you investigate first?</strong></p>
+<p>A. Topic partition count B. Consumer offset C. SASL credentials and mechanism D. Replication factor</p>
+<p>Answer: <strong>C</strong></p>
+<p>Authentication is failing before authorization or topic operations.</p>
+<h3 id="question-2">Question 2</h3>
+<p><strong>Which protocol provides both SASL authentication and TLS encryption?</strong></p>
+<p>A. PLAINTEXT B. SSL C. SASL_PLAINTEXT D. SASL_SSL</p>
+<p>Answer: <strong>D</strong></p>
+<h3 id="question-3">Question 3</h3>
+<p>A consumer successfully authenticates but receives GroupAuthorizationException.</p>
+<p><strong>What is the most likely issue?</strong></p>
+<p>A. The broker certificate expired B. The consumer lacks permission for the group C. The topic has no partitions D. The
+producer is unavailable</p>
+<p>Answer: <strong>B</strong></p>
+<h3 id="question-4">Question 4</h3>
+<p>What is the main purpose of a TrustStore?</p>
+<p>A. Store application passwords B. Store trusted certificates / certificate authorities C. Store Kafka offsets D. Store
+ACLs</p>
+<p>Answer: <strong>B</strong></p>
+<h3 id="question-5">Question 5</h3>
+<p><strong>What does authentication determine?</strong></p>
+<p>A. What an identity may do B. The identity of the client C. The partition leader D. The consumer offset</p>
+<p>Answer: <strong>B</strong></p>
+<h3 id="question-6">Question 6</h3>
+<p><strong>What does authorization determine?</strong></p>
+<p>A. Client identity B. Broker identity C. Whether an authenticated principal may perform an operation D. Network routing</p>
+<p>Answer: <strong>C</strong></p>
+<h3 id="question-7">Question 7</h3>
+<p><strong>Which is normally unsafe for password-based authentication unless additional network protection exists?</strong></p>
+<p>A. SASL_SSL B. SASL_PLAINTEXT C. SSL D. mTLS</p>
+<p>Answer: <strong>B</strong></p>
+<h3 id="question-8">Question 8</h3>
+<p><strong>A Kafka client connects successfully to the bootstrap server but later tries to connect to an unreachable hostname.
+What Kafka configuration should be investigated?</strong></p>
+<p>A. <code>advertised.listeners</code>
+B. <code>log.retention.ms</code>
+C. <code>num.partitions</code>
+D. <code>compression.type</code></p>
+<p>Answer: <strong>A</strong></p>
+<h3 id="question-9">Question 9</h3>
+<p><strong>What is the purpose of least privilege?</strong></p>
+<p>A. Increase partition count B. Reduce the permissions and potential blast radius of identities C. Increase producer
+throughput D. Disable authentication</p>
+<p>Answer: <strong>B</strong></p>
+<h3 id="question-10">Question 10</h3>
+<p><strong>Which sequence is the best troubleshooting model?</strong></p>
+<p>A. ACL → partition → DNS → TLS B. DNS → TCP → TLS → authentication → authorization C. Offset → consumer → DNS → ACL D.
+Producer → partition → schema → ACL</p>
+<p>Answer: <strong>B</strong></p>
+<h2 id="51-security-checklist">51. Security Checklist</h2>
+<p>Before declaring a Kafka cluster production-ready:</p>
+<p>TLS configured where required Certificates managed securely Certificate expiration monitored Trust chains validated SASL
+mechanism selected appropriately Strong credentials used Secrets not stored in Git ACLs configured Least privilege
+applied Application identities separated Consumer group permissions validated Inter-broker communication secured
+Controller communication secured where applicable Advertised listeners verified Security logs centralized Authentication
+failures monitored Authorization failures monitored Certificate rotation procedure documented</p>
+<h2 id="52-final-exam-cheat-sheet">52. Final Exam Cheat Sheet</h2>
+<pre><code>TLS
+    -&gt; encryption
+    -&gt; certificate-based authentication possible
+
+SASL 
+    -&gt; authentication
+
+SASL_SSL
+    -&gt; SASL authentication + TLS encryption
+
+SASL_PLAINTEXT
+    -&gt; SASL authentication without TLS encryption
+
+KeyStore 
+    -&gt; identity/private key/certificate
+
+TrustStore 
+    -&gt; trusted certificates / CAs
+
+Authentication 
+    -&gt; Who are you?
+
+Authorization 
+    -&gt; What can you do?
+
+Principal 
+    -&gt; authenticated identity
+
+ACL 
+    -&gt; authorization rule
+
+Producer 
+    -&gt; usually WRITE topic
+
+Consumer 
+    -&gt; READ topic 
+    -&gt; consumer-group permissions
+
+Listeners 
+    -&gt; broker endpoints
+
+Advertised listeners 
+    -&gt; addresses returned to clients
+
+Inter-broker security 
+    -&gt; protects broker-to-broker traffic
+
+Troubleshooting 
+    -&gt; DNS 
+    -&gt; TCP 
+    -&gt; TLS 
+    -&gt; Authentication 
+    -&gt; Authorization 
+    -&gt; Kafka operation
+</code></pre>
+<h2 id="53-key-takeaways">53. Key Takeaways</h2>
+<p>The most important concepts from this chapter are:</p>
+<ol>
+<li>Authentication and authorization are different.</li>
+<li>TLS provides encryption and can provide certificate-based authentication.</li>
+<li><code>SASL</code> provides authentication mechanisms.</li>
+<li><code>SASL_SSL</code> combines SASL authentication with TLS encryption.</li>
+<li><code>SASL_PLAINTEXT</code> does not encrypt network traffic.</li>
+<li>A KeyStore represents local identity; a TrustStore represents trusted identities/CAs.</li>
+<li>Kafka ACLs control authorization.</li>
+<li>Consumer authorization often involves both topic and consumer-group permissions.</li>
+<li>advertised.listeners is critical for client connectivity.</li>
+<li>Inter-broker and controller communication must also be considered in secure cluster design.</li>
+<li>Least privilege is the preferred authorization strategy.</li>
+<li>Security troubleshooting should proceed layer by layer.</li>
+<li>Secure Kafka is not just a Kafka configuration problem; identity, certificates, networking, secrets, monitoring, and
+ecosystem components all matter.</li>
+</ol>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <a class="prev" href="kafka-certification-mastery-chapter-8.html"><span class="nav-label">Previous</span><span class="nav-title">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</span></a>
+          <a class="next" href="kafka-certification-mastery-chapter-10.html"><span class="nav-label">Next</span><span class="nav-title">Chapter 10 — Kafka Connect Deep Dive</span></a>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 9 of 16</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "chapters\/kafka-certification-mastery-chapter-9.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

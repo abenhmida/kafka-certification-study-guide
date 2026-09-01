@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Certification track: Kafka Developer &#43; Kafka Administrator Reference foundation: Kafka: The Definitive Guide , 2nd Edition 1. Chapter Objectives This chapter…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Chapter 8 — Kafka Administration &amp; Operations Deep Dive - Kafka Certification Study Guide">
+<meta property="og:description" content="Certification track: Kafka Developer &#43; Kafka Administrator Reference foundation: Kafka: The Definitive Guide , 2nd Edition 1. Chapter Objectives This chapter…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Chapter 8 — Kafka Administration &amp; Operations Deep Dive - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="kafka-certification-mastery-chapter-8.html">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Chapter 8 — Kafka Administration &amp; Operations Deep Dive</h1>
+        <blockquote>
+<p>Certification track: Kafka Developer + Kafka Administrator<br>
+Reference foundation: <em>Kafka: The Definitive Guide</em>, 2nd Edition</p>
+</blockquote>
+<hr>
+<h2 id="1-chapter-objectives">1. Chapter Objectives</h2>
+<p>This chapter focuses on practical Kafka administration and operations.</p>
+<p>You should be able to:</p>
+<ul>
+<li>inspect cluster health</li>
+<li>create and manage topics</li>
+<li>inspect partitions and replicas</li>
+<li>understand topic configuration</li>
+<li>administer consumer groups</li>
+<li>diagnose consumer lag</li>
+<li>manage broker configuration</li>
+<li>perform partition reassignment</li>
+<li>understand preferred leader election</li>
+<li>administer KRaft</li>
+<li>monitor Kafka</li>
+<li>troubleshoot common production failures</li>
+<li>reason about capacity and recovery</li>
+<li>answer administrator certification scenarios</li>
+</ul>
+<p>Core mental model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka Cluster
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- Brokers
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- Topics
+</span></span><span class="line"><span class="cl">     |     |
+</span></span><span class="line"><span class="cl">     |     +-- Partitions
+</span></span><span class="line"><span class="cl">     |           |
+</span></span><span class="line"><span class="cl">     |           +-- Leaders
+</span></span><span class="line"><span class="cl">     |           +-- Replicas
+</span></span><span class="line"><span class="cl">     |           +-- ISR
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- Consumer Groups
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- KRaft Controllers
+</span></span><span class="line"><span class="cl">     |
+</span></span><span class="line"><span class="cl">     +-- Monitoring
+</span></span></code></pre><h2 id="2-kafka-administration-philosophy">2. Kafka Administration Philosophy</h2>
+<p>Kafka administration is not just starting brokers and creating topics.</p>
+<p>A production administrator must continuously manage:</p>
+<ul>
+<li>Availability</li>
+<li>Durability</li>
+<li>Performance</li>
+<li>Capacity</li>
+<li>Security</li>
+<li>Observability</li>
+<li>Recovery</li>
+</ul>
+<p>The goal is predictable behavior under both normal traffic and failure.</p>
+<h2 id="3-core-administration-areas">3. Core Administration Areas</h2>
+<p>The major operational areas are:</p>
+<ul>
+<li>Cluster</li>
+<li>Topics</li>
+<li>Partitions</li>
+<li>Replication</li>
+<li>Consumers</li>
+<li>Configuration</li>
+<li>Storage</li>
+<li>Security</li>
+<li>Monitoring</li>
+<li>Recovery</li>
+</ul>
+<p>These areas are interconnected.</p>
+<h2 id="4-kafka-cli-toolkit">4. Kafka CLI Toolkit</h2>
+<p>Common Kafka command-line tools include:</p>
+<ul>
+<li><code>kafka-topics.sh</code></li>
+<li><code>kafka-configs.sh</code></li>
+<li><code>kafka-consumer-groups.sh</code></li>
+<li><code>kafka-console-producer.sh</code></li>
+<li><code>kafka-console-consumer.sh</code></li>
+<li><code>kafka-reassign-partitions.sh</code></li>
+<li><code>kafka-metadata-quorum.sh</code></li>
+<li><code>kafka-broker-api-versions.sh</code></li>
+<li><code>kafka-storage.sh</code></li>
+</ul>
+<p>Exact commands and options depend on the Kafka version.</p>
+<p>Always check the installed version:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-topics.sh --help
+</span></span></code></pre><h2 id="5-bootstrap-server">5. Bootstrap Server</h2>
+<p>Administrative clients commonly use:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">--bootstrap-server broker1:9092
+</span></span></code></pre><p>The bootstrap server provides the initial connection point from which the client discovers Kafka cluster metadata.</p>
+<p>It does not mean every request permanently goes to that broker.</p>
+<h2 id="6-listing-topics">6. Listing Topics</h2>
+<p>Typical command:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--list
+</span></span></code></pre><p>Use it to inspect which topics are visible in the cluster.</p>
+<h2 id="7-describing-a-topic">7. Describing a Topic</h2>
+<p>Typical command:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--describe <span class="se">\
+</span></span></span><span class="line"><span class="cl">--topic orders
+</span></span></code></pre><p>Important fields include:</p>
+<ul>
+<li>Topic</li>
+<li>Partition</li>
+<li>Leader</li>
+<li>Replicas</li>
+<li>ISR</li>
+</ul>
+<p>Example:</p>
+<p><code>P0 -&gt; Leader B1 -&gt; Replicas B1,B2,B3 -&gt; ISR B1,B2,B3</code></p>
+<h2 id="8-topic-metadata">8. Topic Metadata</h2>
+<p>When troubleshooting a topic, inspect:</p>
+<ul>
+<li>partition count</li>
+<li>leader distribution</li>
+<li>replica placement</li>
+<li>ISR membership</li>
+</ul>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 -&gt; B1 leader -&gt; B1,B2,B3 ISR
+</span></span><span class="line"><span class="cl">P1 -&gt; B2 leader -&gt; B2,B3,B1 ISR
+</span></span><span class="line"><span class="cl">P2 -&gt; B3 leader -&gt; B3,B1,B2 ISR
+</span></span></code></pre><p>This gives an initial picture of replication and leadership balance.</p>
+<h2 id="9-creating-a-topic">9. Creating a Topic</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--create <span class="se">\
+</span></span></span><span class="line"><span class="cl">--topic orders <span class="se">\
+</span></span></span><span class="line"><span class="cl">--partitions <span class="m">6</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">--replication-factor <span class="m">3</span>
+</span></span></code></pre><p>Important parameters:</p>
+<ul>
+<li><code>topic</code></li>
+<li><code>partitions</code></li>
+<li><code>replication factor</code></li>
+</ul>
+<h2 id="10-partition-count">10. Partition Count</h2>
+<p>Six partitions means:</p>
+<ul>
+<li>P0</li>
+<li>P1</li>
+<li>P2</li>
+<li>P3</li>
+<li>P4</li>
+<li>P5</li>
+</ul>
+<p>Partitions provide:</p>
+<ul>
+<li>parallelism</li>
+<li>distribution</li>
+<li>ordering boundaries</li>
+<li>consumer-group concurrency</li>
+</ul>
+<p>Partition count is an architectural decision.</p>
+<h2 id="11-changing-partition-count">11. Changing Partition Count</h2>
+<p>Kafka can increase the number of partitions.</p>
+<p>However, increasing partitions can affect keyed workloads.</p>
+<p>With the default key-based partitioning behavior, changing the number of partitions can cause future records for a key to map to a different partition.</p>
+<p>Therefore:</p>
+<blockquote>
+<p>Do not treat partition count as a harmless tuning knob.</p>
+</blockquote>
+<h2 id="12-replication-factor">12. Replication Factor</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">--replication-factor <span class="m">3</span>
+</span></span></code></pre><p>means each partition has three assigned replicas.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 -&gt; B1
+</span></span><span class="line"><span class="cl">      B2
+</span></span><span class="line"><span class="cl">      B3
+</span></span></code></pre><p>Replication provides fault tolerance.</p>
+<h2 id="13-topic-configuration">13. Topic Configuration</h2>
+<p>Common topic-level properties include:</p>
+<ul>
+<li><code>retention.ms</code></li>
+<li><code>retention.bytes</code></li>
+<li><code>cleanup.policy</code></li>
+<li><code>compression.type</code></li>
+<li><code>min.insync.replicas</code></li>
+<li><code>max.message.bytes</code></li>
+<li><code>segment.bytes</code></li>
+</ul>
+<p>The exact available settings depend on Kafka version.</p>
+<h2 id="14-configuration-layers">14. Configuration Layers</h2>
+<p>Think about configuration at several levels:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka defaults
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Broker configuration
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Topic configuration
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Client configuration
+</span></span></code></pre><p>Do not confuse broker configuration with topic or client configuration.</p>
+<h2 id="15-viewing-topic-configuration">15. Viewing Topic Configuration</h2>
+<p>Typical command:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-configs.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--entity-type topics <span class="se">\
+</span></span></span><span class="line"><span class="cl">--entity-name orders <span class="se">\
+</span></span></span><span class="line"><span class="cl">--describe
+</span></span></code></pre><p>This is useful for identifying explicit topic overrides.</p>
+<h2 id="16-altering-topic-configuration">16. Altering Topic Configuration</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-configs.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--entity-type topics <span class="se">\
+</span></span></span><span class="line"><span class="cl">--entity-name orders <span class="se">\
+</span></span></span><span class="line"><span class="cl">--alter <span class="se">\
+</span></span></span><span class="line"><span class="cl">--add-config retention.ms<span class="o">=</span><span class="m">604800000</span>
+</span></span></code></pre><p>This sets an explicit topic-level retention value.</p>
+<h2 id="17-removing-a-topic-override">17. Removing a Topic Override</h2>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">--delete-config retention.ms
+</span></span></code></pre><p>This removes the explicit topic override so the relevant default can apply again.</p>
+<p>Always verify the resulting configuration.</p>
+<h2 id="18-retention">18. Retention</h2>
+<p>Kafka can retain data according to:</p>
+<ul>
+<li><code>retention.ms</code></li>
+<li><code>retention.bytes</code></li>
+</ul>
+<p>Retention is independent of whether a consumer has already processed the record.</p>
+<p>A consumer group does not cause Kafka to delete records simply by consuming them.</p>
+<h2 id="19-retention-is-segment-based">19. Retention Is Segment-Based</h2>
+<p>Kafka stores data in log segments.</p>
+<p>Therefore retention is not an exact per-record stopwatch.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">records
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">segments
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">retention eligibility
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">cleanup
+</span></span></code></pre><p>This is important when interpreting retention behavior.</p>
+<h2 id="20-cleanup-policies">20. Cleanup Policies</h2>
+<p>Important policies include:</p>
+<ul>
+<li><code>delete</code></li>
+<li><code>compact</code></li>
+<li><code>compact,delete</code></li>
+</ul>
+<h2 id="21-delete-policy">21. Delete Policy</h2>
+<p>Delete retention removes old log segments when they become eligible.</p>
+<p>Typical use:</p>
+<ul>
+<li>events</li>
+<li>logs</li>
+<li>telemetry</li>
+</ul>
+<p>where historical retention is bounded.</p>
+<h2 id="22-compaction">22. Compaction</h2>
+<p>Log compaction keeps the latest value for a key, subject to Kafka's compaction semantics.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">A -&gt; 1
+</span></span><span class="line"><span class="cl">B -&gt; 5
+</span></span><span class="line"><span class="cl">A -&gt; 2
+</span></span><span class="line"><span class="cl">A -&gt; 3
+</span></span></code></pre><p>After compaction, the retained state can represent:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">A -&gt; 3
+</span></span><span class="line"><span class="cl">B -&gt; 5
+</span></span></code></pre><p>Compaction is not instantaneous and does not mean every older record disappears immediately.</p>
+<h2 id="23-tombstones">23. Tombstones</h2>
+<p>A null-valued record can act as a deletion marker in a compacted topic.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">A -&gt; 1
+</span></span><span class="line"><span class="cl">A -&gt; 2
+</span></span><span class="line"><span class="cl">A -&gt; null
+</span></span></code></pre><p>The tombstone tells Kafka that key A should eventually disappear from the compacted state.</p>
+<p>Tombstones themselves are eventually cleaned according to compaction rules.</p>
+<h2 id="24-consumer-group-administration">24. Consumer Group Administration</h2>
+<p>List consumer groups:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-consumer-groups.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--list
+</span></span></code></pre><p>Describe a group:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-consumer-groups.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--describe <span class="se">\
+</span></span></span><span class="line"><span class="cl">--group orders-service
+</span></span></code></pre><h2 id="25-consumer-lag">25. Consumer Lag</h2>
+<p>A simplified model is:</p>
+<p><code>lag = log end offset - committed/current consumer offset</code></p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Log End Offset = 10,000
+</span></span><span class="line"><span class="cl">Consumer Offset = 9,700
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Lag = 300
+</span></span></code></pre><p>Lag is one of the most important Kafka operational signals.</p>
+<h2 id="26-lag-does-not-automatically-mean-failure">26. Lag Does Not Automatically Mean Failure</h2>
+<p>A consumer may intentionally have lag.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer = 10,000 msg/s
+</span></span><span class="line"><span class="cl">Consumer = 9,500 msg/s
+</span></span></code></pre><p>Lag grows.</p>
+<p>The important question is whether lag is:</p>
+<ul>
+<li>stable</li>
+<li>growing</li>
+<li>shrinking</li>
+</ul>
+<h2 id="27-diagnosing-growing-lag">27. Diagnosing Growing Lag</h2>
+<p>Possible causes:</p>
+<ul>
+<li>slow application</li>
+<li>slow database</li>
+<li>CPU saturation</li>
+<li>GC pauses</li>
+<li>network latency</li>
+<li>insufficient partition parallelism</li>
+<li>frequent rebalances</li>
+<li>broker performance problems</li>
+</ul>
+<blockquote>
+<p>Do not automatically add consumers before identifying the bottleneck.</p>
+</blockquote>
+<h2 id="28-consumer-parallelism">28. Consumer Parallelism</h2>
+<p>Suppose:</p>
+<ul>
+<li>Topic = 6 partitions</li>
+<li>Consumer group = 3 consumers</li>
+</ul>
+<p>A possible assignment:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">C1 -&gt; P0 P3
+</span></span><span class="line"><span class="cl">C2 -&gt; P1 P4
+</span></span><span class="line"><span class="cl">C3 -&gt; P2 P5
+</span></span></code></pre><p>At most six consumers can actively own partitions of that topic simultaneously.</p>
+<h2 id="29-too-many-consumers">29. Too Many Consumers</h2>
+<p>If:</p>
+<ul>
+<li>6 partitions</li>
+<li>12 consumers</li>
+</ul>
+<p>some consumers will have no partitions.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">C1 -&gt; P0
+</span></span><span class="line"><span class="cl">C2 -&gt; P1
+</span></span><span class="line"><span class="cl">C3 -&gt; P2
+</span></span><span class="line"><span class="cl">C4 -&gt; P3
+</span></span><span class="line"><span class="cl">C5 -&gt; P4
+</span></span><span class="line"><span class="cl">C6 -&gt; P5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C7-C12 -&gt; idle
+</span></span></code></pre><p>Adding consumers beyond partition count does not create more partition-level parallelism.</p>
+<h2 id="30-consumer-rebalancing">30. Consumer Rebalancing</h2>
+<p>A rebalance can occur when:</p>
+<ul>
+<li>consumer joins</li>
+<li>consumer leaves</li>
+<li>consumer crashes</li>
+<li>subscription changes</li>
+<li>group membership changes</li>
+</ul>
+<p>Partitions are redistributed.</p>
+<p>Frequent rebalances can cause:</p>
+<ul>
+<li>processing pauses</li>
+<li>latency</li>
+<li>duplicate processing</li>
+<li>unstable assignments</li>
+</ul>
+<h2 id="31-rebalance-troubleshooting">31. Rebalance Troubleshooting</h2>
+<p>Investigate:</p>
+<ul>
+<li>consumer crashes</li>
+<li>poll interval</li>
+<li>processing duration</li>
+<li>network stability</li>
+<li>deployment churn</li>
+<li>GC pauses</li>
+<li>group configuration</li>
+</ul>
+<blockquote>
+<p>A consumer that takes too long to poll/process can repeatedly leave and rejoin the group.</p>
+</blockquote>
+<h2 id="32-consumer-offset-reset">32. Consumer Offset Reset</h2>
+<p>Kafka provides administrative mechanisms for resetting group offsets.</p>
+<p>Safe operational process:</p>
+<ol>
+<li>Stop consumers.</li>
+<li>Identify the group.</li>
+<li>Determine desired offset.</li>
+<li>Preview the operation.</li>
+<li>Apply reset.</li>
+<li>Verify.</li>
+<li>Restart consumers.</li>
+</ol>
+<p>Offset reset is potentially destructive and should be controlled.</p>
+<h2 id="33-offset-reset-strategies">33. Offset Reset Strategies</h2>
+<p>Common strategies include:</p>
+<ul>
+<li><code>earliest</code></li>
+<li><code>latest</code></li>
+<li>specific offset</li>
+<li>timestamp</li>
+<li>datetime</li>
+<li>duration</li>
+</ul>
+<p>The exact CLI syntax varies by Kafka release.</p>
+<h2 id="34-topic-deletion">34. Topic Deletion</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">bin/kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">--bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">--delete <span class="se">\
+</span></span></span><span class="line"><span class="cl">--topic orders
+</span></span></code></pre><p>Topic deletion is destructive.</p>
+<p>Always verify:</p>
+<ul>
+<li>cluster</li>
+<li>topic name</li>
+<li>business ownership</li>
+<li>backup/recovery expectations</li>
+</ul>
+<p>before performing it.</p>
+<h2 id="35-dynamic-broker-configuration">35. Dynamic Broker Configuration</h2>
+<p>Modern Kafka supports dynamic configuration for many settings.</p>
+<p>Typical administrative mechanism:</p>
+<ul>
+<li><code>kafka-configs.sh</code></li>
+</ul>
+<p>Dynamic configuration can reduce unnecessary broker restarts.</p>
+<p>However:</p>
+<blockquote>
+<p>Not every Kafka configuration is dynamically changeable.</p>
+</blockquote>
+<p>Always verify the installed Kafka version's configuration reference.</p>
+<h2 id="36-quotas">36. Quotas</h2>
+<p>Kafka supports quotas to prevent a client from monopolizing broker resources.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer A -&gt; 20 MB/s
+</span></span><span class="line"><span class="cl">Producer B -&gt; 100 MB/s
+</span></span><span class="line"><span class="cl">Consumer C -&gt; 30 MB/s
+</span></span></code></pre><p>Quotas can help protect cluster stability.</p>
+<h2 id="37-partition-reassignment">37. Partition Reassignment</h2>
+<p>Partition reassignment moves replicas between brokers.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Before:
+</span></span><span class="line"><span class="cl">P0 -&gt; B1 B2 B3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">After:
+</span></span><span class="line"><span class="cl">P0 -&gt; B2 B3 B4
+</span></span></code></pre><p>Typical workflow:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">generate assignment
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">review
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">execute
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">monitor
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">verify
+</span></span></code></pre><h2 id="38-why-reassignment-is-expensive">38. Why Reassignment Is Expensive</h2>
+<p>Moving replicas consumes:</p>
+<ul>
+<li>network</li>
+<li>disk I/O</li>
+<li>CPU</li>
+<li>broker resources</li>
+</ul>
+<p>Aggressive reassignment can degrade production traffic.</p>
+<h2 id="39-reassignment-throttling">39. Reassignment Throttling</h2>
+<p>Use throttling when appropriate so that recovery/rebalancing does not consume all available bandwidth.</p>
+<p>Goal:</p>
+<blockquote>
+<p>restore balance without creating a production incident</p>
+</blockquote>
+<h2 id="40-preferred-leader-election">40. Preferred Leader Election</h2>
+<p>Partition replicas have an ordering.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 -&gt; [B1, B2, B3]
+</span></span><span class="line"><span class="cl">       ^
+</span></span><span class="line"><span class="cl">       preferred replica
+</span></span></code></pre><p>After failures or operational changes, leadership can become uneven.</p>
+<p>Preferred leader election can restore leadership distribution toward the preferred replicas.</p>
+<h2 id="41-leader-imbalance">41. Leader Imbalance</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1 -&gt; 70% of partition leaders
+</span></span><span class="line"><span class="cl">B2 -&gt; 15%
+</span></span><span class="line"><span class="cl">B3 -&gt; 15%
+</span></span></code></pre><p>Even if storage is balanced, B1 may experience disproportionate:</p>
+<ul>
+<li>CPU</li>
+<li>network</li>
+<li>request load</li>
+</ul>
+<p>Monitor leader distribution.</p>
+<h2 id="42-adding-a-broker">42. Adding a Broker</h2>
+<p>Adding <code>B4</code> does not automatically redistribute all existing partition replicas.</p>
+<p>Existing assignments may remain:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1
+</span></span><span class="line"><span class="cl">B2
+</span></span><span class="line"><span class="cl">B3
+</span></span></code></pre><p>Reassignment may be required to use the new capacity.</p>
+<h2 id="43-storage-administration">43. Storage Administration</h2>
+<p>Monitor:</p>
+<ul>
+<li>disk capacity</li>
+<li>disk latency</li>
+<li>I/O throughput</li>
+<li>log directories</li>
+<li>filesystem errors</li>
+</ul>
+<p>A full or failing disk can cause serious Kafka incidents.</p>
+<h2 id="44-multiple-log-directories">44. Multiple Log Directories</h2>
+<p>A broker can be configured with multiple log directories.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+-- /data1
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+-- /data2
+</span></span></code></pre><p>Partition placement and directory health must be monitored.</p>
+<p>A failed directory can affect the partitions stored there.</p>
+<h2 id="45-cluster-health">45. Cluster Health</h2>
+<p>A useful health checklist is:</p>
+<ul>
+<li>brokers available</li>
+<li>controller quorum healthy</li>
+<li>offline partitions = 0</li>
+<li>under-replicated partitions = 0</li>
+<li>ISR stable</li>
+<li>consumer lag within SLA</li>
+<li>disk capacity healthy</li>
+<li>network capacity healthy</li>
+<li>request latency acceptable</li>
+</ul>
+<p>No single metric proves cluster health.</p>
+<h2 id="46-important-metrics">46. Important Metrics</h2>
+<p>Know the purpose of metrics such as:</p>
+<ul>
+<li><code>UnderReplicatedPartitions</code></li>
+<li><code>OfflinePartitionsCount</code></li>
+<li><code>IsrShrinksPerSec</code></li>
+<li><code>IsrExpandsPerSec</code></li>
+<li><code>UncleanLeaderElectionsPerSec</code></li>
+<li><code>LeaderElectionRateAndTimeMs</code></li>
+<li>request latency</li>
+<li>bytes in/out</li>
+<li>disk utilization</li>
+<li>consumer lag</li>
+</ul>
+<p>Exact metric names can vary by Kafka version.</p>
+<h2 id="47-under-replicated-partitions">47. Under-Replicated Partitions</h2>
+<p>If <code>UnderReplicatedPartitions &gt; 0</code>, investigate:</p>
+<ul>
+<li>broker failures</li>
+<li>slow disks</li>
+<li>network problems</li>
+<li>CPU saturation</li>
+<li>replica recovery</li>
+<li>reassignment</li>
+<li>throttling</li>
+</ul>
+<p>Persistent under-replication means durability is degraded.</p>
+<h2 id="48-offline-partitions">48. Offline Partitions</h2>
+<p>If <code>OfflinePartitionsCount &gt; 0</code>, at least one partition has no leader.</p>
+<p>This is significantly more severe than ordinary under-replication.</p>
+<p>Potential effects:</p>
+<ul>
+<li>producer failures</li>
+<li>consumer failures</li>
+<li>unavailable partition data</li>
+</ul>
+<h2 id="49-kraft-administration">49. KRaft Administration</h2>
+<p>Modern Kafka deployments use KRaft for cluster metadata management.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Controller quorum
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Cluster metadata
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+-- brokers
+</span></span><span class="line"><span class="cl">+-- topics
+</span></span><span class="line"><span class="cl">+-- partitions
+</span></span><span class="line"><span class="cl">+-- leadership
+</span></span></code></pre><h2 id="50-kraft-controller-quorum">50. KRaft Controller Quorum</h2>
+<p>A production KRaft deployment normally uses multiple controllers.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">C1
+</span></span><span class="line"><span class="cl">C2
+</span></span><span class="line"><span class="cl">C3
+</span></span></code></pre><p>With three controllers, losing one can still leave a majority:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">C1
+</span></span><span class="line"><span class="cl">C3
+</span></span></code></pre><p>The exact topology depends on whether nodes are combined broker/controller roles or dedicated roles.</p>
+<h2 id="51-kraft-administration-tool">51. KRaft Administration Tool</h2>
+<p>A useful command family is <code>kafka-metadata-quorum.sh</code>. Use it to inspect metadata quorum state.</p>
+<p>The exact syntax depends on the Kafka version.</p>
+<h2 id="52-broker-api-versions">52. Broker API Versions</h2>
+<p>Useful command: <code>kafka-broker-api-versions.sh</code>. This can help inspect broker API compatibility.</p>
+<p>Useful during:</p>
+<ul>
+<li>upgrades</li>
+<li>client compatibility troubleshooting</li>
+<li>protocol diagnosis</li>
+</ul>
+<h2 id="53-advertised-listeners">53. Advertised Listeners</h2>
+<p>A classic Kafka networking problem is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">client
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">bootstrap broker
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">metadata
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">advertised broker address
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">X
+</span></span><span class="line"><span class="cl">client cannot reach it
+</span></span></code></pre><p>The client may successfully bootstrap but fail afterward.</p>
+<p>Check:</p>
+<ul>
+<li><code>listeners</code></li>
+<li><code>advertised.listeners</code></li>
+<li>DNS</li>
+<li>routing</li>
+<li>firewalls</li>
+<li>security protocol</li>
+</ul>
+<h2 id="54-security-administration-overview">54. Security Administration Overview</h2>
+<p>Kafka security involves:</p>
+<ul>
+<li>TLS</li>
+<li>SASL</li>
+<li>Authentication</li>
+<li>Authorization</li>
+<li>ACLs</li>
+</ul>
+<p>Authentication asks:</p>
+<blockquote>
+<p>Who are you?</p>
+</blockquote>
+<p>Authorization asks:</p>
+<blockquote>
+<p>What are you allowed to do?</p>
+</blockquote>
+<p>Detailed security is covered in the dedicated security chapter.</p>
+<h2 id="55-monitoring-architecture">55. Monitoring Architecture</h2>
+<p>A common model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">JMX / metrics
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">metrics collector
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">monitoring platform
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">dashboards + alerts
+</span></span></code></pre><p>Monitor both Kafka infrastructure and application behavior.</p>
+<h2 id="56-good-alerts">56. Good Alerts</h2>
+<p>Useful alerts include:</p>
+<ul>
+<li>offline partitions</li>
+<li>persistent under-replication</li>
+<li>controller instability</li>
+<li>rapid ISR shrinkage</li>
+<li>disk near capacity</li>
+<li>consumer lag beyond SLA</li>
+<li>high request latency</li>
+<li>broker unavailable</li>
+</ul>
+<p>Avoid alerting on every transient event.</p>
+<h2 id="57-capacity-planning">57. Capacity Planning</h2>
+<p>Kafka capacity planning includes:</p>
+<ul>
+<li>throughput</li>
+<li>storage</li>
+<li>partitions</li>
+<li>replication</li>
+<li>network</li>
+<li>CPU</li>
+<li>memory</li>
+<li>recovery bandwidth</li>
+<li>failure headroom</li>
+</ul>
+<h2 id="58-storage-estimate">58. Storage Estimate</h2>
+<p>Approximate replicated storage:</p>
+<p><code>daily data x retention days x replication factor</code></p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">200 GB/day
+</span></span><span class="line"><span class="cl">x 7 days
+</span></span><span class="line"><span class="cl">x RF 3
+</span></span><span class="line"><span class="cl">= 4.2 TB
+</span></span></code></pre><p>Then add headroom for:</p>
+<ul>
+<li>indexes</li>
+<li>segments</li>
+<li>recovery</li>
+<li>growth</li>
+<li>reassignment</li>
+<li>operational safety</li>
+</ul>
+<blockquote>
+<p>Do not size disks to 100% utilization.</p>
+</blockquote>
+<h2 id="59-network-capacity">59. Network Capacity</h2>
+<p>Broker traffic can include:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">producer ingress
+</span></span><span class="line"><span class="cl">+
+</span></span><span class="line"><span class="cl">replication traffic
+</span></span><span class="line"><span class="cl">+
+</span></span><span class="line"><span class="cl">consumer egress
+</span></span><span class="line"><span class="cl">+
+</span></span><span class="line"><span class="cl">recovery
+</span></span><span class="line"><span class="cl">+
+</span></span><span class="line"><span class="cl">reassignment
+</span></span></code></pre><p>Therefore application ingress alone is not enough for network sizing.</p>
+<h2 id="60-partition-capacity">60. Partition Capacity</h2>
+<p>Too many partitions can increase:</p>
+<ul>
+<li>metadata</li>
+<li>memory</li>
+<li>file descriptors</li>
+<li>leader management</li>
+<li>recovery time</li>
+<li>rebalancing cost</li>
+<li>controller workload</li>
+</ul>
+<blockquote>
+<p>More partitions are not automatically better.</p>
+</blockquote>
+<h2 id="61-failure-headroom">61. Failure Headroom</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1 = 70%
+</span></span><span class="line"><span class="cl">B2 = 70%
+</span></span><span class="line"><span class="cl">B3 = 70%
+</span></span></code></pre><p>If <code>B1</code> fails, <code>B2</code> and <code>B3</code> may become overloaded.</p>
+<p>Therefore:</p>
+<blockquote>
+<p>Fault tolerance requires spare capacity, not just replicas.</p>
+</blockquote>
+<h2 id="62-operational-troubleshooting-model">62. Operational Troubleshooting Model</h2>
+<p>Use a layered approach:</p>
+<ol>
+<li>Network</li>
+<li>Broker process</li>
+<li>Cluster metadata</li>
+<li>Topic</li>
+<li>Partition</li>
+<li>Replication</li>
+<li>Consumer group</li>
+<li>Application</li>
+</ol>
+<p>This prevents confusing symptoms with root causes.</p>
+<h2 id="63-incident-consumer-lag">63. Incident — Consumer Lag</h2>
+<p><strong>Symptom:</strong> consumer lag increasing</p>
+<p>Investigate:</p>
+<ul>
+<li>consumer assignment</li>
+<li>consumer processing time</li>
+<li>CPU</li>
+<li>GC</li>
+<li>downstream systems</li>
+<li>rebalance frequency</li>
+<li>partition count</li>
+<li>broker health</li>
+<li>network</li>
+</ul>
+<blockquote>
+<p>Do not automatically add consumers.</p>
+</blockquote>
+<h2 id="64-incident-isr-shrinks">64. Incident — ISR Shrinks</h2>
+<p><strong>Symptom:</strong> ISR repeatedly shrinks</p>
+<p>Possible causes:</p>
+<ul>
+<li>slow disk</li>
+<li>network latency</li>
+<li>CPU saturation</li>
+<li>GC pauses</li>
+<li>reassignment</li>
+<li>recovery</li>
+<li>throttling</li>
+</ul>
+<p>Persistent ISR shrinkage requires root-cause investigation.</p>
+<h2 id="65-incident-disk-nearly-full">65. Incident — Disk Nearly Full</h2>
+<p>If disk usage reaches a dangerous threshold:</p>
+<ul>
+<li>increase storage</li>
+<li>review retention</li>
+<li>rebalance replicas</li>
+<li>identify abnormal producers</li>
+<li>remove unnecessary data according to policy</li>
+</ul>
+<blockquote>
+<p>Do not wait until the filesystem is completely full.</p>
+</blockquote>
+<h2 id="66-incident-broker-failure">66. Incident — Broker Failure</h2>
+<p><strong>Runbook:</strong></p>
+<ol>
+<li>Confirm broker failure.</li>
+<li>Identify affected partitions.</li>
+<li>Inspect leaders.</li>
+<li>Inspect ISR.</li>
+<li>Check offline partitions.</li>
+<li>Check remaining broker capacity.</li>
+<li>Restore broker.</li>
+<li>Monitor replica recovery.</li>
+<li>Verify ISR expansion.</li>
+<li>Verify cluster health.</li>
+</ol>
+<h2 id="67-incident-network-connectivity">67. Incident — Network Connectivity</h2>
+<p>Check:</p>
+<ul>
+<li>DNS</li>
+<li>IP routing</li>
+<li>firewall</li>
+<li>listeners</li>
+<li><code>advertised.listeners</code></li>
+<li>TLS</li>
+<li>SASL</li>
+<li>broker availability</li>
+</ul>
+<blockquote>
+<p>Kafka connection errors are often caused by metadata or networking rather than a dead broker.</p>
+</blockquote>
+<h2 id="68-incident-topic-configuration">68. Incident — Topic Configuration</h2>
+<p>Before changing configuration:</p>
+<ol>
+<li>Identify current value.</li>
+<li>Determine effective value.</li>
+<li>Understand scope.</li>
+<li>Check business impact.</li>
+<li>Change minimally.</li>
+<li>Monitor.</li>
+<li>Verify.</li>
+</ol>
+<blockquote>
+<p>Avoid random Kafka tuning.</p>
+</blockquote>
+<h2 id="69-certification-drill">69. Certification Drill</h2>
+<h3 id="question-1">Question 1</h3>
+<p>A topic has 6 partitions and a consumer group has 12 consumers. How many consumers can actively own partitions simultaneously?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p>At most <strong>6</strong>. The remaining consumers are idle for that topic assignment.</p>
+</blockquote>
+<h2 id="70-certification-drill">70. Certification Drill</h2>
+<h3 id="question-2">Question 2</h3>
+<p>What does <code>UnderReplicatedPartitions &gt; 0</code> mean?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p>At least one partition has fewer in-sync replicas than its assigned replica set. The partition may still have a leader and serve traffic.</p>
+</blockquote>
+<h2 id="71-certification-drill">71. Certification Drill</h2>
+<h3 id="question-3">Question 3</h3>
+<p>What does <code>OfflinePartitionsCount &gt; 0</code> mean?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p>At least one partition currently has no leader available. This is a high-severity availability condition.</p>
+</blockquote>
+<h2 id="72-certification-drill">72. Certification Drill</h2>
+<h3 id="question-4">Question 4</h3>
+<p>Does adding a broker automatically redistribute all existing data?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p><strong>No.</strong> Partition reassignment or another explicit placement mechanism may be required.</p>
+</blockquote>
+<h2 id="73-certification-drill">73. Certification Drill</h2>
+<h3 id="question-5">Question 5</h3>
+<p>Why throttle reassignment?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p>Replica movement consumes network and disk resources and can interfere with production workloads.</p>
+</blockquote>
+<h2 id="74-certification-drill">74. Certification Drill</h2>
+<h3 id="question-6">Question 6</h3>
+<p>What should you inspect if a Kafka client bootstraps successfully but cannot connect to the broker returned in metadata?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p>Strong candidates include:</p>
+<ul>
+<li><code>advertised.listeners</code></li>
+<li>DNS</li>
+<li>routing</li>
+<li>firewalls</li>
+<li>security protocol</li>
+</ul>
+</blockquote>
+<h2 id="75-certification-drill">75. Certification Drill</h2>
+<h3 id="question-7">Question 7</h3>
+<p>What command is commonly used for consumer group administration?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p><code>kafka-consumer-groups.sh</code></p>
+</blockquote>
+<h2 id="76-certification-drill">76. Certification Drill</h2>
+<h3 id="question-8">Question 8</h3>
+<p>What command is commonly used for topic administration?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p><code>kafka-topics.sh</code></p>
+</blockquote>
+<h2 id="77-certification-drill">77. Certification Drill</h2>
+<h3 id="question-9">Question 9</h3>
+<p>What command is commonly used for configuration administration?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p><code>kafka-configs.sh</code></p>
+</blockquote>
+<h2 id="78-certification-drill">78. Certification Drill</h2>
+<h3 id="question-10">Question 10</h3>
+<p>What command is associated with partition reassignment?</p>
+<p><strong>Answer</strong></p>
+<blockquote>
+<p><code>kafka-reassign-partitions.sh</code></p>
+</blockquote>
+<h2 id="79-administrator-certification-checklist">79. Administrator Certification Checklist</h2>
+<p>You should be able to:</p>
+<ul>
+<li>create topics</li>
+<li>describe topics</li>
+<li>inspect partitions</li>
+<li>inspect leaders</li>
+<li>inspect replicas</li>
+<li>inspect ISR</li>
+<li>alter topic configuration</li>
+<li>understand retention</li>
+<li>understand compaction</li>
+<li>inspect consumer groups</li>
+<li>diagnose lag</li>
+<li>reset offsets safely</li>
+<li>perform reassignment</li>
+<li>understand reassignment throttling</li>
+<li>identify offline partitions</li>
+<li>identify under-replication</li>
+<li>monitor disk</li>
+<li>monitor network</li>
+<li>understand KRaft quorum</li>
+<li>troubleshoot advertised listeners</li>
+<li>understand quotas</li>
+<li>understand security administration</li>
+<li>reason about capacity</li>
+<li>build incident runbooks</li>
+</ul>
+<h2 id="80-final-administrator-mental-model">80. Final Administrator Mental Model</h2>
+<p>When something breaks:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Client problem
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Network?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Broker available?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Metadata healthy?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Partition has leader?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">ISR healthy?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Consumer group healthy?
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Application healthy?
+</span></span></code></pre><p>For every configuration change:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Observe
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Understand
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Change
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Monitor
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Verify
+</span></span></code></pre><h2 id="81-chapter-takeaway">81. Chapter Takeaway</h2>
+<p>Kafka administration is the discipline of maintaining the relationship between brokers, partitions, replicas, consumers, configuration, and infrastructure while preserving availability, durability, performance, and operational safety.</p>
+<blockquote>
+<p>For certification, do not memorize commands in isolation.</p>
+</blockquote>
+<p>For each command, understand:</p>
+<ul>
+<li>What does it inspect?</li>
+<li>What does it change?</li>
+<li>What risk does it create?</li>
+<li>How do I verify the result?</li>
+</ul>
+<p>That mental model is much more valuable than memorizing shell syntax.</p>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <a class="prev" href="kafka-certification-mastery-chapter-7.html"><span class="nav-label">Previous</span><span class="nav-title">Chapter 7 — Consumer Groups</span></a>
+          <a class="next" href="kafka-certification-mastery-chapter-9.html"><span class="nav-label">Next</span><span class="nav-title">Chapter 9 — Kafka Security Deep Dive</span></a>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 8 of 16</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "chapters\/kafka-certification-mastery-chapter-8.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

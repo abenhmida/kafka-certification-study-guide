@@ -1,6 +1,6 @@
 # Chapter 4 — Producers Deep Dive
 
-> Certification track: CCDAK + CCAAK  
+> Certification track: Kafka Developer + Kafka Administrator  
 > Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
 
 ---

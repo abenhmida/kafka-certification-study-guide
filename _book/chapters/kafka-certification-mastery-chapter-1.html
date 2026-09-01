@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Certification track: CCDAK &#43; CCAAK Reference foundation: Kafka: The Definitive Guide , 2nd Edition Table of Contents Kafka Mental Model 1. What Kafka Actually…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Chapter 1 — Kafka Mental Model - Kafka Certification Study Guide">
+<meta property="og:description" content="Certification track: CCDAK &#43; CCAAK Reference foundation: Kafka: The Definitive Guide , 2nd Edition Table of Contents Kafka Mental Model 1. What Kafka Actually…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Chapter 1 — Kafka Mental Model - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="kafka-certification-mastery-chapter-1.html">Chapter 1 — Kafka Mental Model</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Chapter 1 — Kafka Mental Model</h1>
+        <blockquote>
+<p>Certification track: CCDAK + CCAAK<br>
+Reference foundation: <em>Kafka: The Definitive Guide</em>, 2nd Edition</p>
+</blockquote>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#kafka-mental-model">Kafka Mental Model</a></li>
+<li><a href="#1-what-kafka-actually-is">1. What Kafka Actually Is</a></li>
+<li><a href="#2-kafkas-fundamental-abstraction">2. Kafka's Fundamental Abstraction</a></li>
+<li><a href="#3-kafka-records">3. Kafka Records</a></li>
+<li><a href="#4-topics">4. Topics</a></li>
+<li><a href="#5-partitions">5. Partitions</a></li>
+<li><a href="#certification-rule-1">Certification Rule #1</a></li>
+<li><a href="#6-why-kafka-uses-partitions">6. Why Kafka Uses Partitions</a></li>
+<li><a href="#61-scalability">6.1 Scalability</a></li>
+<li><a href="#62-parallelism">6.2 Parallelism</a></li>
+<li><a href="#7-brokers">7. Brokers</a></li>
+<li><a href="#8-replication">8. Replication</a></li>
+<li><a href="#9-leaders-and-followers">9. Leaders and Followers</a></li>
+<li><a href="#10-isr-in-sync-replicas">10. ISR — In-Sync Replicas</a></li>
+<li><a href="#11-producers">11. Producers</a></li>
+<li><a href="#12-partitioning">12. Partitioning</a></li>
+<li><a href="#certification-rule-2">Certification Rule #2</a></li>
+<li><a href="#13-consumers">13. Consumers</a></li>
+<li><a href="#14-offsets">14. Offsets</a></li>
+<li><a href="#15-consumer-groups">15. Consumer Groups</a></li>
+<li><a href="#16-the-golden-consumer-group-rule">16. The Golden Consumer-Group Rule</a></li>
+<li><a href="#certification-rule-3">Certification Rule #3</a></li>
+<li><a href="#17-multiple-consumer-groups">17. Multiple Consumer Groups</a></li>
+<li><a href="#18-kafka-is-not-a-traditional-queue">18. Kafka Is Not a Traditional Queue</a></li>
+<li><a href="#19-retention">19. Retention</a></li>
+<li><a href="#20-consumer-position-vs-committed-offset">20. Consumer Position vs Committed Offset</a></li>
+<li><a href="#21-kafkas-fundamental-data-flow">21. Kafka's Fundamental Data Flow</a></li>
+<li><a href="#next-chapter">Next Chapter</a></li>
+</ul>
+<hr>
+<h2 id="kafka-mental-model">Kafka Mental Model</h2>
+<blockquote>
+<p>Certification track: CCDAK + CCAAK<br>
+Reference foundation: <em>Kafka: The Definitive Guide</em>, 2nd Edition</p>
+</blockquote>
+<hr>
+<h2 id="1-what-kafka-actually-is">1. What Kafka Actually Is</h2>
+<p>Apache Kafka is a <strong>distributed event streaming platform</strong>.</p>
+<p>The key abstraction is the <strong>log</strong>.</p>
+<p>A Kafka topic is not simply a queue containing messages waiting to be consumed. Conceptually, Kafka stores an <strong>ordered, append-only sequence of records</strong>.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: orders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Partition 0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">offset
+</span></span><span class="line"><span class="cl">  0 ────────► OrderCreated
+</span></span><span class="line"><span class="cl">  1 ────────► PaymentReceived
+</span></span><span class="line"><span class="cl">  2 ────────► OrderValidated
+</span></span><span class="line"><span class="cl">  3 ────────► OrderShipped
+</span></span><span class="line"><span class="cl">  4 ────────► OrderDelivered
+</span></span></code></pre><p>Records remain in the partition according to Kafka's retention policy.</p>
+<p>A consumer does not normally &quot;remove&quot; a record from Kafka. Instead, the consumer maintains a <strong>position</strong> in the log.</p>
+<p>This distinction is fundamental.</p>
+<hr>
+<h2 id="2-kafkas-fundamental-abstraction">2. Kafka's Fundamental Abstraction</h2>
+<p>Think about Kafka as:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 KAFKA
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ┌──────────────────────┐
+</span></span><span class="line"><span class="cl">        │        Cluster       │
+</span></span><span class="line"><span class="cl">        │                      │
+</span></span><span class="line"><span class="cl">        │   ┌──────────────┐   │
+</span></span><span class="line"><span class="cl">        │   │    Topic     │   │
+</span></span><span class="line"><span class="cl">        │   └──────┬───────┘   │
+</span></span><span class="line"><span class="cl">        │          │           │
+</span></span><span class="line"><span class="cl">        │     Partitions       │
+</span></span><span class="line"><span class="cl">        │          │           │
+</span></span><span class="line"><span class="cl">        │     ┌────┴────┐      │
+</span></span><span class="line"><span class="cl">        │     ▼    ▼    ▼      │
+</span></span><span class="line"><span class="cl">        │    P0   P1   P2      │
+</span></span><span class="line"><span class="cl">        │                      │
+</span></span><span class="line"><span class="cl">        └──────────────────────┘
+</span></span></code></pre><p>A <strong>topic</strong> is a logical grouping of events.</p>
+<p>A <strong>partition</strong> is the unit of:</p>
+<ul>
+<li>ordering</li>
+<li>storage</li>
+<li>replication</li>
+<li>parallelism</li>
+</ul>
+<p>This is why partitions are so important.</p>
+<hr>
+<h2 id="3-kafka-records">3. Kafka Records</h2>
+<p>A Kafka record can be thought of as:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Record
+</span></span><span class="line"><span class="cl"> ├── key
+</span></span><span class="line"><span class="cl"> ├── value
+</span></span><span class="line"><span class="cl"> ├── headers
+</span></span><span class="line"><span class="cl"> ├── timestamp
+</span></span><span class="line"><span class="cl"> └── offset
+</span></span></code></pre><p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">key:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">customer-42
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">value:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  &#34;orderId&#34;: &#34;ORD-1001&#34;,
+</span></span><span class="line"><span class="cl">  &#34;customerId&#34;: &#34;customer-42&#34;,
+</span></span><span class="line"><span class="cl">  &#34;amount&#34;: 149.99
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre><p>The key has enormous importance because Kafka can use it to determine the partition.</p>
+<hr>
+<h2 id="4-topics">4. Topics</h2>
+<p>A topic is a logical name.</p>
+<p>Examples:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders
+</span></span><span class="line"><span class="cl">payments
+</span></span><span class="line"><span class="cl">customers
+</span></span><span class="line"><span class="cl">shipments
+</span></span><span class="line"><span class="cl">inventory-events
+</span></span></code></pre><p>But do not think:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders = one big file
+</span></span></code></pre><p>Instead:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ├── partition 0
+</span></span><span class="line"><span class="cl">   ├── partition 1
+</span></span><span class="line"><span class="cl">   ├── partition 2
+</span></span><span class="line"><span class="cl">   └── partition 3
+</span></span></code></pre><p>Each partition is independently ordered.</p>
+<p>Therefore:</p>
+<blockquote>
+<p><strong>Kafka guarantees ordering within a partition, not across an entire topic.</strong></p>
+</blockquote>
+<p>This is one of the most important certification facts.</p>
+<hr>
+<h2 id="5-partitions">5. Partitions</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: orders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0:
+</span></span><span class="line"><span class="cl">0 → A
+</span></span><span class="line"><span class="cl">1 → B
+</span></span><span class="line"><span class="cl">2 → C
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P1:
+</span></span><span class="line"><span class="cl">0 → D
+</span></span><span class="line"><span class="cl">1 → E
+</span></span><span class="line"><span class="cl">2 → F
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P2:
+</span></span><span class="line"><span class="cl">0 → G
+</span></span><span class="line"><span class="cl">1 → H
+</span></span><span class="line"><span class="cl">2 → I
+</span></span></code></pre><p>There is no global ordering such as:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">A → B → C → D → E → F → ...
+</span></span></code></pre><p>Kafka only guarantees:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0: A &lt; B &lt; C
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P1: D &lt; E &lt; F
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P2: G &lt; H &lt; I
+</span></span></code></pre><h3 id="certification-rule-1">Certification Rule #1</h3>
+<blockquote>
+<p><strong>Ordering is guaranteed only within a partition.</strong></p>
+</blockquote>
+<hr>
+<h2 id="6-why-kafka-uses-partitions">6. Why Kafka Uses Partitions</h2>
+<p>Partitions solve two fundamental problems.</p>
+<h3 id="61-scalability">6.1 Scalability</h3>
+<p>A single partition cannot provide unlimited throughput.</p>
+<p>Kafka distributes partitions across brokers.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 Topic orders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">              ┌──────────────┐
+</span></span><span class="line"><span class="cl">              │ Partition 0  │
+</span></span><span class="line"><span class="cl">              └──────────────┘
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">                    ▼
+</span></span><span class="line"><span class="cl">                Broker 1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">              ┌──────────────┐
+</span></span><span class="line"><span class="cl">              │ Partition 1  │
+</span></span><span class="line"><span class="cl">              └──────────────┘
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">                    ▼
+</span></span><span class="line"><span class="cl">                Broker 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">              ┌──────────────┐
+</span></span><span class="line"><span class="cl">              │ Partition 2  │
+</span></span><span class="line"><span class="cl">              └──────────────┘
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">                    ▼
+</span></span><span class="line"><span class="cl">                Broker 3
+</span></span></code></pre><h3 id="62-parallelism">6.2 Parallelism</h3>
+<p>Different consumers can process different partitions simultaneously.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 ──────► Consumer 1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P1 ──────► Consumer 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P2 ──────► Consumer 3
+</span></span></code></pre><p>This is the foundation of Kafka's scalability model.</p>
+<hr>
+<h2 id="7-brokers">7. Brokers</h2>
+<p>A broker is a Kafka server.</p>
+<p>Imagine:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka Cluster
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">┌─────────────────────────────┐
+</span></span><span class="line"><span class="cl">│                             │
+</span></span><span class="line"><span class="cl">│ Broker 1                    │
+</span></span><span class="line"><span class="cl">│ Broker 2                    │
+</span></span><span class="line"><span class="cl">│ Broker 3                    │
+</span></span><span class="line"><span class="cl">│                             │
+</span></span><span class="line"><span class="cl">└─────────────────────────────┘
+</span></span></code></pre><p>Each broker can store partitions.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl"> ├── orders-0
+</span></span><span class="line"><span class="cl"> ├── payments-1
+</span></span><span class="line"><span class="cl"> └── customers-2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl"> ├── orders-1
+</span></span><span class="line"><span class="cl"> ├── payments-2
+</span></span><span class="line"><span class="cl"> └── customers-0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span><span class="line"><span class="cl"> ├── orders-2
+</span></span><span class="line"><span class="cl"> ├── payments-0
+</span></span><span class="line"><span class="cl"> └── customers-1
+</span></span></code></pre><p>This distributes storage and workload.</p>
+<hr>
+<h2 id="8-replication">8. Replication</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: orders
+</span></span><span class="line"><span class="cl">Partition: 0
+</span></span><span class="line"><span class="cl">Replication factor: 3
+</span></span></code></pre><p>Kafka can store:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">└── orders-0
+</span></span><span class="line"><span class="cl">      Leader
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">└── orders-0
+</span></span><span class="line"><span class="cl">      Follower
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span><span class="line"><span class="cl">└── orders-0
+</span></span><span class="line"><span class="cl">      Follower
+</span></span></code></pre><p>There are three replicas.</p>
+<p>Therefore:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span></code></pre><p>Replication provides fault tolerance and durability.</p>
+<hr>
+<h2 id="9-leaders-and-followers">9. Leaders and Followers</h2>
+<p>For each partition, one replica is the <strong>leader</strong>.</p>
+<p>The other replicas are followers.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">              orders-0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                 Leader
+</span></span><span class="line"><span class="cl">                   │
+</span></span><span class="line"><span class="cl">             ┌─────┴─────┐
+</span></span><span class="line"><span class="cl">             ▼            ▼
+</span></span><span class="line"><span class="cl">          Broker 2     Broker 3
+</span></span><span class="line"><span class="cl">          Follower     Follower
+</span></span></code></pre><p>Producers normally send records to the partition leader.</p>
+<p>Followers replicate the leader's log.</p>
+<hr>
+<h2 id="10-isr-in-sync-replicas">10. ISR — In-Sync Replicas</h2>
+<p>ISR means:</p>
+<blockquote>
+<p><strong>In-Sync Replicas</strong></p>
+</blockquote>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders-0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 1 → Leader
+</span></span><span class="line"><span class="cl">Broker 2 → Follower
+</span></span><span class="line"><span class="cl">Broker 3 → Follower
+</span></span></code></pre><p>If all replicas are sufficiently caught up:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = {Broker1, Broker2, Broker3}
+</span></span></code></pre><p>If Broker 3 falls behind and leaves the ISR:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = {Broker1, Broker2}
+</span></span></code></pre><p>ISR becomes extremely important when discussing:</p>
+<ul>
+<li><code>acks</code></li>
+<li><code>min.insync.replicas</code></li>
+<li>durability</li>
+<li>leader election</li>
+<li>producer failures</li>
+<li>broker failures</li>
+</ul>
+<hr>
+<h2 id="11-producers">11. Producers</h2>
+<p>A producer writes records to Kafka.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Application
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     │ produce()
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl"> Kafka Producer
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">   Kafka
+</span></span></code></pre><p>Example Java:</p>
+<pre class="chroma light" data-lang="java"><code class="language-java"><span class="line"><span class="cl"><span class="n">ProducerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="o">=</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">ProducerRecord</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;orders&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;customer-42&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;{\&#34;orderId\&#34;:\&#34;ORD-1001\&#34;}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">producer</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="n">record</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre><p>The producer ultimately needs to determine:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Which topic?
+</span></span><span class="line"><span class="cl">Which partition?
+</span></span><span class="line"><span class="cl">Which broker?
+</span></span><span class="line"><span class="cl">Which leader?
+</span></span></code></pre><hr>
+<h2 id="12-partitioning">12. Partitioning</h2>
+<p>Suppose we have:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0
+</span></span><span class="line"><span class="cl">P1
+</span></span><span class="line"><span class="cl">P2
+</span></span><span class="line"><span class="cl">P3
+</span></span></code></pre><p>And the producer sends:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">key = customer-42
+</span></span></code></pre><p>The partitioning mechanism determines the destination partition.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">customer-42
+</span></span><span class="line"><span class="cl">      │
+</span></span><span class="line"><span class="cl">      ▼
+</span></span><span class="line"><span class="cl">Partitioner
+</span></span><span class="line"><span class="cl">      │
+</span></span><span class="line"><span class="cl">      ▼
+</span></span><span class="line"><span class="cl">Partition 2
+</span></span></code></pre><p>If the same key consistently maps to the same partition, events for that key can maintain ordering.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">customer-42
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OrderCreated
+</span></span><span class="line"><span class="cl">PaymentReceived
+</span></span><span class="line"><span class="cl">OrderShipped
+</span></span><span class="line"><span class="cl">OrderDelivered
+</span></span></code></pre><p>could all go to:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders-2
+</span></span></code></pre><h3 id="certification-rule-2">Certification Rule #2</h3>
+<blockquote>
+<p>If ordering for an entity matters, use an appropriate key so that related records are routed to the same partition.</p>
+</blockquote>
+<hr>
+<h2 id="13-consumers">13. Consumers</h2>
+<p>A consumer reads records from Kafka.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka
+</span></span><span class="line"><span class="cl">  │
+</span></span><span class="line"><span class="cl">  ▼
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">  │
+</span></span><span class="line"><span class="cl">  ▼
+</span></span><span class="line"><span class="cl">Application
+</span></span></code></pre><p>Kafka does not normally delete a record after it is read.</p>
+<p>Instead:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0 ── A
+</span></span><span class="line"><span class="cl">1 ── B
+</span></span><span class="line"><span class="cl">2 ── C
+</span></span><span class="line"><span class="cl">3 ── D
+</span></span><span class="line"><span class="cl">4 ── E
+</span></span></code></pre><p>The consumer maintains a position in the log.</p>
+<hr>
+<h2 id="14-offsets">14. Offsets</h2>
+<p>Every record in a partition has an offset.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders-0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Offset 0 → Order A
+</span></span><span class="line"><span class="cl">Offset 1 → Order B
+</span></span><span class="line"><span class="cl">Offset 2 → Order C
+</span></span><span class="line"><span class="cl">Offset 3 → Order D
+</span></span><span class="line"><span class="cl">Offset 4 → Order E
+</span></span></code></pre><p>Important:</p>
+<blockquote>
+<p><strong>An offset is unique only within a partition.</strong></p>
+</blockquote>
+<p>This is valid:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">orders-0 offset 42
+</span></span><span class="line"><span class="cl">orders-1 offset 42
+</span></span><span class="line"><span class="cl">orders-2 offset 42
+</span></span></code></pre><p>They are three different records.</p>
+<p>There is no global offset across the topic.</p>
+<hr>
+<h2 id="15-consumer-groups">15. Consumer Groups</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: orders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0
+</span></span><span class="line"><span class="cl">P1
+</span></span><span class="line"><span class="cl">P2
+</span></span></code></pre><p>And:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Consumer Group: order-service
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Consumer A
+</span></span><span class="line"><span class="cl">Consumer B
+</span></span><span class="line"><span class="cl">Consumer C
+</span></span></code></pre><p>Kafka can assign:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 ─────► Consumer A
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P1 ─────► Consumer B
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P2 ─────► Consumer C
+</span></span></code></pre><p>This enables parallel processing.</p>
+<hr>
+<h2 id="16-the-golden-consumer-group-rule">16. The Golden Consumer-Group Rule</h2>
+<p>For a single consumer group:</p>
+<blockquote>
+<p><strong>A partition is assigned to at most one consumer at a time.</strong></p>
+</blockquote>
+<p>Therefore:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">3 partitions
+</span></span><span class="line"><span class="cl">3 consumers
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0 → C1
+</span></span><span class="line"><span class="cl">P1 → C2
+</span></span><span class="line"><span class="cl">P2 → C3
+</span></span></code></pre><p>But:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">3 partitions
+</span></span><span class="line"><span class="cl">5 consumers
+</span></span></code></pre><p>means:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0 → C1
+</span></span><span class="line"><span class="cl">P1 → C2
+</span></span><span class="line"><span class="cl">P2 → C3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C4 → idle
+</span></span><span class="line"><span class="cl">C5 → idle
+</span></span></code></pre><h3 id="certification-rule-3">Certification Rule #3</h3>
+<blockquote>
+<p>Maximum active consumer parallelism within one consumer group is bounded by the number of partitions.</p>
+</blockquote>
+<hr>
+<h2 id="17-multiple-consumer-groups">17. Multiple Consumer Groups</h2>
+<p>Suppose two independent applications consume <code>orders</code>:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">order-service
+</span></span><span class="line"><span class="cl">analytics-service
+</span></span></code></pre><p>They can use different consumer groups.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 orders
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">          ┌─────────┴─────────┐
+</span></span><span class="line"><span class="cl">          │                   │
+</span></span><span class="line"><span class="cl">          ▼                   ▼
+</span></span><span class="line"><span class="cl">     order-service        analytics
+</span></span><span class="line"><span class="cl">     group A              group B
+</span></span></code></pre><p>Each group tracks its own offsets.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Group A offset = 500
+</span></span><span class="line"><span class="cl">Group B offset = 120
+</span></span></code></pre><p>They do not interfere with one another.</p>
+<hr>
+<h2 id="18-kafka-is-not-a-traditional-queue">18. Kafka Is Not a Traditional Queue</h2>
+<p>Traditional queue model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ▼
+</span></span><span class="line"><span class="cl"> Queue
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ▼
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ▼
+</span></span><span class="line"><span class="cl">Message removed
+</span></span></code></pre><p>Kafka model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ▼
+</span></span><span class="line"><span class="cl">Kafka Log
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ├────────► Consumer Group A
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ├────────► Consumer Group B
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   └────────► Consumer Group C
+</span></span></code></pre><p>The record can remain available according to retention.</p>
+<p>Different groups can independently consume it.</p>
+<hr>
+<h2 id="19-retention">19. Retention</h2>
+<p>Kafka normally does not ask:</p>
+<blockquote>
+<p>&quot;Has somebody consumed this message?&quot;</p>
+</blockquote>
+<p>Instead, Kafka asks:</p>
+<blockquote>
+<p>&quot;Does this record still satisfy the retention policy?&quot;</p>
+</blockquote>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">retention.ms = 7 days
+</span></span></code></pre><p>A record may remain available for seven days even if every consumer has already processed it.</p>
+<p>This is fundamentally different from many traditional messaging systems.</p>
+<hr>
+<h2 id="20-consumer-position-vs-committed-offset">20. Consumer Position vs Committed Offset</h2>
+<p>This distinction causes many certification mistakes.</p>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Offset
+</span></span><span class="line"><span class="cl">0 → A
+</span></span><span class="line"><span class="cl">1 → B
+</span></span><span class="line"><span class="cl">2 → C
+</span></span><span class="line"><span class="cl">3 → D
+</span></span><span class="line"><span class="cl">4 → E
+</span></span></code></pre><p>A consumer has processed A, B and C.</p>
+<p>Its current position may be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">3
+</span></span></code></pre><p>Meaning the next record to consume is offset 3.</p>
+<p>But the committed offset may still be different depending on when commits happen.</p>
+<p>Therefore distinguish:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">record offset
+</span></span><span class="line"><span class="cl">consumer position
+</span></span><span class="line"><span class="cl">committed offset
+</span></span></code></pre><p>These concepts will receive dedicated treatment later in the curriculum.</p>
+<hr>
+<h2 id="21-kafkas-fundamental-data-flow">21. Kafka's Fundamental Data Flow</h2>
+<p>The complete path can be visualized as:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                PRODUCER
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Application
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">KafkaProducer
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Serializer
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Partitioner
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Partition
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Leader Broker
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Replication
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Kafka Log
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Deserializer
+</span></span><span class="line"><span class="cl">     │
+</span></span><span class="line"><span class="cl">     ▼
+</span></span><span class="line"><span class="cl">Application
+</span></span></code></pre><p>If you understand this pipeline, you already have the foundation for a large portion of the certification.</p>
+<hr>
+<h2 id="22-administrator-mental-model">22. Administrator Mental Model</h2>
+<p>An administrator asks:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">How many brokers?
+</span></span><span class="line"><span class="cl">How many partitions?
+</span></span><span class="line"><span class="cl">What replication factor?
+</span></span><span class="line"><span class="cl">Where are replicas?
+</span></span><span class="line"><span class="cl">What is the ISR?
+</span></span><span class="line"><span class="cl">What is the leader?
+</span></span><span class="line"><span class="cl">What is the consumer lag?
+</span></span><span class="line"><span class="cl">What is disk utilization?
+</span></span><span class="line"><span class="cl">What are the broker metrics?
+</span></span><span class="line"><span class="cl">What happens if a broker dies?
+</span></span><span class="line"><span class="cl">How is Kafka secured?
+</span></span><span class="line"><span class="cl">How is Kafka monitored?
+</span></span></code></pre><p>The administrator's mental model is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 CLUSTER
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">       ┌───────────┬───────────┐
+</span></span><span class="line"><span class="cl">       │           │           │
+</span></span><span class="line"><span class="cl">    Broker 1    Broker 2    Broker 3
+</span></span><span class="line"><span class="cl">       │           │           │
+</span></span><span class="line"><span class="cl">       ├─────┐     ├─────┐     ├─────┐
+</span></span><span class="line"><span class="cl">       ▼     ▼     ▼     ▼     ▼     ▼
+</span></span><span class="line"><span class="cl">      P0     P1    P2    P3    P4    P5
+</span></span><span class="line"><span class="cl">       │           │           │
+</span></span><span class="line"><span class="cl">       └───────────┼───────────┘
+</span></span><span class="line"><span class="cl">                   ▼
+</span></span><span class="line"><span class="cl">              Replication
+</span></span><span class="line"><span class="cl">                   │
+</span></span><span class="line"><span class="cl">                   ▼
+</span></span><span class="line"><span class="cl">                  ISR
+</span></span></code></pre><hr>
+<h2 id="23-developer-mental-model">23. Developer Mental Model</h2>
+<p>A developer thinks about:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   │
+</span></span><span class="line"><span class="cl">   ├── key
+</span></span><span class="line"><span class="cl">   ├── serializer
+</span></span><span class="line"><span class="cl">   ├── partitioner
+</span></span><span class="line"><span class="cl">   ├── acks
+</span></span><span class="line"><span class="cl">   ├── retries
+</span></span><span class="line"><span class="cl">   └── idempotence
+</span></span><span class="line"><span class="cl">          │
+</span></span><span class="line"><span class="cl">          ▼
+</span></span><span class="line"><span class="cl">       Kafka
+</span></span><span class="line"><span class="cl">          │
+</span></span><span class="line"><span class="cl">          ▼
+</span></span><span class="line"><span class="cl">     Consumer
+</span></span><span class="line"><span class="cl">          │
+</span></span><span class="line"><span class="cl">          ├── group
+</span></span><span class="line"><span class="cl">          ├── poll
+</span></span><span class="line"><span class="cl">          ├── offset
+</span></span><span class="line"><span class="cl">          ├── commit
+</span></span><span class="line"><span class="cl">          └── rebalance
+</span></span></code></pre><p>A senior Kafka engineer must understand both models.</p>
+<hr>
+<h2 id="24-certification-trap-1-more-consumers-than-partitions">24. Certification Trap #1 — More Consumers Than Partitions</h2>
+<p><strong>Question</strong></p>
+<p>A topic has 6 partitions and a consumer group has 10 consumers. How many consumers can actively consume partitions?</p>
+<p><strong>Answer</strong></p>
+<p><strong>6</strong></p>
+<p>Not 10.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">6 partitions
+</span></span><span class="line"><span class="cl">     ↓
+</span></span><span class="line"><span class="cl">maximum 6 active consumers
+</span></span></code></pre><p>Four consumers remain idle.</p>
+<hr>
+<h2 id="25-certification-trap-2-ordering">25. Certification Trap #2 — Ordering</h2>
+<p><strong>Question</strong></p>
+<p>Does Kafka guarantee ordering across all partitions of a topic?</p>
+<p><strong>Answer</strong></p>
+<p><strong>No.</strong></p>
+<p>Kafka guarantees ordering within each partition.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">P0: A → B → C
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P1: D → E → F
+</span></span></code></pre><p>Kafka does not guarantee:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">A → B → C → D → E → F
+</span></span></code></pre><hr>
+<h2 id="26-certification-trap-3-consumption-deletes-records">26. Certification Trap #3 — Consumption Deletes Records</h2>
+<p><strong>Question</strong></p>
+<p>When a consumer reads a record, is the record removed from Kafka?</p>
+<p><strong>Answer</strong></p>
+<p><strong>No.</strong></p>
+<p>The record remains according to retention and/or compaction rules.</p>
+<p>The consumer advances its position and manages committed offsets independently.</p>
+<hr>
+<h2 id="27-certification-trap-4-global-offsets">27. Certification Trap #4 — Global Offsets</h2>
+<p><strong>Question</strong></p>
+<p>Is an offset globally unique within Kafka?</p>
+<p><strong>Answer</strong></p>
+<p><strong>No.</strong></p>
+<p>Offsets are scoped to a partition.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">topic-A partition-0 offset 100
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">topic-A partition-1 offset 100
+</span></span></code></pre><p>These are different records.</p>
+<hr>
+<h2 id="28-certification-trap-5-replication">28. Certification Trap #5 — Replication</h2>
+<p><strong>Question</strong></p>
+<p>Does replication mean three brokers process the same record independently?</p>
+<p><strong>Answer</strong></p>
+<p>Not quite.</p>
+<p>For a partition:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Leader
+</span></span><span class="line"><span class="cl">  │
+</span></span><span class="line"><span class="cl">  ├── record
+</span></span><span class="line"><span class="cl">  │
+</span></span><span class="line"><span class="cl">  ├────► Follower
+</span></span><span class="line"><span class="cl">  │
+</span></span><span class="line"><span class="cl">  └────► Follower
+</span></span></code></pre><p>Followers replicate the partition's log.</p>
+<p>There is one partition leader responsible for serving writes.</p>
+<hr>
+<h2 id="29-hands-on-lab-create-a-topic">29. Hands-On Lab — Create a Topic</h2>
+<p>Create:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: certification-orders
+</span></span><span class="line"><span class="cl">Partitions: 3
+</span></span><span class="line"><span class="cl">Replication factor: 1
+</span></span></code></pre><p>Example:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --create <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --topic certification-orders <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --partitions <span class="m">3</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --replication-factor <span class="m">1</span>
+</span></span></code></pre><p>Then inspect it:</p>
+<pre class="chroma light" data-lang="bash"><code class="language-bash"><span class="line"><span class="cl">kafka-topics.sh <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --bootstrap-server localhost:9092 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --describe <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --topic certification-orders
+</span></span></code></pre><p>Identify:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic
+</span></span><span class="line"><span class="cl">Partition
+</span></span><span class="line"><span class="cl">Leader
+</span></span><span class="line"><span class="cl">Replicas
+</span></span><span class="line"><span class="cl">ISR
+</span></span></code></pre><p>Do not proceed until you can explain every field.</p>
+<hr>
+<h2 id="30-developer-exercise-partitioning">30. Developer Exercise — Partitioning</h2>
+<p>Produce records using different keys:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">customer-1
+</span></span><span class="line"><span class="cl">customer-1
+</span></span><span class="line"><span class="cl">customer-2
+</span></span><span class="line"><span class="cl">customer-2
+</span></span><span class="line"><span class="cl">customer-3
+</span></span></code></pre><p>Inspect which partitions receive them.</p>
+<p>The objective is to observe:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">same key
+</span></span><span class="line"><span class="cl">   ↓
+</span></span><span class="line"><span class="cl">same partition
+</span></span><span class="line"><span class="cl">   ↓
+</span></span><span class="line"><span class="cl">ordering for that key
+</span></span></code></pre><p>Do not simply memorize this. Observe it.</p>
+<hr>
+<h2 id="31-administrator-exercise-replication">31. Administrator Exercise — Replication</h2>
+<p>Create:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">certification-orders
+</span></span></code></pre><p>with:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">partitions = 6
+</span></span><span class="line"><span class="cl">replication.factor = 3
+</span></span></code></pre><p>Then inspect:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Leader
+</span></span><span class="line"><span class="cl">Replicas
+</span></span><span class="line"><span class="cl">ISR
+</span></span></code></pre><p>Draw the cluster manually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl"> ├── certification-orders-0
+</span></span><span class="line"><span class="cl"> ├── certification-orders-?
+</span></span><span class="line"><span class="cl"> └── certification-orders-?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl"> ├── ...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span><span class="line"><span class="cl"> ├── ...
+</span></span></code></pre><p>The objective is to make partition placement intuitive.</p>
+<hr>
+<h2 id="32-mental-model-checkpoint">32. Mental Model Checkpoint</h2>
+<p>Before moving to Chapter 2, you should be able to explain this diagram without notes:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                    KAFKA CLUSTER
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ┌────────────────────────────────┐
+</span></span><span class="line"><span class="cl">        │                                │
+</span></span><span class="line"><span class="cl">        │             Topic              │
+</span></span><span class="line"><span class="cl">        │            &#34;orders&#34;            │
+</span></span><span class="line"><span class="cl">        │                                │
+</span></span><span class="line"><span class="cl">        │  ┌────┐  ┌────┐  ┌────┐       │
+</span></span><span class="line"><span class="cl">        │  │ P0 │  │ P1 │  │ P2 │       │
+</span></span><span class="line"><span class="cl">        │  └─┬──┘  └─┬──┘  └─┬──┘       │
+</span></span><span class="line"><span class="cl">        │    │       │       │           │
+</span></span><span class="line"><span class="cl">        │    ▼       ▼       ▼           │
+</span></span><span class="line"><span class="cl">        │ Broker1 Broker2 Broker3        │
+</span></span><span class="line"><span class="cl">        │    │       │       │           │
+</span></span><span class="line"><span class="cl">        │    └───────┼───────┘           │
+</span></span><span class="line"><span class="cl">        │            │                   │
+</span></span><span class="line"><span class="cl">        │        Replication             │
+</span></span><span class="line"><span class="cl">        │            │                   │
+</span></span><span class="line"><span class="cl">        │            ▼                   │
+</span></span><span class="line"><span class="cl">        │           ISR                  │
+</span></span><span class="line"><span class="cl">        │                                │
+</span></span><span class="line"><span class="cl">        └────────────────────────────────┘
+</span></span><span class="line"><span class="cl">                    ▲
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">               Producer
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">                    ▼
+</span></span><span class="line"><span class="cl">               Consumer
+</span></span><span class="line"><span class="cl">                    │
+</span></span><span class="line"><span class="cl">                    ▼
+</span></span><span class="line"><span class="cl">             Consumer Group
+</span></span></code></pre><p>You should be able to answer:</p>
+<ol>
+<li>What is a topic?</li>
+<li>What is a partition?</li>
+<li>Why do partitions exist?</li>
+<li>What is an offset?</li>
+<li>Where is ordering guaranteed?</li>
+<li>What is a broker?</li>
+<li>What is a leader?</li>
+<li>What is a follower?</li>
+<li>What is ISR?</li>
+<li>What is a consumer group?</li>
+<li>Why can five consumers not fully utilize a three-partition topic?</li>
+<li>Why can two different consumer groups independently consume the same topic?</li>
+<li>Does consuming delete records?</li>
+<li>Is an offset globally unique?</li>
+<li>Why does the record key matter?</li>
+</ol>
+<p>If those 15 answers are intuitive rather than memorized, <strong>Chapter 1 is complete</strong>.</p>
+<hr>
+<h2 id="33-chapter-1-summary">33. Chapter 1 Summary</h2>
+<p>The core Kafka mental model is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                    KAFKA
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">    │
+</span></span><span class="line"><span class="cl">    ▼
+</span></span><span class="line"><span class="cl">  Topic
+</span></span><span class="line"><span class="cl">    │
+</span></span><span class="line"><span class="cl">    ├── Partition 0 ── Leader ── Replicas
+</span></span><span class="line"><span class="cl">    ├── Partition 1 ── Leader ── Replicas
+</span></span><span class="line"><span class="cl">    └── Partition 2 ── Leader ── Replicas
+</span></span><span class="line"><span class="cl">                          │
+</span></span><span class="line"><span class="cl">                         ISR
+</span></span><span class="line"><span class="cl">                          │
+</span></span><span class="line"><span class="cl">                          ▼
+</span></span><span class="line"><span class="cl">                    Consumer Group
+</span></span><span class="line"><span class="cl">                    ┌─────┼─────┐
+</span></span><span class="line"><span class="cl">                    ▼     ▼     ▼
+</span></span><span class="line"><span class="cl">                   C1    C2    C3
+</span></span></code></pre><p>Remember these rules:</p>
+<ol>
+<li><strong>Topics are divided into partitions.</strong></li>
+<li><strong>Ordering is guaranteed within a partition.</strong></li>
+<li><strong>Offsets are scoped to partitions.</strong></li>
+<li><strong>Partitions provide scalability and parallelism.</strong></li>
+<li><strong>Replication provides fault tolerance and durability.</strong></li>
+<li><strong>Each partition has a leader.</strong></li>
+<li><strong>Followers replicate the leader's log.</strong></li>
+<li><strong>ISR means In-Sync Replicas.</strong></li>
+<li><strong>A consumer group distributes partitions among its consumers.</strong></li>
+<li><strong>A partition is assigned to at most one consumer in a group at a time.</strong></li>
+<li><strong>Consumer parallelism is bounded by partition count.</strong></li>
+<li><strong>Different consumer groups independently consume the same topic.</strong></li>
+<li><strong>Reading a record does not normally delete it.</strong></li>
+<li><strong>Retention determines how long records remain available.</strong></li>
+<li><strong>Keys influence partition selection and therefore ordering.</strong></li>
+</ol>
+<hr>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <span></span>
+          <a class="next" href="kafka-certification-mastery-chapter-2.html"><span class="nav-label">Next</span><span class="nav-title">Chapter 2 — Kafka Architecture Deep Dive</span></a>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 1 of 16</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "chapters\/kafka-certification-mastery-chapter-1.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

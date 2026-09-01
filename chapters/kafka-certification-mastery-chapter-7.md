@@ -1,5 +1,9 @@
-# Kafka Certification — Chapter 7: Consumer Groups
+# Chapter 7 — Consumer Groups
 
+> Certification track: Kafka Developer + Kafka Administrator  
+> Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
+
+---
 
 ## Table of Contents
 

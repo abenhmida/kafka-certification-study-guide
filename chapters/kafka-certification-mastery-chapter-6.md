@@ -1,4 +1,7 @@
-# Apache Kafka Certification Mastery
+# Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance
+
+> Certification track: Kafka Developer + Kafka Administrator  
+> Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
 
 ## Table of Contents
 

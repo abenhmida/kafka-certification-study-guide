@@ -1,4 +1,4 @@
-# Chapter 16 — Kafka Schema Management & Data Contracts Deep Dive
+# Chapter 15 — Kafka Schema Management & Data Contracts Deep Dive
 
 ### Kafka Developer & Administrator Certification Preparation
 

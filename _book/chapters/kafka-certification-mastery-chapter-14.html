@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Kafka Developer &amp; Administrator Certification Preparation Certification track: Kafka Developer &#43; Kafka Administrator Reference foundation: Kafka: The…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive - Kafka Certification Study Guide">
+<meta property="og:description" content="Kafka Developer &amp; Administrator Certification Preparation Certification track: Kafka Developer &#43; Kafka Administrator Reference foundation: Kafka: The…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="kafka-certification-mastery-chapter-14.html">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</h1>
+        <h3 id="kafka-developer-administrator-certification-preparation">Kafka Developer &amp; Administrator Certification Preparation</h3>
+<blockquote>
+<p>Certification track: Kafka Developer + Kafka Administrator<br>
+Reference foundation: <em>Kafka: The Definitive Guide</em>, 2nd Edition</p>
+</blockquote>
+<hr>
+<h2 id="1-learning-objectives">1. Learning Objectives</h2>
+<p>By the end of this chapter, you should be able to explain and troubleshoot:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Kafka replication</li>
+<li><input checked="" disabled="" type="checkbox"> Leader and follower replicas</li>
+<li><input checked="" disabled="" type="checkbox"> ISR mechanics</li>
+<li><input checked="" disabled="" type="checkbox"> Broker failures</li>
+<li><input checked="" disabled="" type="checkbox"> Leader elections</li>
+<li><input checked="" disabled="" type="checkbox"> replication.factor</li>
+<li><input checked="" disabled="" type="checkbox"> min.insync.replicas</li>
+<li><input checked="" disabled="" type="checkbox"> acks</li>
+<li><input checked="" disabled="" type="checkbox"> unclean leader election</li>
+<li><input checked="" disabled="" type="checkbox"> data loss scenarios</li>
+<li><input checked="" disabled="" type="checkbox"> availability vs durability</li>
+<li><input checked="" disabled="" type="checkbox"> rack/AZ awareness</li>
+<li><input checked="" disabled="" type="checkbox"> controlled broker shutdown</li>
+<li><input checked="" disabled="" type="checkbox"> rolling upgrades</li>
+<li><input checked="" disabled="" type="checkbox"> replica reassignment</li>
+<li><input checked="" disabled="" type="checkbox"> broker recovery</li>
+<li><input checked="" disabled="" type="checkbox"> disaster recovery</li>
+<li><input checked="" disabled="" type="checkbox"> MirrorMaker 2</li>
+<li><input checked="" disabled="" type="checkbox"> cross-cluster replication</li>
+<li><input checked="" disabled="" type="checkbox"> RPO and RTO</li>
+<li><input checked="" disabled="" type="checkbox"> backup/restore considerations</li>
+<li><input checked="" disabled="" type="checkbox"> multi-AZ Kafka architectures</li>
+<li><input checked="" disabled="" type="checkbox"> failure scenarios</li>
+<li><input checked="" disabled="" type="checkbox"> certification-style reliability questions</li>
+</ol>
+<h2 id="2-what-reliability-means-in-kafka">2. What Reliability Means in Kafka</h2>
+<p>Kafka reliability is not one single property you must distinguish:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Reliability
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Availability
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Durability
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Fault tolerance
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Consistency
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Recoverability
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Disaster recovery
+</span></span></code></pre><p>These concepts are related but different.</p>
+<h3 id="21-availability">2.1. Availability</h3>
+<p>Availability asks <strong>Can clients currently access the partition?</strong></p>
+<p>For a partition:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition P0
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Leader
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +--&gt; available
+</span></span></code></pre><p>If no broker can provide a valid leader then the partition is unavailable.</p>
+<h3 id="22-durability">2.2. Durability</h3>
+<p>Durability asks <strong>Once data has been acknowledged, how resistant is it to loss?</strong></p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Producer
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | acks=all
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Leader
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +--&gt; Replica 1
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +--&gt; Replica 2
+</span></span></code></pre><p>More independent copies generally provide stronger failure tolerance but replication alone is not enough.
+The producer acknowledgment policy matters too.</p>
+<h3 id="23-fault-tolerance">2.3. Fault Tolerance</h3>
+<p>Fault tolerance means the system can continue operating despite failures.
+Kafka achieves this through <code>Replication + Leader election + ISR + Distributed metadata</code></p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">              Partition 0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                 Leader
+</span></span><span class="line"><span class="cl">                Broker 1
+</span></span><span class="line"><span class="cl">                   |
+</span></span><span class="line"><span class="cl">           +-------+-------+
+</span></span><span class="line"><span class="cl">           |               |
+</span></span><span class="line"><span class="cl">        Broker 2         Broker 3
+</span></span><span class="line"><span class="cl">        follower         follower
+</span></span></code></pre><p>If Broker 1 fails another eligible replica can become leader.</p>
+<h3 id="24-kafkas-fundamental-reliability-model">2.4. Kafka's Fundamental Reliability Model</h3>
+<p>The central model is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Leader
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    +-- Followers
+</span></span></code></pre><p>All replicas contain copies of the partition's log. Writes go to the leader.
+Followers replicate from the leader.</p>
+<h3 id="25-example-replication-factor-3">2.5. Example: Replication Factor 3</h3>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic: orders
+</span></span><span class="line"><span class="cl">Partition: 0
+</span></span><span class="line"><span class="cl">Replication factor: 3
+</span></span></code></pre><p>The replica set might be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1 -&gt; Leader
+</span></span><span class="line"><span class="cl">Broker 2 -&gt; Follower
+</span></span><span class="line"><span class="cl">Broker 3 -&gt; Follower
+</span></span></code></pre><p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                orders-0
+</span></span><span class="line"><span class="cl">                   |
+</span></span><span class="line"><span class="cl">        +----------+----------+
+</span></span><span class="line"><span class="cl">        |          |          |
+</span></span><span class="line"><span class="cl">     Broker 1   Broker 2   Broker 3
+</span></span><span class="line"><span class="cl">     Leader     Follower   Follower
+</span></span></code></pre><h2 id="3-what-happens-during-a-write">3. What Happens During a Write?</h2>
+<p>A producer sends <code>Produce(order-123)</code> to the partition leader. Followers replicate the data.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl"> Leader
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +----&gt; Broker 2
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +----&gt; Broker 3
+</span></span></code></pre><p>The acknowledgment depends on the producer configuration.</p>
+<h3 id="31-acks">3.1. acks</h3>
+<p>The producer's acks configuration controls when the producer considers a write acknowledged.</p>
+<p>Important values <code>acks=0</code>, <code>acks=1</code>, <code>acks=all</code></p>
+<h4 id="311-acks0">3.1.1. acks=0</h4>
+<p>With <code>acks=0</code> the producer does not wait for a broker acknowledgment.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Producer
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    | send
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Broker
+</span></span></code></pre><p>The producer proceeds without waiting for confirmation.</p>
+<ol>
+<li><strong>Advantages</strong>:</li>
+</ol>
+<ul>
+<li>potentially lower latency</li>
+<li>potentially higher throughput</li>
+</ul>
+<ol start="2">
+<li><strong>Disadvantage</strong>:</li>
+</ol>
+<ul>
+<li>weakest delivery assurance</li>
+</ul>
+<p>For reliability-sensitive workloads, this is generally unsuitable.</p>
+<h4 id="312-acks1">3.1.2. acks=1</h4>
+<p>With <code>acks=1</code> the leader acknowledges the record after accepting it.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">     Producer
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">      Leader
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        | acknowledge
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">     Producer
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p>Followers may still be catching up. If the leader fails before followers have replicated the record,
+the record may be vulnerable depending on the election/recovery situation.</p>
+<h4 id="313-acksall">3.1.3. acks=all</h4>
+<p>With <code>acks=all</code> the leader waits for the required in-sync replicas according to the cluster's replication rules.</p>
+<p>This is generally the strongest producer acknowledgment mode but remember <code>acks=all</code> <strong>does not magically guarantee durability under every configuration</strong>.</p>
+<p>You must consider <code>acks + replication.factor + min.insync.replicas + leader election policy</code></p>
+<h2 id="4-the-reliability-equation">4. The Reliability Equation</h2>
+<p>A useful certification mental model is <code>Durability = replication + ISR + acks + min.insync.replicas + safe leader election</code></p>
+<p>No single configuration parameter provides the entire guarantee.</p>
+<h2 id="5-replicationfactor">5. replication.factor</h2>
+<p>The replication factor determines how many replicas exist for a partition.</p>
+<p>For example <code>replication.factor = 3</code> means <code>3 replicas</code></p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span></code></pre><h2 id="6-what-replication-factor-does-not-mean">6. What Replication Factor Does NOT Mean</h2>
+<p>A replication factor of 3 does not necessarily mean <strong>Three brokers are always healthy</strong>.</p>
+<p>You can have:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 1 -&gt; leader
+</span></span><span class="line"><span class="cl">Broker 2 -&gt; follower
+</span></span><span class="line"><span class="cl">Broker 3 -&gt; offline
+</span></span></code></pre><p>The partition is still configured with three replicas, but only two may currently be in the ISR.</p>
+<h2 id="7-isr-in-sync-replicas">7. ISR — In-Sync Replicas</h2>
+<p>ISR stands for <strong>In-Sync Replicas</strong>. The ISR contains replicas considered sufficiently caught up with the leader.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Replica set:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span></code></pre><p>All replicas are healthy.</p>
+<h2 id="8-isr-shrink">8. ISR Shrink</h2>
+<p>Suppose Broker 3 falls behind.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Before:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR = {B1, B2, B3}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">After:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR = {B1, B2}
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p>This is called an ISR shrink. The cluster has reduced redundancy.</p>
+<h2 id="9-isr-expansion">9. ISR Expansion</h2>
+<p>When Broker 3 catches up <code>ISR = {B1, B2, B3}</code>. This is an ISR expansion.</p>
+<p>A healthy cluster should generally return to its expected ISR state after temporary failures.</p>
+<h2 id="10-why-isr-matters">10. Why ISR Matters</h2>
+<p>Consider:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">ISR = {B1, B2}
+</span></span></code></pre><p>If <strong>B1</strong> is leader and fails, <strong>B2</strong> can potentially become leader. But if <code>ISR = {B1}</code>
+and <strong>B1</strong> fails, there may be no in-sync follower available.
+This can create an availability problem.</p>
+<h2 id="11-mininsyncreplicas">11. min.insync.replicas</h2>
+<p><code>min.insync.replicas</code> specifies the minimum number of ISR replicas required for certain writes to succeed when using appropriate acknowledgment semantics.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">replication.factor = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><p>Normal state <code>ISR = 3</code> writes succeed. If one replica fails <code>ISR = 2</code> writes can still satisfy the minimum.</p>
+<p>If another replica is lost <code>ISR = 1</code> writes requiring the minimum ISR can fail.</p>
+<h2 id="12-why-mininsyncreplicas-matters">12. Why min.insync.replicas Matters</h2>
+<p>It creates a deliberate trade-off <code>Availability vs Durability</code></p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><p>requires at least two in-sync replicas for successful writes.
+This prevents the leader from continuing to acknowledge writes when redundancy has degraded below the desired level.</p>
+<h2 id="13-the-classic-reliability-configuration">13. The Classic Reliability Configuration</h2>
+<p>A common reliability-oriented design is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">replication.factor = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">              Producer
+</span></span><span class="line"><span class="cl">                  |
+</span></span><span class="line"><span class="cl">               acks=all
+</span></span><span class="line"><span class="cl">                  |
+</span></span><span class="line"><span class="cl">                  v
+</span></span><span class="line"><span class="cl">               Leader
+</span></span><span class="line"><span class="cl">              /      \
+</span></span><span class="line"><span class="cl">             /        \
+</span></span><span class="line"><span class="cl">           ISR        ISR
+</span></span><span class="line"><span class="cl">          Broker 2   Broker 3
+</span></span></code></pre><p>This gives strong protection against a single broker failure, assuming the replicas are placed independently.</p>
+<h2 id="14-important-certification-trap">14. Important Certification Trap</h2>
+<h3 id="question">Question:</h3>
+<p><strong>Does replication.factor=3 guarantee that three copies always exist?</strong></p>
+<p><strong>No</strong>.</p>
+<p>A replica can be offline or out of sync. The actual operational state is reflected by <strong>ISR</strong> and related replication health metrics.</p>
+<h2 id="15-failure-scenario-one-broker-dies">15. Failure Scenario — One Broker Dies</h2>
+<p>Initial:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">B1 = Leader
+</span></span><span class="line"><span class="cl">B2 = Follower
+</span></span><span class="line"><span class="cl">B3 = Follower
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR = {B1,B2,B3}
+</span></span></code></pre><p>B1 fails. Kafka elects an eligible replica:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B2 = Leader
+</span></span><span class="line"><span class="cl">B3 = Follower
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Now:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR = {B2,B3}
+</span></span></code></pre><p>The partition remains available.</p>
+<h2 id="16-what-happens-to-producers">16. What Happens to Producers?</h2>
+<p>After leader election, producers must discover the new leader. Clients may initially receive errors such as:</p>
+<p><code>NOT_LEADER_OR_FOLLOWER</code> or related metadata errors.
+The producer refreshes metadata and sends records to the new leader.</p>
+<h2 id="17-what-happens-to-consumers">17. What Happens to Consumers?</h2>
+<p>Consumers also need to discover the new leader.
+Fetch requests may temporarily fail while metadata changes propagate.
+The consumer normally refreshes metadata and continues.
+A well-designed Kafka client handles these transitions automatically.</p>
+<h2 id="18-failure-scenario-follower-dies">18. Failure Scenario — Follower Dies</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1 = Leader
+</span></span><span class="line"><span class="cl">B2 = Follower
+</span></span><span class="line"><span class="cl">B3 = Follower
+</span></span></code></pre><p>B3 fails.</p>
+<p>The leader remains <strong>B1</strong> and <strong>ISR</strong> becomes <code>{B1,B2}</code></p>
+<p>The partition can continue operating. However, Redundancy has decreased.</p>
+<p>The administrator should restore the missing replica.</p>
+<h2 id="19-failure-scenario-two-brokers-die">19. Failure Scenario — Two Brokers Die</h2>
+<p>Initial:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">ISR = {B1,B2,B3}
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p><strong>B2</strong> and <strong>B3</strong> fail. Only <strong>B1</strong> remains <code>ISR = {B1}</code> now <code>min.insync.replicas = 2</code> cannot be satisfied.</p>
+<p>With <code>acks=all</code> new writes may fail. This is an important distinction <strong>Existing leader availability</strong>
+is not equivalent to <strong>write availability</strong></p>
+<h2 id="20-availability-vs-write-availability">20. Availability vs Write Availability</h2>
+<p>You can have <strong>Partition leader exists</strong> while <strong>new writes fail</strong> because <code>ISR &lt; min.insync.replicas</code></p>
+<p>This is intentional protection against reducing durability too far.</p>
+<h2 id="21-unclean-leader-election">21. Unclean Leader Election</h2>
+<p>Kafka can be configured regarding whether an <strong>out-of-sync</strong> replica may become leader when no <strong>ISR</strong> replica is available.</p>
+<p>This is associated with <code>unclean.leader.election.enable</code>, the fundamental trade-off is <code>Availability vs Data consistency/durability</code></p>
+<h2 id="22-clean-leader-election">22. Clean Leader Election</h2>
+<p>In a clean election, Kafka selects a suitable in-sync replica.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = {B1,B2}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">B1 fails
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">B2 becomes leader
+</span></span></code></pre><p>No stale replica is required.</p>
+<h2 id="23-unclean-election">23. Unclean Election</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1 = leader
+</span></span><span class="line"><span class="cl">B2 = ISR follower
+</span></span><span class="line"><span class="cl">B3 = stale follower
+</span></span></code></pre><p>Then:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1 fails
+</span></span><span class="line"><span class="cl">B2 also unavailable
+</span></span></code></pre><p>Only <strong>B3</strong> remains, but <strong>B3</strong> is not in the <strong>ISR</strong>. If unclean election is allowed:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B3
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+--&gt; becomes leader
+</span></span></code></pre><p>This can restore availability but <strong><em>B3 may not contain the latest records</em></strong>.</p>
+<h2 id="24-data-loss-scenario">24. Data Loss Scenario</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Leader B1:
+</span></span><span class="line"><span class="cl">m1
+</span></span><span class="line"><span class="cl">m2
+</span></span><span class="line"><span class="cl">m3
+</span></span><span class="line"><span class="cl">m4
+</span></span></code></pre><p>Follower B3 has only:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">m1
+</span></span><span class="line"><span class="cl">m2
+</span></span><span class="line"><span class="cl">m3
+</span></span></code></pre><p>If <strong>B1</strong> fails and <strong>B3</strong> becomes <strong>leader</strong> through an <strong>unclean election</strong>:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B3:
+</span></span><span class="line"><span class="cl">m1
+</span></span><span class="line"><span class="cl">m2
+</span></span><span class="line"><span class="cl">m3
+</span></span></code></pre><p>m4 may be lost from the active log. Thus <code>Availability ↑</code> and <code>Durability ↓</code></p>
+<h2 id="25-certification-principle">25. Certification Principle</h2>
+<p>Remember:</p>
+<blockquote>
+<p>Unclean leader election favors availability over preserving the latest acknowledged data
+when no in-sync replica is available.</p>
+</blockquote>
+<p>This is a classic administrator exam concept.</p>
+<h2 id="26-why-rack-awareness-matters">26. Why Rack Awareness Matters</h2>
+<p>Replication is not useful enough if all replicas fail together.</p>
+<p>Bad architecture:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">              Rack A
+</span></span><span class="line"><span class="cl">        +-------+-------+
+</span></span><span class="line"><span class="cl">        |       |       |
+</span></span><span class="line"><span class="cl">       B1      B2      B3
+</span></span></code></pre><p>A rack failure can remove all replicas.</p>
+<p>Better:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">       Rack A        Rack B        Rack C
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        B1            B2            B3
+</span></span><span class="line"><span class="cl">         \             |            /
+</span></span><span class="line"><span class="cl">          \            |           /
+</span></span><span class="line"><span class="cl">              Partition replicas
+</span></span></code></pre><h2 id="27-availability-zones">27. Availability Zones</h2>
+<p>In cloud deployments, use independent availability zones.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">AZ-a       AZ-b       AZ-c
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> B1         B2         B3
+</span></span></code></pre><p>A single AZ failure should not remove all replicas.
+This is the basic idea behind rack/AZ-aware replica placement.</p>
+<h2 id="28-failure-domains">28. Failure Domains</h2>
+<p>A good reliability architecture considers:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Process failure</li>
+<li><input checked="" disabled="" type="checkbox"> Broker failure</li>
+<li><input checked="" disabled="" type="checkbox"> Host failure</li>
+<li><input checked="" disabled="" type="checkbox"> Rack failure</li>
+<li><input checked="" disabled="" type="checkbox"> AZ failure</li>
+<li><input checked="" disabled="" type="checkbox"> Region failure</li>
+</ol>
+<p>Replication addresses some of these. Cross-region replication addresses larger failures.</p>
+<h2 id="29-multi-az-architecture">29. Multi-AZ Architecture</h2>
+<p>A typical architecture:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 Kafka Cluster
+</span></span><span class="line"><span class="cl">                      |
+</span></span><span class="line"><span class="cl">       +--------------+--------------+
+</span></span><span class="line"><span class="cl">       |              |              |
+</span></span><span class="line"><span class="cl">      AZ-A           AZ-B           AZ-C
+</span></span><span class="line"><span class="cl">       |              |              |
+</span></span><span class="line"><span class="cl">      B1             B2             B3
+</span></span><span class="line"><span class="cl">       \              |             /
+</span></span><span class="line"><span class="cl">        +-------------+------------+
+</span></span></code></pre><p>A partition's replicas should be distributed across failure domains where possible.</p>
+<h2 id="30-controlled-shutdown">30. Controlled Shutdown</h2>
+<p>A planned broker shutdown is different from an unexpected failure.
+During a controlled shutdown, Kafka can move leadership away from the broker before stopping it.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">    Broker B1
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">  planned shutdown
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">  Leadership moved
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">   Broker stops
+</span></span></code></pre><p>This reduces unnecessary disruption.</p>
+<h2 id="31-why-controlled-shutdown-matters">31. Why Controlled Shutdown Matters</h2>
+<p>Without controlled shutdown:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">   Broker stops
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">  Leader elections
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">Client metadata changes
+</span></span></code></pre><p>With controlled shutdown:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Leadership transferred
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">    Broker stops
+</span></span></code></pre><p>The second approach is generally smoother.</p>
+<h2 id="32-a-rolling-restart-means">32. A rolling restart means:</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Restart broker 1
+</span></span><span class="line"><span class="cl">wait for recovery
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Restart broker 2
+</span></span><span class="line"><span class="cl">wait for recovery
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Restart broker 3
+</span></span><span class="line"><span class="cl">wait for recovery
+</span></span></code></pre><p>rather than:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Stop all brokers
+</span></span><span class="line"><span class="cl">Restart all brokers
+</span></span></code></pre><p>The rolling approach helps preserve availability.</p>
+<h2 id="33-rolling-upgrade">33. Rolling Upgrade</h2>
+<p>A rolling upgrade typically follows:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Verify cluster health</li>
+<li><input checked="" disabled="" type="checkbox"> Upgrade one broker</li>
+<li><input checked="" disabled="" type="checkbox"> Wait for recovery</li>
+<li><input checked="" disabled="" type="checkbox"> Verify health</li>
+<li><input checked="" disabled="" type="checkbox"> Upgrade next broker</li>
+<li><input checked="" disabled="" type="checkbox"> Repeat</li>
+</ol>
+<p>Never begin a rolling upgrade with <code>UnderReplicatedPartitions</code> already high
+or another unresolved cluster-health problem.</p>
+<h2 id="34-pre-upgrade-checklist">34. Pre-Upgrade Checklist</h2>
+<p>Before a rolling upgrade:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> All brokers healthy</li>
+<li><input checked="" disabled="" type="checkbox"> No offline partitions</li>
+<li><input checked="" disabled="" type="checkbox"> ISR healthy</li>
+<li><input checked="" disabled="" type="checkbox"> Disk capacity sufficient</li>
+<li><input checked="" disabled="" type="checkbox"> Monitoring operational</li>
+<li><input checked="" disabled="" type="checkbox"> Rollback plan</li>
+<li><input checked="" disabled="" type="checkbox"> Client compatibility checked</li>
+<li><input checked="" disabled="" type="checkbox"> Configuration changes reviewed</li>
+</ol>
+<h2 id="35-partition-reassignment">35. Partition Reassignment</h2>
+<p>Kafka partitions can be reassigned between brokers.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Before:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0 -&gt; B1,B2
+</span></span><span class="line"><span class="cl">P1 -&gt; B1,B3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">After:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">P0 -&gt; B2,B3
+</span></span><span class="line"><span class="cl">P1 -&gt; B1,B3
+</span></span></code></pre><p>This can be used for:</p>
+<ul>
+<li>rebalancing</li>
+<li>broker replacement</li>
+<li>capacity changes</li>
+<li>failure recovery</li>
+</ul>
+<h2 id="36-why-reassignment-is-risky">36. Why Reassignment Is Risky</h2>
+<p>Partition reassignment creates additional traffic. You can have
+<code>normal workload + replication traffic + reassignment traffic</code></p>
+<p>This can saturate:</p>
+<ul>
+<li>network</li>
+<li>disk</li>
+<li>CPU</li>
+</ul>
+<p>Therefore, reassignment should be monitored carefully.</p>
+<h2 id="37-reassignment-during-peak-traffic">37. Reassignment During Peak Traffic</h2>
+<p>Suppose <code>normal traffic = 700 MB/s</code> and reassignment adds <code>400 MB/s</code> Total <code>1.1 GB/s</code></p>
+<p>If the infrastructure supports only <code>1 GB/s</code> you have created a new bottleneck.</p>
+<h2 id="38-broker-recovery">38. Broker Recovery</h2>
+<p>When a failed broker returns:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">      Broker returns
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl"> Replicas begin catching up
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">       ISR expands
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">Replication health restored
+</span></span></code></pre><p>Recovery should be monitored.</p>
+<h2 id="39-recovery-metrics">39. Recovery Metrics</h2>
+<p>Watch:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> UnderReplicatedPartitions</li>
+<li><input checked="" disabled="" type="checkbox"> ISR</li>
+<li><input checked="" disabled="" type="checkbox"> replication throughput</li>
+<li><input checked="" disabled="" type="checkbox"> disk I/O</li>
+<li><input checked="" disabled="" type="checkbox"> network traffic</li>
+<li><input checked="" disabled="" type="checkbox"> consumer latency</li>
+<li><input checked="" disabled="" type="checkbox"> producer latency</li>
+</ol>
+<p>Recovery itself can affect production workloads.</p>
+<h2 id="40-recovery-throttling">40. Recovery Throttling</h2>
+<p>Kafka supports mechanisms to limit replication/reassignment traffic.
+The objective is <strong>Recovery speed vs Production workload impact</strong>. Too little throttling:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Recovery fast
+</span></span><span class="line"><span class="cl">Production performance suffers
+</span></span></code></pre><p>Too much throttling:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Production healthy
+</span></span><span class="line"><span class="cl">Recovery takes too long
+</span></span></code></pre><h2 id="41-disaster-recovery">41. Disaster Recovery</h2>
+<p>Disaster recovery addresses failures larger than an individual broker.</p>
+<p>Examples:</p>
+<ul>
+<li>Region failure</li>
+<li>Datacenter failure</li>
+<li>Major network outage</li>
+<li>Corrupted cluster</li>
+<li>Operational mistake</li>
+<li>Security incident</li>
+</ul>
+<p>A DR architecture needs</p>
+<ol>
+<li>backup/recovery strategy</li>
+<li>replication strategy</li>
+<li>failover procedure</li>
+<li>testing</li>
+</ol>
+<h2 id="42-rpo">42. RPO</h2>
+<p>RPO means <strong>Recovery Point Objective</strong>, it answers <strong>How much data can we afford to lose?</strong></p>
+<p>Example <code>RPO = 5 minutes</code> means the organization may tolerate losing up to approximately five minutes of data, depending on the design.</p>
+<h2 id="43-rto">43. RTO</h2>
+<p>RTO means <strong>Recovery Time Objective</strong>, it answers <strong>How quickly must service be restored?</strong></p>
+<p>Example <code>RTO = 30 minutes</code> means the target is to restore service within approximately 30 minutes.</p>
+<h2 id="44-rpo-vs-rto">44. RPO vs RTO</h2>
+<p>Memorize:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RPO = data loss tolerance
+</span></span><span class="line"><span class="cl">RTO = downtime tolerance
+</span></span></code></pre><p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RPO = 1 minute
+</span></span><span class="line"><span class="cl">RTO = 10 minutes
+</span></span></code></pre><p>means:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Data loss target &lt;= 1 minute
+</span></span><span class="line"><span class="cl">Recovery time target &lt;= 10 minutes
+</span></span></code></pre><h2 id="45-disaster-recovery-levels">45. Disaster Recovery Levels</h2>
+<p>Think in levels:</p>
+<ol>
+<li><strong>Level 1</strong>: Broker failure</li>
+<li><strong>Level 2</strong>: Rack/AZ failure</li>
+<li><strong>Level 3</strong>: Cluster failure</li>
+<li><strong>Level 4</strong>: Region failure</li>
+</ol>
+<p>Each level requires progressively stronger recovery mechanisms.</p>
+<h2 id="46-backup-is-not-replication">46. Backup Is Not Replication</h2>
+<p>This is a critical distinction. Replication:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Cluster A
+</span></span><span class="line"><span class="cl">B1 &lt;--&gt; B2 &lt;--&gt; B3
+</span></span></code></pre><p>protects against some failures but if an operator accidentally deletes data: <code>delete topic/data</code>
+replication may reproduce the operational state across replicas.</p>
+<p>Replication is not a replacement for appropriate backup/recovery mechanisms.</p>
+<h2 id="47-disaster-recovery-vs-high-availability">47. Disaster Recovery vs High Availability</h2>
+<h3 id="high-availability">High availability</h3>
+<p>Keep the service running during failures.</p>
+<h3 id="disaster-recovery">Disaster recovery</h3>
+<p>Restore service/data after a major disaster.</p>
+<p>Example <strong>Multi-AZ Kafka</strong> improves <strong>HA</strong>, <strong>Cross-region replication</strong> can improve <strong>DR</strong>.</p>
+<h2 id="48-mirrormaker-2">48. MirrorMaker 2</h2>
+<p>Kafka provides MirrorMaker 2 for replicating data between Kafka clusters.</p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Cluster A
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">| MirrorMaker 2
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Cluster B
+</span></span></code></pre><p>It can be used for:</p>
+<ol>
+<li>disaster recovery</li>
+<li>migration</li>
+<li>data distribution</li>
+<li>geo-replication</li>
+</ol>
+<h3 id="481-mirrormaker-2-architecture">48.1. MirrorMaker 2 Architecture</h3>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">+-------------------+
+</span></span><span class="line"><span class="cl">| Source Cluster    |
+</span></span><span class="line"><span class="cl">|                   |
+</span></span><span class="line"><span class="cl">| Topic A           |
+</span></span><span class="line"><span class="cl">| Topic B           |
+</span></span><span class="line"><span class="cl">+---------+---------+
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">   MirrorMaker 2
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">+-------------------+
+</span></span><span class="line"><span class="cl">| Target Cluster    |
+</span></span><span class="line"><span class="cl">|                   |
+</span></span><span class="line"><span class="cl">| A replicated      |
+</span></span><span class="line"><span class="cl">| B replicated      |
+</span></span><span class="line"><span class="cl">+-------------------+
+</span></span></code></pre><h2 id="49-active-passive-dr">49. Active-Passive DR</h2>
+<p>A simple architecture:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                Primary
+</span></span><span class="line"><span class="cl">               Cluster A
+</span></span><span class="line"><span class="cl">                   |
+</span></span><span class="line"><span class="cl">                   |
+</span></span><span class="line"><span class="cl">              MirrorMaker 2
+</span></span><span class="line"><span class="cl">                   |
+</span></span><span class="line"><span class="cl">                   v
+</span></span><span class="line"><span class="cl">              Cluster B
+</span></span><span class="line"><span class="cl">              DR standby
+</span></span></code></pre><p>Normal operation <code>Clients -&gt; Cluster A</code>, After disaster <code>Clients -&gt; Cluster B</code></p>
+<h2 id="50-active-active-architecture">50. Active-Active Architecture</h2>
+<p>Another model:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Cluster A &lt;----&gt; Cluster B
+</span></span><span class="line"><span class="cl">    ^                ^
+</span></span><span class="line"><span class="cl">    |                |
+</span></span><span class="line"><span class="cl"> Clients A        Clients B
+</span></span></code></pre><p>Both clusters serve traffic. This can reduce recovery time but is considerably more complex.</p>
+<p>You must handle:</p>
+<ul>
+<li>duplicate data</li>
+<li>conflict resolution</li>
+<li>consumer offsets</li>
+<li>application semantics</li>
+<li>failback</li>
+</ul>
+<h2 id="51-failover">51. Failover</h2>
+<p>A DR (Disaster Recovery) failover procedure should define:</p>
+<ol>
+<li>Detect failure</li>
+<li>Declare disaster</li>
+<li>Stop/redirect producers</li>
+<li>Select target cluster</li>
+<li>Verify replicated data</li>
+<li>Redirect consumers</li>
+<li>Validate processing</li>
+<li>Monitor</li>
+</ol>
+<p>Do not improvise failover during a real disaster.</p>
+<h2 id="52-failback">52. Failback</h2>
+<p>After the primary cluster is restored:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Primary restored
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">  Synchronize data
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">Validate consistency
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">Redirect workloads
+</span></span></code></pre><p>Failback can be more difficult than failover. A DR plan must explicitly include it.</p>
+<h2 id="53-consumer-offsets-in-dr">53. Consumer Offsets in DR</h2>
+<p>A critical question is <strong>Where should consumers resume after switching clusters?</strong></p>
+<p>You need a strategy for <strong>consumer group offsets</strong></p>
+<p>Cross-cluster replication can involve offset synchronization mechanisms, but the exact architecture and semantics depend on the MirrorMaker 2 setup.</p>
+<p>This is an important operational design issue.</p>
+<h2 id="54-duplicate-processing-during-dr">54. Duplicate Processing During DR</h2>
+<p>Suppose the consumer processed:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">m1
+</span></span><span class="line"><span class="cl">m2
+</span></span><span class="line"><span class="cl">m3
+</span></span></code></pre><p>before failure. The DR system may not have exactly the same application-side state.</p>
+<p>After failover, the consumer may process:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">m3
+</span></span><span class="line"><span class="cl">m4
+</span></span><span class="line"><span class="cl">m5
+</span></span></code></pre><p>again.</p>
+<p>Therefore, DR applications should often be designed with <strong>idempotency</strong> in mind.</p>
+<h2 id="55-kafka-dr-and-exactly-once">55. Kafka DR and Exactly Once</h2>
+<p>Exactly-once semantics do not automatically solve every cross-cluster DR problem.</p>
+<p>You must consider:</p>
+<ul>
+<li>Kafka transactions</li>
+<li>consumer offsets</li>
+<li>external systems</li>
+<li>cross-cluster replication</li>
+<li>failover</li>
+</ul>
+<p>The end-to-end guarantee depends on the complete architecture.</p>
+<h2 id="56-disaster-scenario-region-failure">56. Disaster Scenario — Region Failure</h2>
+<p>Architecture:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">    Region A
+</span></span><span class="line"><span class="cl">    Kafka Cluster A
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        | MirrorMaker 2
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl">    Region B
+</span></span><span class="line"><span class="cl">    Kafka Cluster B
+</span></span></code></pre><p>Region A disappears. Applications fail over to <strong>Region B</strong></p>
+<p>But before doing so, verify:</p>
+<ul>
+<li>replication freshness</li>
+<li>consumer offsets</li>
+<li>application state</li>
+<li>network routing</li>
+<li>credentials</li>
+</ul>
+<h2 id="57-dr-data-lag">57. DR Data Lag</h2>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Primary:
+</span></span><span class="line"><span class="cl">offset = 10,000,000
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">DR:
+</span></span><span class="line"><span class="cl">offset = 9,950,000
+</span></span></code></pre><p>DR lag <code>50,000 records</code></p>
+<p>Your actual achievable RPO depends on how quickly data is replicated and what the business considers recoverable.</p>
+<p>This is why DR replication must itself be monitored.</p>
+<h2 id="58-monitor-mirrormaker-2">58. Monitor MirrorMaker 2</h2>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> replication throughput</li>
+<li><input checked="" disabled="" type="checkbox"> replication lag</li>
+<li><input checked="" disabled="" type="checkbox"> connector/task health</li>
+<li><input checked="" disabled="" type="checkbox"> errors</li>
+<li><input checked="" disabled="" type="checkbox"> source/target connectivity</li>
+<li><input checked="" disabled="" type="checkbox"> offset synchronization</li>
+</ol>
+<p>A DR architecture without DR monitoring is incomplete.</p>
+<h2 id="59-disaster-recovery-testing">59. Disaster Recovery Testing</h2>
+<p>A DR plan that has never been tested is only a theory. Regularly test:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> failover</li>
+<li><input checked="" disabled="" type="checkbox"> consumer recovery</li>
+<li><input checked="" disabled="" type="checkbox"> producer recovery</li>
+<li><input checked="" disabled="" type="checkbox"> DNS/routing changes</li>
+<li><input checked="" disabled="" type="checkbox"> credentials</li>
+<li><input checked="" disabled="" type="checkbox"> offset behavior</li>
+<li><input checked="" disabled="" type="checkbox"> data integrity</li>
+<li><input checked="" disabled="" type="checkbox"> failback</li>
+</ol>
+<h2 id="60-game-day">60. Game Day</h2>
+<p>A useful reliability practice is a controlled failure exercise.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Game Day
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:00
+</span></span><span class="line"><span class="cl">Stop Broker 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:05
+</span></span><span class="line"><span class="cl">Observe leader election
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:10
+</span></span><span class="line"><span class="cl">Check ISR
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:15
+</span></span><span class="line"><span class="cl">Check producer latency
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:20
+</span></span><span class="line"><span class="cl">Check consumer lag
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:30
+</span></span><span class="line"><span class="cl">Restore Broker 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:40
+</span></span><span class="line"><span class="cl">Verify ISR recovery
+</span></span></code></pre><p>This validates assumptions.</p>
+<h2 id="61-failure-injection">61. Failure Injection</h2>
+<p>You can simulate:</p>
+<ul>
+<li>broker crash</li>
+<li>network partition</li>
+<li>disk pressure</li>
+<li>high CPU</li>
+<li>GC pauses</li>
+<li>AZ failure</li>
+<li>consumer crash</li>
+<li>producer failure</li>
+</ul>
+<p>The goal is to understand how the system actually behaves.</p>
+<h2 id="62-reliability-testing-pyramid">62. Reliability Testing Pyramid</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 DR test
+</span></span><span class="line"><span class="cl">                   /\
+</span></span><span class="line"><span class="cl">                  /  \
+</span></span><span class="line"><span class="cl">               AZ failure
+</span></span><span class="line"><span class="cl">                   /\
+</span></span><span class="line"><span class="cl">                  /  \
+</span></span><span class="line"><span class="cl">              Broker failure
+</span></span><span class="line"><span class="cl">                   /\
+</span></span><span class="line"><span class="cl">                  /  \
+</span></span><span class="line"><span class="cl">             Component tests
+</span></span></code></pre><p>Test progressively larger failures.</p>
+<h2 id="63-data-loss-scenarios">63. Data Loss Scenarios</h2>
+<p>Data can become vulnerable through:</p>
+<ul>
+<li>acks=0</li>
+<li>acks=1</li>
+<li>RF=1</li>
+<li>low ISR</li>
+<li>unclean leader election</li>
+<li>operator mistakes</li>
+<li>disk failures</li>
+<li>region loss</li>
+<li>application bugs</li>
+</ul>
+<p>No single parameter eliminates every risk.</p>
+<h2 id="64-reliability-anti-pattern">64. Reliability Anti-Pattern</h2>
+<p>Bad:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 1
+</span></span><span class="line"><span class="cl">acks = 1
+</span></span><span class="line"><span class="cl">unclean election enabled
+</span></span><span class="line"><span class="cl">single AZ
+</span></span><span class="line"><span class="cl">no DR
+</span></span></code></pre><p>This provides limited failure protection.</p>
+<h2 id="65-better-production-pattern">65. Better Production Pattern</h2>
+<p>A more resilient design might use:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><p>combined with:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> multi-AZ placement</li>
+<li><input checked="" disabled="" type="checkbox"> monitoring</li>
+<li><input checked="" disabled="" type="checkbox"> controlled operations</li>
+<li><input checked="" disabled="" type="checkbox"> DR replication</li>
+<li><input checked="" disabled="" type="checkbox"> tested recovery</li>
+</ol>
+<p>Exact values depend on workload and operational requirements.</p>
+<h2 id="66-reliability-is-a-system-property">66. Reliability Is a System Property</h2>
+<p>Kafka configuration alone is not enough.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+-- producer configuration
+</span></span><span class="line"><span class="cl">+-- broker configuration
+</span></span><span class="line"><span class="cl">+-- replica placement
+</span></span><span class="line"><span class="cl">+-- storage
+</span></span><span class="line"><span class="cl">+-- network
+</span></span><span class="line"><span class="cl">+-- monitoring
+</span></span><span class="line"><span class="cl">+-- application behavior
+</span></span><span class="line"><span class="cl">+-- DR
+</span></span></code></pre><p>Reliability emerges from the entire system.</p>
+<h2 id="67-developer-responsibilities">67. Developer Responsibilities</h2>
+<p>Developers should:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> use appropriate acks</li>
+<li><input checked="" disabled="" type="checkbox"> enable idempotence where appropriate</li>
+<li><input checked="" disabled="" type="checkbox"> handle retries correctly</li>
+<li><input checked="" disabled="" type="checkbox"> design idempotent consumers</li>
+<li><input checked="" disabled="" type="checkbox"> handle serialization errors</li>
+<li><input checked="" disabled="" type="checkbox"> monitor consumer lag</li>
+<li><input checked="" disabled="" type="checkbox"> handle rebalances</li>
+<li><input checked="" disabled="" type="checkbox"> avoid blocking poll loops</li>
+</ol>
+<h2 id="68-administrator-responsibilities">68. Administrator Responsibilities</h2>
+<p>Administrators should:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> maintain replication</li>
+<li><input checked="" disabled="" type="checkbox"> monitor ISR</li>
+<li><input checked="" disabled="" type="checkbox"> maintain broker health</li>
+<li><input checked="" disabled="" type="checkbox"> balance partitions</li>
+<li><input checked="" disabled="" type="checkbox"> manage disk capacity</li>
+<li><input checked="" disabled="" type="checkbox"> maintain AZ/rack distribution</li>
+<li><input checked="" disabled="" type="checkbox"> perform safe upgrades</li>
+<li><input checked="" disabled="" type="checkbox"> test recovery</li>
+<li><input checked="" disabled="" type="checkbox"> maintain DR</li>
+</ol>
+<h2 id="69-reliability-checklist">69. Reliability Checklist</h2>
+<h3 id="producer">Producer</h3>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Appropriate acks</li>
+<li><input checked="" disabled="" type="checkbox"> Idempotence where appropriate</li>
+<li><input checked="" disabled="" type="checkbox"> Retry policy</li>
+<li><input checked="" disabled="" type="checkbox"> Error handling</li>
+<li><input checked="" disabled="" type="checkbox"> Timeout configuration</li>
+</ol>
+<h3 id="topic">Topic</h3>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Appropriate replication factor</li>
+<li><input checked="" disabled="" type="checkbox"> Appropriate min.insync.replicas</li>
+<li><input checked="" disabled="" type="checkbox"> Correct partition placement</li>
+<li><input checked="" disabled="" type="checkbox"> Appropriate retention</li>
+</ol>
+<h3 id="broker">Broker</h3>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> Disk capacity</li>
+<li><input checked="" disabled="" type="checkbox"> Disk performance</li>
+<li><input checked="" disabled="" type="checkbox"> Network capacity</li>
+<li><input checked="" disabled="" type="checkbox"> JVM health</li>
+<li><input checked="" disabled="" type="checkbox"> Monitoring</li>
+</ol>
+<h3 id="cluster">Cluster</h3>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> ISR healthy</li>
+<li><input checked="" disabled="" type="checkbox"> No offline partitions</li>
+<li><input checked="" disabled="" type="checkbox"> Leader distribution</li>
+<li><input checked="" disabled="" type="checkbox"> AZ/rack distribution</li>
+<li><input checked="" disabled="" type="checkbox"> Recovery procedures</li>
+</ol>
+<h3 id="dr">DR</h3>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> RPO defined</li>
+<li><input checked="" disabled="" type="checkbox"> RTO defined</li>
+<li><input checked="" disabled="" type="checkbox"> Cross-cluster replication if required</li>
+<li><input checked="" disabled="" type="checkbox"> Offset strategy</li>
+<li><input checked="" disabled="" type="checkbox"> Failover procedure</li>
+<li><input checked="" disabled="" type="checkbox"> Failback procedure</li>
+<li><input checked="" disabled="" type="checkbox"> Regular DR tests</li>
+</ol>
+<h2 id="70-certification-scenario-acks-and-isr">70. Certification Scenario — acks and ISR</h2>
+<p>Configuration:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p>Current ISR:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">B1
+</span></span><span class="line"><span class="cl">B2
+</span></span><span class="line"><span class="cl">B3
+</span></span></code></pre><p>B3 fails. <strong>What happens?</strong></p>
+<details>
+<summary>Answer</summary>
+ISR becomes:
+<p>B1
+B2</p>
+<p>Writes using acks=all can still succeed because:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = 2
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span></code></pre><p>But redundancy is degraded.</p>
+</details>
+<h2 id="71-certification-scenario-second-failure">71. Certification Scenario — Second Failure</h2>
+<p>Starting from:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = {B1,B2}
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span></code></pre><p>B2 fails.</p>
+<p>Now:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR = {B1}
+</span></span></code></pre><p><strong>What happens to writes requiring the minimum ISR?</strong></p>
+<details>
+<summary>Answer</summary>
+They fail because ``1 < 2``
+<p>This protects durability at the cost of write availability.</p>
+</details>
+<h2 id="72-certification-scenario-unclean-election">72. Certification Scenario — Unclean Election</h2>
+<p>Question: <strong>Why might an administrator enable unclean leader election?</strong></p>
+<details>
+<summary>Answer</summary>
+To improve availability when no in-sync replica is available. But the trade-off is:
+<p><code>higher availability + potential data loss</code></p>
+<p>This should be a deliberate business decision.</p>
+</details>
+<h2 id="73-certification-scenario-rack-awareness">73. Certification Scenario — Rack Awareness</h2>
+<p>Question: <strong>Why distribute replicas across racks/AZs?</strong></p>
+<details>
+<summary>Answer</summary>
+To prevent a single failure domain from taking all replicas offline.
+<p>Example:</p>
+<p>Bad:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">AZ-A:
+</span></span><span class="line"><span class="cl">B1
+</span></span><span class="line"><span class="cl">B2
+</span></span><span class="line"><span class="cl">B3
+</span></span></code></pre><p>Good:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">AZ-A:
+</span></span><span class="line"><span class="cl">B1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">AZ-B:
+</span></span><span class="line"><span class="cl">B2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">AZ-C:
+</span></span><span class="line"><span class="cl">B3
+</span></span></code></pre></details>
+<h2 id="74-certification-scenario-rolling-upgrade">74. Certification Scenario — Rolling Upgrade</h2>
+<p>Question: <strong>What should you check before restarting a broker during a rolling upgrade?</strong></p>
+<details>
+<summary>Answer</summary>
+At minimum:
+<ol>
+<li><input checked="" disabled="" type="checkbox"> cluster health</li>
+<li><input checked="" disabled="" type="checkbox"> ISR health</li>
+<li><input checked="" disabled="" type="checkbox"> offline partitions</li>
+<li><input checked="" disabled="" type="checkbox"> capacity</li>
+</ol>
+<p>Do not intentionally introduce another failure into an already degraded cluster.</p>
+</details>
+<h2 id="75-certification-scenario-recovery">75. Certification Scenario — Recovery</h2>
+<p>A broker returns after several hours. Metrics show <code>UnderReplicatedPartitions = 500</code></p>
+<p>Question: <strong>What should you do?</strong></p>
+<details>
+<summary>Answer</summary>
+Monitor:
+<ol>
+<li><input checked="" disabled="" type="checkbox"> recovery progress</li>
+<li><input checked="" disabled="" type="checkbox"> network</li>
+<li><input checked="" disabled="" type="checkbox"> disk</li>
+<li><input checked="" disabled="" type="checkbox"> ISR expansion</li>
+<li><input checked="" disabled="" type="checkbox"> production latency</li>
+</ol>
+<p>Do not assume that broker availability immediately means full cluster recovery.</p>
+</details>
+<h2 id="76-certification-scenario-dr">76. Certification Scenario — DR</h2>
+<p>Your business requirement is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RPO = 5 minutes
+</span></span><span class="line"><span class="cl">RTO = 15 minutes
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p>Your cross-region replication regularly falls <code>20 minutes behind</code>. <strong>Is the DR design meeting the requirement?</strong></p>
+<details>
+<summary>Answer</summary>
+**No**. The replication system itself violates the desired RPO.
+</details>
+<h2 id="77-certification-scenario-backup">77. Certification Scenario — Backup</h2>
+<p>Question: <strong>Is replication sufficient protection against accidental deletion?</strong></p>
+<details>
+<summary>Answer</summary>
+<p><strong>No</strong>. Replication can propagate the same logical state to multiple replicas.</p>
+<p>You need an appropriate recovery mechanism for operational mistakes.</p>
+</details>
+<h2 id="78-certification-scenario-consumer-recovery">78. Certification Scenario — Consumer Recovery</h2>
+<p>A consumer processed:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">m1
+</span></span><span class="line"><span class="cl">m2
+</span></span><span class="line"><span class="cl">m3
+</span></span></code></pre><p>and crashed before committing the relevant offset. After restart, it may process <code>m3</code> again.</p>
+<p>Therefore, <code>at-least-once</code> processing can produce duplicates.
+Applications should be designed accordingly.</p>
+<h2 id="79-reliability-and-idempotency">79. Reliability and Idempotency</h2>
+<p>A reliable Kafka application often combines <code>Kafka reliability + consumer idempotency</code></p>
+<p>Example <code>eventId = 12345</code> consumer stores <strong>processed event IDs</strong>. If event <strong>12345</strong> arrives again:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> already processed
+</span></span><span class="line"><span class="cl">        |
+</span></span><span class="line"><span class="cl">        v
+</span></span><span class="line"><span class="cl"> ignore duplicate
+</span></span></code></pre><h2 id="80-end-to-end-reliability">80. End-to-End Reliability</h2>
+<p>Consider:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Producer
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl">  Kafka
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl"> Consumer
+</span></span><span class="line"><span class="cl">    |
+</span></span><span class="line"><span class="cl">    v
+</span></span><span class="line"><span class="cl"> Database
+</span></span></code></pre><p>Kafka may guarantee <strong>durable Kafka record</strong> but your application must still ensure <strong>database update</strong> is handled correctly.</p>
+<p>Otherwise:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka success
+</span></span><span class="line"><span class="cl">Database failure
+</span></span></code></pre><p>can still produce inconsistent business state.</p>
+<h2 id="81-transactional-outbox-connection">81. Transactional Outbox Connection</h2>
+<p>A transactional outbox can help bridge <code>Database transaction + Kafka publishing</code></p>
+<p>Conceptually:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">  Application
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      +--&gt; DB transaction
+</span></span><span class="line"><span class="cl">      |       |
+</span></span><span class="line"><span class="cl">      |       +--&gt; business data
+</span></span><span class="line"><span class="cl">      |       +--&gt; outbox event
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">Outbox Publisher
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">    Kafka
+</span></span></code></pre><p>This is an application-level reliability pattern.</p>
+<h2 id="82-exactly-once-is-not-disaster-recovery">82. Exactly-Once Is Not Disaster Recovery</h2>
+<p><code>Exactly-once</code> semantics help with processing guarantees within supported Kafka transactional boundaries.</p>
+<p>They do not automatically solve:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> region failure</li>
+<li><input checked="" disabled="" type="checkbox"> operator deletion</li>
+<li><input checked="" disabled="" type="checkbox"> network disaster</li>
+<li><input checked="" disabled="" type="checkbox"> DR failover</li>
+<li><input checked="" disabled="" type="checkbox"> external database consistency</li>
+</ol>
+<p>This distinction is important in senior-level interviews and certification preparation.</p>
+<h2 id="83-reliability-architecture">83. Reliability Architecture</h2>
+<p>A mature Kafka architecture might look like:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                    REGION A
+</span></span><span class="line"><span class="cl">             +-------------------+
+</span></span><span class="line"><span class="cl">             |                   |
+</span></span><span class="line"><span class="cl">             |   Kafka Cluster   |
+</span></span><span class="line"><span class="cl">             |                   |
+</span></span><span class="line"><span class="cl">             |   B1   B2   B3    |
+</span></span><span class="line"><span class="cl">             |   |    |    |     |
+</span></span><span class="line"><span class="cl">             +-------------------+
+</span></span><span class="line"><span class="cl">                       |
+</span></span><span class="line"><span class="cl">                  MirrorMaker 2
+</span></span><span class="line"><span class="cl">                       |
+</span></span><span class="line"><span class="cl">                       v
+</span></span><span class="line"><span class="cl">                    REGION B
+</span></span><span class="line"><span class="cl">             +-------------------+
+</span></span><span class="line"><span class="cl">             |                   |
+</span></span><span class="line"><span class="cl">             |   Kafka Cluster   |
+</span></span><span class="line"><span class="cl">             |                   |
+</span></span><span class="line"><span class="cl">             |   B1   B2   B3+    |
+</span></span><span class="line"><span class="cl">             |                   |
+</span></span><span class="line"><span class="cl">             +-------------------+
+</span></span></code></pre><p>Within each region:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF=3
+</span></span><span class="line"><span class="cl">multi-AZ
+</span></span><span class="line"><span class="cl">min.insync.replicas=2
+</span></span><span class="line"><span class="cl">acks=all
+</span></span></code></pre><p>when appropriate for the workload.</p>
+<h2 id="84-the-reliability-hierarchy">84. The Reliability Hierarchy</h2>
+<p>Think about reliability in this order:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                    Reliability
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">          +--------------+--------------+
+</span></span><span class="line"><span class="cl">          |              |              |
+</span></span><span class="line"><span class="cl">      Replication      Failure       Recovery
+</span></span><span class="line"><span class="cl">                       handling
+</span></span><span class="line"><span class="cl">          |              |              |
+</span></span><span class="line"><span class="cl">       RF / ISR       Elections       DR
+</span></span><span class="line"><span class="cl">       minISR         Shutdown        Backup
+</span></span><span class="line"><span class="cl">       AZ/rack        Upgrade         Failover
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">      Durability
+</span></span></code></pre><h2 id="85-the-most-important-relationships">85. The Most Important Relationships</h2>
+<p>Memorize these:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> <strong>RF</strong> = number of replicas</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>ISR</strong> = replicas currently considered in sync</li>
+<li><input checked="" disabled="" type="checkbox"> <code>min.insync.replicas</code> = minimum ISR required for appropriate acknowledged writes</li>
+<li><input checked="" disabled="" type="checkbox"> <code>acks=all</code> = producer waits for the required in-sync acknowledgments</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>unclean election</strong> = availability at possible durability/data-loss cost</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>RPO</strong> = acceptable data-loss window</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>RTO</strong> = acceptable recovery-time window</li>
+</ol>
+<h2 id="86-the-golden-reliability-configuration">86. The Golden Reliability Configuration</h2>
+<p>For certification questions, remember this common pattern:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">replication.factor = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><p>with:</p>
+<ol>
+<li><input disabled="" type="checkbox"> replicas distributed across failure domains</li>
+<li><input disabled="" type="checkbox"> monitoring</li>
+<li><input disabled="" type="checkbox"> controlled maintenance</li>
+<li><input disabled="" type="checkbox"> tested DR</li>
+</ol>
+<p>But remember: <strong>This is a common reliability pattern, not a universal configuration that is automatically correct for every workload.</strong></p>
+<h2 id="87-cheat-sheet">87. Cheat Sheet</h2>
+<blockquote>
+<p><strong>RF</strong> = number of replicas</p>
+</blockquote>
+<blockquote>
+<p><strong>ISR</strong> = replicas currently in sync</p>
+</blockquote>
+<blockquote>
+<p>acks=0 → no acknowledgment</p>
+</blockquote>
+<blockquote>
+<p>acks=1 → leader acknowledgment</p>
+</blockquote>
+<blockquote>
+<p>acks=all → strongest producer acknowledgment mode</p>
+</blockquote>
+<blockquote>
+<p>minISR=2 → require at least 2 ISR replicas for appropriate writes</p>
+</blockquote>
+<blockquote>
+<p>RF=3 + minISR=2 + acks=all → strong common durability configuration</p>
+</blockquote>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">unclean election
+</span></span><span class="line"><span class="cl">→ availability ↑
+</span></span><span class="line"><span class="cl">→ potential data loss ↑
+</span></span></code></pre><blockquote>
+<p>rack/AZ awareness → protects against shared failure domains</p>
+</blockquote>
+<blockquote>
+<p>controlled shutdown → graceful leadership movement</p>
+</blockquote>
+<blockquote>
+<p>rolling upgrade → one broker at a time</p>
+</blockquote>
+<blockquote>
+<p>RPO → acceptable data loss</p>
+</blockquote>
+<blockquote>
+<p>RTO → acceptable recovery time</p>
+</blockquote>
+<blockquote>
+<p>MirrorMaker 2→ cross-cluster replication / DR / migration</p>
+</blockquote>
+<blockquote>
+<p>Replication != Backup</p>
+</blockquote>
+<h2 id="88-mental-model">88. Mental Model</h2>
+<p>If you remember only one diagram from this chapter, remember this:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                         KAFKA RELIABILITY
+</span></span><span class="line"><span class="cl">                                |
+</span></span><span class="line"><span class="cl">          +---------------------+---------------------+
+</span></span><span class="line"><span class="cl">          |                     |                     |
+</span></span><span class="line"><span class="cl">     REPLICATION            AVAILABILITY           RECOVERY
+</span></span><span class="line"><span class="cl">          |                     |                     |
+</span></span><span class="line"><span class="cl">       RF / ISR              Elections              Broker
+</span></span><span class="line"><span class="cl">       minISR                Leaders                Reassignment
+</span></span><span class="line"><span class="cl">       acks                  AZ/Rack                Rolling upgrade
+</span></span><span class="line"><span class="cl">          |                     |                     |
+</span></span><span class="line"><span class="cl">          +---------------------+---------------------+
+</span></span><span class="line"><span class="cl">                                |
+</span></span><span class="line"><span class="cl">                         DISASTER RECOVERY
+</span></span><span class="line"><span class="cl">                                |
+</span></span><span class="line"><span class="cl">                  +-------------+-------------+
+</span></span><span class="line"><span class="cl">                  |                           |
+</span></span><span class="line"><span class="cl">              RPO / RTO                 Cross-cluster
+</span></span><span class="line"><span class="cl">                                            |
+</span></span><span class="line"><span class="cl">                                      MirrorMaker 2
+</span></span><span class="line"><span class="cl">                                            |
+</span></span><span class="line"><span class="cl">                                      Failover/Failback
+</span></span></code></pre><p>The key principle is:</p>
+<blockquote>
+<p>Kafka reliability is the combination of replication, correct acknowledgment semantics,
+failure-domain-aware placement, safe operations, monitoring, and tested recovery procedures.</p>
+</blockquote>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <a class="prev" href="kafka-certification-mastery-chapter-13.html"><span class="nav-label">Previous</span><span class="nav-title">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</span></a>
+          <a class="next" href="kafka-certification-mastery-chapter-15.html"><span class="nav-label">Next</span><span class="nav-title">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</span></a>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 14 of 16</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "chapters\/kafka-certification-mastery-chapter-14.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

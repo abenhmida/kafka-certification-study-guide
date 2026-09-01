@@ -67,7 +67,7 @@ Kafka is a distributed log system composed of:
 
 The fundamental storage unit is the **partition log**.
 
-![KafkaCluster Architecture](diagrams/KafkaCluster.png)
+![KafkaCluster Architecture](../diagrams/KafkaCluster.png)
 
 ## Key idea
 
@@ -112,7 +112,7 @@ Internally, a broker coordinates:
 - Storage
 - Background maintenance
 
-![KafkaBrokerInternals Architecture](diagrams/KafkaBrokerInternals.png)
+![KafkaBrokerInternals Architecture](../diagrams/KafkaBrokerInternals.png)
 
 ## Important internal responsibility boundaries
 
@@ -154,7 +154,7 @@ Allows brokers to quickly determine partition leadership and metadata state.
 
 The basic request lifecycle:
 
-![KafkaRequestPipeline Architecture](diagrams/KafkaRequestPipeline.png)
+![KafkaRequestPipeline Architecture](../diagrams/KafkaRequestPipeline.png)
 
 The important architectural property is that **network I/O and request processing are separated**.
 
@@ -166,7 +166,7 @@ This prevents a slow disk operation or expensive request from directly blocking 
 
 The Kafka producer is a sophisticated asynchronous pipeline.
 
-![KafkaProducerInternals Architecture](diagrams/KafkaProducerInternals.png)
+![KafkaProducerInternals Architecture](../diagrams/KafkaProducerInternals.png)
 
 The critical insight:
 
@@ -187,7 +187,7 @@ Instead:
 
 The accumulator groups records by topic-partition.
 
-![RecordAccumulator Architecture](diagrams/RecordAccumulator.png)
+![RecordAccumulator Architecture](../diagrams/RecordAccumulator.png)
 
 Two major batching controls:
 
@@ -215,7 +215,7 @@ Compression is normally applied at the **record batch** level.
 
 ## 6. Producer Network and Retry Flow
 
-![ProducerRetryFlow Architecture](diagrams/ProducerRetryFlow.png)
+![ProducerRetryFlow Architecture](../diagrams/ProducerRetryFlow.png)
 
 Retries are not equivalent to "at least once" in every configuration.
 
@@ -236,7 +236,7 @@ With idempotence enabled, sequence numbers allow the broker to detect duplicate 
 
 The consumer architecture is pull-based.
 
-![KafkaConsumerInternals Architecture](diagrams/KafkaConsumerInternals.png)
+![KafkaConsumerInternals Architecture](../diagrams/KafkaConsumerInternals.png)
 
 The consumer does not receive pushed messages from Kafka.
 
@@ -264,7 +264,7 @@ This pull model allows consumers to control their consumption rate.
 
 ## 8. Consumer Fetch Pipeline
 
-![ConsumerFetchPipeline Architecture](diagrams/ConsumerFetchPipeline.png)
+![ConsumerFetchPipeline Architecture](../diagrams/ConsumerFetchPipeline.png)
 
 Important consumer concepts:
 
@@ -287,7 +287,7 @@ A common mistake is to treat `max.poll.records` as a network fetch size. It is n
 
 A consumer group distributes partitions among group members.
 
-![ConsumerGroup Architecture](diagrams/ConsumerGroup.png)
+![ConsumerGroup Architecture](../diagrams/ConsumerGroup.png)
 
 A consumer group has a key invariant:
 
@@ -312,7 +312,7 @@ Topic-A
 
 A rebalance changes the partition ownership map.
 
-![Rebalance Architecture](diagrams/Rebalance.png)
+![Rebalance Architecture](../diagrams/Rebalance.png)
 
 Typical causes:
 
@@ -338,7 +338,7 @@ A partition has:
 - An ordered log
 - A replica set
 
-![PartitionReplication Architecture](diagrams/PartitionReplication.png)
+![PartitionReplication Architecture](../diagrams/PartitionReplication.png)
 
 Only the partition leader normally handles client produce and fetch requests for that partition.
 
@@ -350,7 +350,7 @@ Followers replicate the leader's log.
 
 Conceptually:
 
-![ReplicationProtocol Architecture](diagrams/ReplicationProtocol.png)
+![ReplicationProtocol Architecture](../diagrams/ReplicationProtocol.png)
 
 Kafka replication is pull-oriented from the follower perspective.
 
@@ -380,7 +380,7 @@ The offset boundary up to which records are considered committed/visible for nor
 
 Replicas sufficiently caught up with the leader according to Kafka's replication rules.
 
-![ISRAndHW Architecture](diagrams/ISRAndHW.png)
+![ISRAndHW Architecture](../diagrams/ISRAndHW.png)
 
 A simplified conceptual relationship:
 
@@ -396,7 +396,7 @@ The exact implementation and timing details are more nuanced, but this mental mo
 
 Each partition is represented as a log.
 
-![KafkaLog Architecture](diagrams/KafkaLog.png)
+![KafkaLog Architecture](../diagrams/KafkaLog.png)
 
 Kafka does not maintain one infinite file per partition.
 
@@ -424,7 +424,7 @@ A segment commonly has related files:
 
 Conceptually:
 
-![LogSegment Architecture](diagrams/LogSegment.png)
+![LogSegment Architecture](../diagrams/LogSegment.png)
 
 The offset index is sparse rather than a full mapping for every record.
 
@@ -449,7 +449,7 @@ Scan records forward
 Return matching data
 ```
 
-![OffsetLookup Architecture](diagrams/OffsetLookup.png)
+![OffsetLookup Architecture](../diagrams/OffsetLookup.png)
 
 ---
 
@@ -457,7 +457,7 @@ Return matching data
 
 A simplified produce path:
 
-![ProducePath Architecture](diagrams/ProducePath.png)
+![ProducePath Architecture](../diagrams/ProducePath.png)
 
 Important:
 
@@ -471,7 +471,7 @@ Durability and availability are primarily achieved through replication.
 
 ## 17. Fetch Path: Disk/Page Cache to Consumer
 
-![FetchPath Architecture](diagrams/FetchPath.png)
+![FetchPath Architecture](../diagrams/FetchPath.png)
 
 Kafka's performance benefits strongly from sequential I/O and page-cache locality.
 
@@ -483,7 +483,7 @@ Kafka's high throughput is closely related to the OS page cache.
 
 Conceptually:
 
-![ZeroCopy Architecture](diagrams/ZeroCopy.png)
+![ZeroCopy Architecture](../diagrams/ZeroCopy.png)
 
 The conceptual goal is to avoid unnecessary copies:
 
@@ -516,7 +516,7 @@ The architecture separates:
 - Broker responsibilities
 - Controller responsibilities
 
-![KRaftArchitecture Architecture](diagrams/KRaftArchitecture.png)
+![KRaftArchitecture Architecture](../diagrams/KRaftArchitecture.png)
 
 The KRaft metadata quorum maintains the cluster's authoritative metadata state.
 
@@ -526,7 +526,7 @@ The KRaft metadata quorum maintains the cluster's authoritative metadata state.
 
 The controller quorum uses a replicated metadata log.
 
-![KRaftMetadataQuorum Architecture](diagrams/KRaftMetadataQuorum.png)
+![KRaftMetadataQuorum Architecture](../diagrams/KRaftMetadataQuorum.png)
 
 Metadata records can represent changes such as:
 
@@ -544,7 +544,7 @@ The metadata log is not the same thing as application topic data.
 
 ## 21. Controller and Broker Metadata Flow
 
-![ControllerBrokerMetadata Architecture](diagrams/ControllerBrokerMetadata.png)
+![ControllerBrokerMetadata Architecture](../diagrams/ControllerBrokerMetadata.png)
 
 The controller is the authority for cluster metadata.
 
@@ -556,7 +556,7 @@ Brokers maintain local views/caches needed to process client requests efficientl
 
 A partition leader can change when a broker fails.
 
-![LeaderElection Architecture](diagrams/LeaderElection.png)
+![LeaderElection Architecture](../diagrams/LeaderElection.png)
 
 The exact election outcome depends on:
 
@@ -573,7 +573,7 @@ The key principle is that leadership is a metadata decision coordinated by the c
 
 A broker has multiple execution domains.
 
-![KafkaThreadModel Architecture](diagrams/KafkaThreadModel.png)
+![KafkaThreadModel Architecture](../diagrams/KafkaThreadModel.png)
 
 Kafka concurrency is intentionally divided into specialized roles.
 
@@ -585,7 +585,7 @@ This prevents a single workload from monopolizing all broker execution resources
 
 Conceptual network architecture:
 
-![KafkaNetwork Architecture](diagrams/KafkaNetwork.png)
+![KafkaNetwork Architecture](../diagrams/KafkaNetwork.png)
 
 A typical broker request lifecycle is:
 
@@ -615,7 +615,7 @@ Socket
 
 Kafka uses several important memory areas.
 
-![KafkaMemory Architecture](diagrams/KafkaMemory.png)
+![KafkaMemory Architecture](../diagrams/KafkaMemory.png)
 
 A common misconception is:
 
@@ -635,7 +635,7 @@ Idempotence addresses duplicate writes caused by retries.
 
 Conceptually:
 
-![IdempotentProducer Architecture](diagrams/IdempotentProducer.png)
+![IdempotentProducer Architecture](../diagrams/IdempotentProducer.png)
 
 The broker can use producer identity and sequence information to recognize duplicate requests.
 
@@ -649,7 +649,7 @@ Transactions coordinate writes across Kafka partitions and consumer offsets.
 
 A simplified flow:
 
-![KafkaTransaction Architecture](diagrams/KafkaTransaction.png)
+![KafkaTransaction Architecture](../diagrams/KafkaTransaction.png)
 
 Exactly-once semantics require understanding several components together:
 
@@ -670,7 +670,7 @@ Exactly-once semantics require understanding several components together:
 
 Consumer offsets are stored in Kafka's internal offsets topic.
 
-![OffsetManagement Architecture](diagrams/OffsetManagement.png)
+![OffsetManagement Architecture](../diagrams/OffsetManagement.png)
 
 The conceptual lifecycle:
 
@@ -720,7 +720,7 @@ The second can produce at-most-once behavior.
 
 This is the most important architecture diagram in the book.
 
-![EndToEndKafka Architecture](diagrams/EndToEndKafka.png)
+![EndToEndKafka Architecture](../diagrams/EndToEndKafka.png)
 
 A message therefore passes through several layers:
 
@@ -766,7 +766,7 @@ Application
 
 Suppose Broker 1 fails.
 
-![BrokerFailure Architecture](diagrams/BrokerFailure.png)
+![BrokerFailure Architecture](../diagrams/BrokerFailure.png)
 
 Clients may initially receive:
 
@@ -781,7 +781,7 @@ The client refreshes metadata and reconnects to the new leader.
 
 ## 31. Leader Failure
 
-![PartitionLeaderFailure Architecture](diagrams/PartitionLeaderFailure.png)
+![PartitionLeaderFailure Architecture](../diagrams/PartitionLeaderFailure.png)
 
 The key distinction:
 
@@ -796,7 +796,7 @@ A broker failure can therefore trigger many partition leadership transitions.
 
 ## 32. Consumer Failure
 
-![ConsumerFailure Architecture](diagrams/ConsumerFailure.png)
+![ConsumerFailure Architecture](../diagrams/ConsumerFailure.png)
 
 The actual behavior depends on:
 
@@ -813,7 +813,7 @@ The actual behavior depends on:
 
 In a KRaft controller quorum:
 
-![ControllerFailure Architecture](diagrams/ControllerFailure.png)
+![ControllerFailure Architecture](../diagrams/ControllerFailure.png)
 
 The important concept:
 
@@ -827,7 +827,7 @@ The metadata quorum is replicated independently from the application partition d
 
 Network failures can be more subtle than process failures.
 
-![NetworkPartition Architecture](diagrams/NetworkPartition.png)
+![NetworkPartition Architecture](../diagrams/NetworkPartition.png)
 
 Possible consequences:
 
@@ -952,7 +952,7 @@ Client recovery
 
 Kafka can be understood as five cooperating systems:
 
-![KafkaFiveSystems Architecture](diagrams/KafkaFiveSystems.png)
+![KafkaFiveSystems Architecture](../diagrams/KafkaFiveSystems.png)
 
 The most useful architecture mental model is:
 

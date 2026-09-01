@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Certification focus: This chapter covers Kafka observability, JMX metrics, broker/producer/consumer metrics, consumer lag, replication health, JVM monitoring,…">
+<meta name="generator" content="mdPress">
+<meta property="og:title" content="Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive - Kafka Certification Study Guide">
+<meta property="og:description" content="Certification focus: This chapter covers Kafka observability, JMX metrics, broker/producer/consumer metrics, consumer lag, replication health, JVM monitoring,…">
+<meta property="og:type" content="article">
+
+<meta name="author" content="Aymen Ben Hmida">
+<title>Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive - Kafka Certification Study Guide</title>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%234285f4'>📚</text></svg>">
+
+<link rel="stylesheet" href="../assets/mdpress-58303aa6daa1418c.css">
+<script>
+ 
+(function(){var t=localStorage.getItem('mdpress-theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}})();
+</script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="search-backdrop" id="search-backdrop"></div>
+  <div class="search-inline" id="search-overlay" role="search" aria-label="Search">
+    <div class="search-header">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Type to search…" autocomplete="off" spellcheck="false">
+      <span class="search-esc">ESC</span>
+    </div>
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results">
+      <div class="search-empty">Type to search…</div>
+    </div>
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+
+  <div class="route-progress" id="route-progress" aria-hidden="true">
+    <div class="route-progress-bar"></div>
+  </div>
+  <button class="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar-nav" aria-expanded="false">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="sidebar">
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+    <div class="sidebar-header">
+      
+      <div class="sidebar-title-row">
+        <h1><a class="sidebar-home-link" href="../index.html">Kafka Certification Study Guide</a></h1>
+        <button class="sidebar-close" aria-label="Hide sidebar" title="Hide sidebar">✕</button>
+      </div>
+      
+      
+      <div class="sidebar-meta">
+      <span class="sidebar-author">Aymen Ben Hmida</span>
+      
+      </div>
+      
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-1.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-1.html" data-file="chapters/kafka-certification-mastery-chapter-1.html" data-group-link="false">Chapter 1 — Kafka Mental Model</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-2.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-2.html" data-file="chapters/kafka-certification-mastery-chapter-2.html" data-group-link="false">Chapter 2 — Kafka Architecture Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-3.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-3.html" data-file="chapters/kafka-certification-mastery-chapter-3.html" data-group-link="false">Chapter 3 — Topics, Partitions, Offsets and Log Internals</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-4.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-4.html" data-file="chapters/kafka-certification-mastery-chapter-4.html" data-group-link="false">Chapter 4 — Producers Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-5.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-5.html" data-file="chapters/kafka-certification-mastery-chapter-5.html" data-group-link="false">Chapter 5 — Consumers and Consumer Groups Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-6.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-6.html" data-file="chapters/kafka-certification-mastery-chapter-6.html" data-group-link="false">Chapter 6 — Kafka Storage, Replication, ISR and Fault Tolerance</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-7.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-7.html" data-file="chapters/kafka-certification-mastery-chapter-7.html" data-group-link="false">Chapter 7 — Consumer Groups</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-8.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-8.html" data-file="chapters/kafka-certification-mastery-chapter-8.html" data-group-link="false">Chapter 8 — Kafka Administration &amp; Operations Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-9.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-9.html" data-file="chapters/kafka-certification-mastery-chapter-9.html" data-group-link="false">Chapter 9 — Kafka Security Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-10.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-10.html" data-file="chapters/kafka-certification-mastery-chapter-10.html" data-group-link="false">Chapter 10 — Kafka Connect Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-11.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-11.html" data-file="chapters/kafka-certification-mastery-chapter-11.html" data-group-link="false">Chapter 11 — Kafka Streams Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-12.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-12.html" data-file="chapters/kafka-certification-mastery-chapter-12.html" data-group-link="false">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-13.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-13.html" data-file="chapters/kafka-certification-mastery-chapter-13.html" data-group-link="false">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-14.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-14.html" data-file="chapters/kafka-certification-mastery-chapter-14.html" data-group-link="false">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-15.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-15.html" data-file="chapters/kafka-certification-mastery-chapter-15.html" data-group-link="false">Chapter 15 — Kafka Schema Management &amp; Data Contracts Deep Dive</a></div></div>
+<div class="nav-group" data-group-file="chapters/kafka-certification-mastery-chapter-16.html"><div class="nav-row"><a class="nav-item nav-chapter nav-depth-1" href="kafka-certification-mastery-chapter-16.html" data-file="chapters/kafka-certification-mastery-chapter-16.html" data-group-link="false">Chapter 16 — Kafka Transactions &amp; Exactly-Once Semantics Deep Dive</a></div></div>
+
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="page-header">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html">Kafka Certification Study Guide</a>
+        <span class="bc-sep">›</span><a href="kafka-certification-mastery-chapter-13.html">Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</a>
+      </nav>
+      <div class="header-right">
+        <button class="header-search-btn" id="header-search-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Type to search…</span>
+          <kbd>Ctrl/⌘ K</kbd>
+        </button>
+        <div class="theme-toggle" aria-label="Theme switcher">
+          <button type="button" data-theme="light" title="Light mode" aria-label="Light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button type="button" data-theme="system" title="System default" aria-label="System default"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></button>
+          <button type="button" data-theme="dark" title="Dark mode" aria-label="Dark mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+    </header>
+    <div class="main-body">
+      <div class="content" id="main-content">
+        <h1>Chapter 13 — Kafka Monitoring, Metrics &amp; Troubleshooting Deep Dive</h1>
+        <pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Certification focus: This chapter covers Kafka observability, JMX metrics, broker/producer/consumer metrics, 
+</span></span><span class="line"><span class="cl">consumer lag, replication health, JVM monitoring, request latency, 
+</span></span><span class="line"><span class="cl">disk and network monitoring, alerting, troubleshooting methodology, Prometheus/Grafana concepts, a
+</span></span><span class="line"><span class="cl">nd certification-style incident scenarios.
+</span></span></code></pre><h2 id="1-learning-objectives">1. Learning Objectives</h2>
+<p>By the end of this chapter, you should be able to:</p>
+<ol>
+<li>Explain Kafka's monitoring model.</li>
+<li>Understand JMX and Kafka metrics.</li>
+<li>Identify the most important broker metrics.</li>
+<li>Monitor producer health.</li>
+<li>Monitor consumer health.</li>
+<li>Explain consumer lag.</li>
+<li>Diagnose under-replicated partitions.</li>
+<li>Diagnose offline partitions.</li>
+<li>Monitor ISR changes.</li>
+<li>Monitor controller health.</li>
+<li>Understand request latency.</li>
+<li>Monitor network and request-handler utilization.</li>
+<li>Monitor disk and filesystem performance.</li>
+<li>Monitor JVM heap and garbage collection.</li>
+<li>Design Kafka alerts.</li>
+<li>Distinguish symptoms from root causes.</li>
+<li>Troubleshoot Kafka systematically.</li>
+<li>Interpret common Kafka incidents.</li>
+<li>Prepare for Kafka administrator certification questions.</li>
+</ol>
+<h2 id="2-why-kafka-monitoring-matters">2. Why Kafka Monitoring Matters</h2>
+<p>Kafka is a distributed system. A cluster can appear healthy from one perspective while being unhealthy from another.</p>
+<p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   | healthy
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Broker
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   | healthy
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   | slow
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Application
+</span></span></code></pre><p>Kafka itself may be operating correctly while consumer lag continuously increases. Therefore, Kafka monitoring must
+cover the entire pipeline:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Kafka Broker
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +--&gt; Replicas
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Application
+</span></span></code></pre><h2 id="3-the-four-observability-signals">3. The Four Observability Signals</h2>
+<p>Kafka monitoring should consider:</p>
+<ul>
+<li>Metrics</li>
+<li>Logs</li>
+<li>Traces</li>
+<li>Events/Alerts</li>
+</ul>
+<ol>
+<li><strong>Metrics</strong>: Tells what is happening?</li>
+</ol>
+<ul>
+<li>CPU</li>
+<li>throughput</li>
+<li>latency</li>
+<li>consumer lag</li>
+<li>ISR count</li>
+</ul>
+<ol>
+<li><strong>Logs</strong>: Tells what did Kafka report?</li>
+</ol>
+<ul>
+<li>leader election</li>
+<li>authentication failure</li>
+<li>replication error</li>
+<li>disk failure</li>
+</ul>
+<ol>
+<li><strong>Traces</strong>: Can tell how did an operation propagate through the system? this is especially useful when Kafka is part
+of a larger distributed architecture.</li>
+<li><strong>Alerts</strong>: Tell operators that something requires attention.</li>
+</ol>
+<h2 id="4-kafka-monitoring-architecture">4. Kafka Monitoring Architecture</h2>
+<p>A typical monitoring architecture looks like:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                         Kafka Cluster
+</span></span><span class="line"><span class="cl">                              |
+</span></span><span class="line"><span class="cl">                 +------------+------------+
+</span></span><span class="line"><span class="cl">                 |            |            |
+</span></span><span class="line"><span class="cl">              Broker 1     Broker 2     Broker 3
+</span></span><span class="line"><span class="cl">                 |            |            |
+</span></span><span class="line"><span class="cl">                 +------------+------------+
+</span></span><span class="line"><span class="cl">                              |
+</span></span><span class="line"><span class="cl">                             JMX
+</span></span><span class="line"><span class="cl">                              |
+</span></span><span class="line"><span class="cl">                              v
+</span></span><span class="line"><span class="cl">                    Metrics Collection
+</span></span><span class="line"><span class="cl">                              |
+</span></span><span class="line"><span class="cl">                    +---------+---------+
+</span></span><span class="line"><span class="cl">                    |                   |
+</span></span><span class="line"><span class="cl">               Prometheus          Other system
+</span></span><span class="line"><span class="cl">                    |
+</span></span><span class="line"><span class="cl">                    v
+</span></span><span class="line"><span class="cl">                 Grafana
+</span></span><span class="line"><span class="cl">                    |
+</span></span><span class="line"><span class="cl">                    v
+</span></span><span class="line"><span class="cl">               Dashboards
+</span></span><span class="line"><span class="cl">                    |
+</span></span><span class="line"><span class="cl">                    v
+</span></span><span class="line"><span class="cl">                 Alerts
+</span></span></code></pre><p>The exact monitoring stack can vary.</p>
+<h2 id="5-jmx">5. JMX</h2>
+<p>Kafka exposes many metrics through: Java Management Extensions — JMX Kafka runs on the JVM, and JMX exposes runtime
+metrics.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka JVM
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +-- Broker metrics
+</span></span><span class="line"><span class="cl">   +-- Producer metrics
+</span></span><span class="line"><span class="cl">   +-- Consumer metrics
+</span></span><span class="line"><span class="cl">   +-- JVM metrics
+</span></span><span class="line"><span class="cl">   +-- Request metrics
+</span></span></code></pre><p>Monitoring systems can collect these metrics.</p>
+<h2 id="6-metric-names">6. Metric Names</h2>
+<p>Kafka metrics commonly follow patterns involving:</p>
+<ol>
+<li><input disabled="" type="checkbox"> type</li>
+<li><input disabled="" type="checkbox"> name</li>
+<li><input disabled="" type="checkbox"> topic</li>
+<li><input disabled="" type="checkbox"> partition</li>
+<li><input disabled="" type="checkbox"> client-id</li>
+<li><input disabled="" type="checkbox"> broker-id</li>
+</ol>
+<p>For example, metrics can describe:</p>
+<ol>
+<li><input disabled="" type="checkbox"> BytesIn</li>
+<li><input disabled="" type="checkbox"> BytesOut</li>
+<li><input disabled="" type="checkbox"> MessagesIn</li>
+<li><input disabled="" type="checkbox"> RequestLatency</li>
+<li><input disabled="" type="checkbox"> UnderReplicatedPartitions</li>
+</ol>
+<p>The exact metric names and tags can differ by Kafka version and monitoring integration.</p>
+<p>For certification preparation, understand the meaning of the metrics rather than relying exclusively on memorized JMX
+object names.</p>
+<h2 id="7-monitoring-layers">7. Monitoring Layers</h2>
+<p>A useful monitoring hierarchy is:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                    Kafka Monitoring
+</span></span><span class="line"><span class="cl">                          |
+</span></span><span class="line"><span class="cl">       +------------------+------------------+
+</span></span><span class="line"><span class="cl">       |                  |                  |
+</span></span><span class="line"><span class="cl">     Broker            Producer           Consumer
+</span></span><span class="line"><span class="cl">       |                  |                  |
+</span></span><span class="line"><span class="cl">       v                  v                  v
+</span></span><span class="line"><span class="cl"> replication          send rate          fetch rate
+</span></span><span class="line"><span class="cl"> requests             errors             lag
+</span></span><span class="line"><span class="cl"> disk                  latency            poll
+</span></span><span class="line"><span class="cl"> network               batching          commits
+</span></span><span class="line"><span class="cl"> JVM                   buffer            rebalances
+</span></span></code></pre><p>Then monitor the infrastructure underneath:</p>
+<ul>
+<li>CPU</li>
+<li>Memory</li>
+<li>Disk</li>
+<li>Network</li>
+<li>Filesystem</li>
+<li>JVM</li>
+</ul>
+<h2 id="8-broker-monitoring">8. Broker Monitoring</h2>
+<p>Important broker categories include:</p>
+<ul>
+<li>Traffic</li>
+<li>Requests</li>
+<li>Replication</li>
+<li>Partitions</li>
+<li>Network</li>
+<li>Disk</li>
+<li>JVM</li>
+<li>Controller</li>
+</ul>
+<p>A healthy dashboard should make these visible.</p>
+<h2 id="9-bytes-in">9. Bytes In</h2>
+<p><code>BytesIn</code> represents incoming data traffic to brokers.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producers
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   | 500 MB/s
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Broker
+</span></span></code></pre><p>If <code>BytesIn</code> suddenly increases</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">normal = 200 MB/s
+</span></span><span class="line"><span class="cl">current = 800 MB/s
+</span></span></code></pre><p>investigate:</p>
+<ul>
+<li>producer traffic increase</li>
+<li>deployment changes</li>
+<li>unexpected producer</li>
+<li>retry storm</li>
+<li>traffic spike</li>
+</ul>
+<h2 id="10-bytes-out">10. Bytes Out</h2>
+<p><code>BytesOut</code> represents data leaving brokers. Traffic can come from:</p>
+<ul>
+<li>Consumers</li>
+<li>Inter-broker communication</li>
+<li>Other Kafka operations</li>
+</ul>
+<p>A sudden increase may indicate:</p>
+<ul>
+<li>consumer traffic increase</li>
+<li>replication activity</li>
+<li>data movement</li>
+</ul>
+<h2 id="11-messages-in">11. Messages In</h2>
+<p>Monitoring record rate helps distinguish <code>bytes/sec</code> from <code>records/sec</code>, for example <code>100,000 records/sec</code> could
+represent
+<code>100 MB/sec</code> if records average <code>1 KB</code> but <code>1 GB/sec</code> if records average <code>10 KB</code>. Always monitor both records and
+bytes when relevant.</p>
+<h2 id="12-request-rate">12. Request Rate</h2>
+<p>Kafka brokers process different request types:</p>
+<ul>
+<li>Produce</li>
+<li>Fetch</li>
+<li>Metadata</li>
+<li>Offset</li>
+<li>JoinGroup</li>
+<li>SyncGroup</li>
+<li>Heartbeat</li>
+<li>ApiVersions</li>
+</ul>
+<p>Monitoring request rates helps identify workload changes. For example
+<code>Produce requests ↑</code> may indicate producer traffic growth while <code>Metadata requests ↑↑↑</code> may indicate client churn
+or inefficient client behavior.</p>
+<h2 id="13-request-latency">13. Request Latency</h2>
+<p>Request latency is a key health indicator.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Client
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">  | request
+</span></span><span class="line"><span class="cl">  v
+</span></span><span class="line"><span class="cl">Broker
+</span></span><span class="line"><span class="cl">  |
+</span></span><span class="line"><span class="cl">  | processing
+</span></span><span class="line"><span class="cl">  v
+</span></span><span class="line"><span class="cl">response
+</span></span></code></pre><p>Monitor</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">average
+</span></span><span class="line"><span class="cl">p95
+</span></span><span class="line"><span class="cl">p99
+</span></span></code></pre><p>rather than only averages.</p>
+<h2 id="14-why-percentiles-matter">14. Why Percentiles Matter</h2>
+<p>Suppose <code>Average = 10 ms</code> but <code>p99 = 1,000 ms</code>, the average hides a serious tail-latency problem. A production
+dashboard should often expose <code>p50</code>, <code>p95</code>, <code>p99</code> for important request classes.</p>
+<h2 id="15-request-handler-utilization">15. Request Handler Utilization</h2>
+<p>Kafka brokers use request-handling threads to process requests. A useful metric concept is
+<code>RequestHandlerAvgIdlePercent</code>. High idle percentage generally means <strong>request handler capacity available</strong>
+and low idle percentage suggests <strong>request handlers are heavily utilized</strong></p>
+<h2 id="16-network-processor-utilization">16. Network Processor Utilization</h2>
+<p>Kafka also uses network processors. A metric conceptually representing network processor idle time can help identify
+network-thread saturation. if <code>network processor idle ≈ very low</code> then the broker may be struggling with network
+request processing.</p>
+<h2 id="17-cpu-vs-request-handler-saturation">17. CPU vs Request Handler Saturation</h2>
+<p>Do not assume <code>CPU = 90%</code> s always the cause. You should correlate
+<code>CPU + request latency + request-handler utilization + network processor utilization</code>. A broker can have high CPU
+because of:</p>
+<ul>
+<li>compression</li>
+<li>TLS</li>
+<li>GC</li>
+<li>other processes</li>
+</ul>
+<p>rather than request handling.</p>
+<h2 id="18-replication-is-one-of-the-most-important-administrator-concerns">18. Replication is one of the most important administrator concerns</h2>
+<p>Monitor</p>
+<ul>
+<li>ISR</li>
+<li>UnderReplicatedPartitions</li>
+<li>OfflinePartitionsCount</li>
+<li>leader elections</li>
+<li>replication latency</li>
+</ul>
+<h2 id="181-under-replicated-partitions">18.1. Under-Replicated Partitions</h2>
+<p>An under-replicated partition is a major warning sign.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Expected:
+</span></span><span class="line"><span class="cl">Leader + Follower 1 + Follower 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Actual ISR:
+</span></span><span class="line"><span class="cl">Leader + Follower 1
+</span></span></code></pre><p>One replica has fallen behind. <code>UnderReplicatedPartitions &gt; 0</code> requires investigation.</p>
+<h2 id="182-is-under-replicated-always-an-incident">18.2. Is Under-Replicated Always an Incident?</h2>
+<p>Not necessarily. During</p>
+<ul>
+<li>controlled maintenance</li>
+<li>broker restart</li>
+<li>partition reassignment</li>
+</ul>
+<p>temporary under-replication can occur but <strong>Persistent under-replication is a serious problem.</strong>
+The key is to monitor:</p>
+<ul>
+<li>duration</li>
+<li>trend</li>
+<li>affected partitions</li>
+<li>affected brokers</li>
+</ul>
+<h2 id="183-offline-partitions">18.3. Offline Partitions</h2>
+<p>An offline partition is much more serious. It means there is no available leader for the partition.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition 5
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Leader = unavailable
+</span></span><span class="line"><span class="cl">Followers = unavailable or unable to become leader
+</span></span></code></pre><p>This can make the partition unavailable to clients. An alert such as <code>OfflinePartitionsCount &gt; 0</code> should normally be
+treated as critical.</p>
+<h2 id="184-isr-shrink-rate">18.4. ISR Shrink Rate</h2>
+<p>Monitoring only the current ISR size is insufficient. You should also monitor</p>
+<ul>
+<li>ISR shrink events</li>
+<li>ISR expansion events</li>
+</ul>
+<p>Frequent shrinking and expansion may indicate:</p>
+<ul>
+<li>disk problems</li>
+<li>network instability</li>
+<li>broker overload</li>
+<li>GC pauses</li>
+</ul>
+<h2 id="185-example-isr-incident">18.5. Example ISR Incident</h2>
+<p>Suppose</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR:
+</span></span><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">Broker 3
+</span></span></code></pre><p>Then</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 3
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">falls behind
+</span></span></code></pre><p>ISR becomes</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span></code></pre><p>If this happens frequently:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR shrink
+</span></span><span class="line"><span class="cl">ISR expand
+</span></span><span class="line"><span class="cl">ISR shrink
+</span></span><span class="line"><span class="cl">ISR expand
+</span></span></code></pre><p>you may have an unstable broker.</p>
+<h2 id="19-controller-monitoring">19. Controller Monitoring</h2>
+<p>Kafka has controller responsibilities for cluster metadata and coordination. Depending on Kafka architecture/version,
+the implementation details differ, but operators still need to monitor:</p>
+<ul>
+<li>controller health</li>
+<li>controller changes</li>
+<li>metadata propagation</li>
+<li>leader elections</li>
+</ul>
+<p>Frequent controller changes are not normal steady-state behavior.</p>
+<h2 id="20-controller-changes">20. Controller Changes</h2>
+<p>A controller transition may occur because of:</p>
+<ul>
+<li>broker failure</li>
+<li>controller failure</li>
+<li>network problems</li>
+<li>cluster instability</li>
+</ul>
+<p>Frequent changes indicate instability. Monitor:</p>
+<ul>
+<li>controller count/state</li>
+<li>controller changes</li>
+<li>leader elections</li>
+</ul>
+<h2 id="21-leader-elections">21. Leader Elections</h2>
+<p>Kafka partitions have leaders. If leaders continuously change <code>leader election rate ↑</code>. investigate:</p>
+<ul>
+<li>broker failures</li>
+<li>network instability</li>
+<li>controller instability</li>
+<li>resource exhaustion</li>
+</ul>
+<p>Frequent leader elections can affect latency and availability.</p>
+<h2 id="22-preferred-leader-balance">22. Preferred Leader Balance</h2>
+<p>Kafka can distribute leadership across brokers. A poorly balanced cluster may have:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1:
+</span></span><span class="line"><span class="cl">80% of leaders
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 2:
+</span></span><span class="line"><span class="cl">10%
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 3:
+</span></span><span class="line"><span class="cl">10%
+</span></span></code></pre><p>This can create:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +-- high network
+</span></span><span class="line"><span class="cl">   +-- high CPU
+</span></span><span class="line"><span class="cl">   +-- high disk
+</span></span></code></pre><p>while other brokers are underutilized.</p>
+<h2 id="23-broker-balance">23. Broker Balance</h2>
+<p>Monitor per-broker:</p>
+<ul>
+<li>BytesIn</li>
+<li>BytesOut</li>
+<li>CPU</li>
+<li>disk usage</li>
+<li>partition count</li>
+<li>leader count</li>
+<li>request rate</li>
+</ul>
+<p>A healthy cluster should generally avoid extreme imbalance.</p>
+<h2 id="24-consumer-monitoring">24. Consumer Monitoring</h2>
+<p>Consumer monitoring should cover:</p>
+<ul>
+<li>lag</li>
+<li>records consumed</li>
+<li>fetch latency</li>
+<li>poll behavior</li>
+<li>commit rate</li>
+<li>rebalance rate</li>
+<li>errors</li>
+<li>processing latency</li>
+</ul>
+<h3 id="241-consumer-lag">24.1. Consumer Lag</h3>
+<p>Consumer lag can be thought of as <code>latest available offset - consumer's committed/processed position</code></p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Latest offset = 1,000,000
+</span></span><span class="line"><span class="cl">Consumer position = 999,500
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Lag = 500
+</span></span></code></pre><h3 id="242-lag-per-partition">24.2. Lag Per Partition</h3>
+<p>Do not monitor only total lag.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition 0 = 10
+</span></span><span class="line"><span class="cl">Partition 1 = 15
+</span></span><span class="line"><span class="cl">Partition 2 = 20
+</span></span><span class="line"><span class="cl">Partition 3 = 500,000
+</span></span></code></pre><p>Total lag <code>500,045</code>. The important information is <strong>Partition 3 is the problem</strong>. This could indicate</p>
+<ul>
+<li>hot partition</li>
+<li>slow consumer assignment</li>
+<li>processing imbalance</li>
+</ul>
+<h3 id="243-maximum-lag">24.3. Maximum Lag</h3>
+<p>records-lag-max or equivalent monitoring is often particularly useful because <code>total lag</code> can hide
+<code>one severely delayed partition</code>
+while maximum lag exposes the worst case.</p>
+<h3 id="244-consumer-lag-trend">24.4. Consumer Lag Trend</h3>
+<p>The trend matters more than a single measurement. Healthy:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">100
+</span></span><span class="line"><span class="cl">120
+</span></span><span class="line"><span class="cl">110
+</span></span><span class="line"><span class="cl">105
+</span></span><span class="line"><span class="cl">100
+</span></span></code></pre><p>Concerning:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">100
+</span></span><span class="line"><span class="cl">500
+</span></span><span class="line"><span class="cl">2,000
+</span></span><span class="line"><span class="cl">10,000
+</span></span><span class="line"><span class="cl">50,000
+</span></span></code></pre><p>The second indicates that consumption is falling behind.</p>
+<h3 id="245-consumer-lag-recovery">24.5. Consumer Lag Recovery</h3>
+<p>Suppose</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Incoming = 100 MB/s
+</span></span><span class="line"><span class="cl">Consumer = 80 MB/s
+</span></span></code></pre><p>Lag grows. You increase consumers and reach <code>Consumer = 150 MB/s</code>. Now lag should eventually decline. This is a good
+example of measuring
+<code>lag growth rate</code> rather than just lag value.</p>
+<h3 id="246-consumer-rebalances">24.6. Consumer Rebalances</h3>
+<p>Frequent consumer-group rebalances can hurt throughput. Monitor:</p>
+<ul>
+<li>rebalance rate</li>
+<li>rebalance duration</li>
+<li>consumer membership changes</li>
+</ul>
+<p>Possible causes:</p>
+<ul>
+<li>consumer crashes</li>
+<li>slow processing</li>
+<li>max.poll.interval.ms exceeded</li>
+<li>network instability</li>
+<li>deployment churn</li>
+</ul>
+<h3 id="247-rebalance-storm">24.7. Rebalance Storm</h3>
+<p>A rebalance storm looks like:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">consumer joins
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">rebalance
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">consumer leaves
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">rebalance
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">consumer joins
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">rebalance
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">...
+</span></span></code></pre><p>Consequences:</p>
+<ul>
+<li>processing interruptions</li>
+<li>lag growth</li>
+<li>duplicate processing</li>
+<li>throughput reduction</li>
+</ul>
+<h3 id="248-consumer-poll-monitoring">24.8. Consumer Poll Monitoring</h3>
+<p>The consumer should call <code>poll()</code> regularly. If application processing takes too long:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">poll
+</span></span><span class="line"><span class="cl"> |
+</span></span><span class="line"><span class="cl"> +---- long processing
+</span></span><span class="line"><span class="cl"> |
+</span></span><span class="line"><span class="cl"> v
+</span></span><span class="line"><span class="cl">poll delayed
+</span></span></code></pre><p>and <code>max.poll.interval.ms</code> may be exceeded.</p>
+<h2 id="25-producer-monitoring">25. Producer Monitoring</h2>
+<p>Monitor:</p>
+<ul>
+<li>record-send-rate</li>
+<li>record-error-rate</li>
+<li>request-rate</li>
+<li>request-latency</li>
+<li>batch-size</li>
+<li>compression-rate</li>
+<li>buffer availability</li>
+<li>retry rate</li>
+</ul>
+<h3 id="251-producer-error-rate">25.1. Producer Error Rate</h3>
+<p>A sudden increase in producer errors may indicate:</p>
+<ul>
+<li>broker unavailable</li>
+<li>authorization failure</li>
+<li>record too large</li>
+<li>timeout</li>
+<li>metadata issue</li>
+<li>insufficient ISR</li>
+<li>network problem</li>
+</ul>
+<p>The metric tells you <strong>that</strong> something is wrong. Logs and error codes often tell you <strong>what</strong>.</p>
+<h3 id="252-producer-retries">25.2. Producer Retries</h3>
+<p>Retries can be healthy in small amounts.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">temporary network issue
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">    retry
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">    success
+</span></span></code></pre><p>But sustained high retries indicate a problem. Potential causes:</p>
+<ul>
+<li>broker overload</li>
+<li>network instability</li>
+<li>timeouts</li>
+<li>leader movement</li>
+</ul>
+<h3 id="253-producer-request-latency">25.3. Producer Request Latency</h3>
+<p>Suppose</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">producer latency
+</span></span><span class="line"><span class="cl">10 ms -&gt; 20 ms -&gt; 100 ms -&gt; 500 ms
+</span></span></code></pre><p>while <code>producer throughput ↓</code>. Investigate the broker and network. Potential causes:</p>
+<ul>
+<li>disk</li>
+<li>CPU</li>
+<li>network</li>
+<li>replication</li>
+<li>request queues</li>
+</ul>
+<h3 id="254-producer-buffer-exhaustion">25.4. Producer Buffer Exhaustion</h3>
+<p>If <code>buffer.available.bytes</code> falls toward zero repeatedly, producers may block. Possible root cause <strong>producer
+generating records faster than Kafka can accept them</strong></p>
+<p>Potential solutions include:</p>
+<ul>
+<li>increase throughput</li>
+<li>improve batching</li>
+<li>increase broker capacity</li>
+<li>add partitions</li>
+<li>reduce compression CPU pressure</li>
+</ul>
+<p>But increasing buffer memory alone may only delay the problem.</p>
+<h2 id="26-vm-monitoring">26. VM Monitoring</h2>
+<p>Kafka is a JVM application. Monitor:</p>
+<ul>
+<li>heap used</li>
+<li>heap committed</li>
+<li>GC frequency</li>
+<li>GC pause time</li>
+<li>non-heap memory</li>
+<li>threads</li>
+<li>CPU</li>
+</ul>
+<h3 id="261-heap-utilization">26.1. Heap Utilization</h3>
+<p>Suppose</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Heap = 16 GB
+</span></span><span class="line"><span class="cl">Used = 15.5 GB
+</span></span></code></pre><p>Persistent high utilization deserves investigation. Possible causes:</p>
+<ul>
+<li>heap too small</li>
+<li>high metadata load</li>
+<li>too many partitions</li>
+<li>application/plugin behavior</li>
+<li>memory leak</li>
+</ul>
+<h3 id="262-gc-monitoring">26.2. GC Monitoring</h3>
+<p>Watch:</p>
+<ul>
+<li>GC count</li>
+<li>GC pause duration</li>
+<li>allocation rate</li>
+<li>old-generation occupancy</li>
+</ul>
+<p>Long GC pauses can cause:</p>
+<ul>
+<li>request latency</li>
+<li>heartbeat delays</li>
+<li>replication delays</li>
+<li>consumer lag</li>
+</ul>
+<h3 id="263-gc-and-isr">26.3. GC and ISR</h3>
+<p>Suppose Broker 2 experiences <code>20-second GC pause</code>, during the pause:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   X
+</span></span><span class="line"><span class="cl">cannot process replication normally
+</span></span></code></pre><p>Followers may fall behind, result <code>ISR shrinks</code> thus <code>GC problem -&gt; replication problem -&gt; ISR problem</code></p>
+<h3 id="264-jvm-heap-vs-page-cache">26.4. JVM Heap vs Page Cache</h3>
+<p>Remember the relationship from Chapter 11:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Physical RAM
+</span></span><span class="line"><span class="cl"> |
+</span></span><span class="line"><span class="cl"> +-- JVM heap
+</span></span><span class="line"><span class="cl"> |
+</span></span><span class="line"><span class="cl"> +-- OS page cache
+</span></span><span class="line"><span class="cl"> |
+</span></span><span class="line"><span class="cl"> +-- native memory
+</span></span></code></pre><p>Over-allocating JVM heap can reduce page cache. This can increase disk reads and potentially hurt Kafka performance.</p>
+<h2 id="27-disk-monitoring">27. Disk Monitoring</h2>
+<p>Monitor:</p>
+<ul>
+<li>disk utilization</li>
+<li>IOPS</li>
+<li>throughput</li>
+<li>latency</li>
+<li>queue depth</li>
+<li>filesystem usage</li>
+</ul>
+<h3 id="271-disk-space-alert">27.1. Disk Space Alert</h3>
+<p>A Kafka broker should not be allowed to run until <code>disk = 100%</code>. At that point the broker may already have severe
+problems. Use warning and critical thresholds. Example conceptual policy:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">70% -&gt; warning
+</span></span><span class="line"><span class="cl">80% -&gt; investigate
+</span></span><span class="line"><span class="cl">90% -&gt; critical planning
+</span></span></code></pre><p>Exact thresholds depend on environment.</p>
+<h3 id="272-disk-latency">27.2. Disk Latency</h3>
+<p>High disk latency can produce:</p>
+<ul>
+<li>write latency</li>
+<li>replication lag</li>
+<li>consumer fetch latency</li>
+<li>request latency</li>
+</ul>
+<p>A broker can have <code>disk capacity = 70%</code> but still be unhealthy because <code>disk latency = extremely high</code>. Capacity and
+performance are different dimensions.</p>
+<h3 id="273-disk-throughput">27.3. Disk Throughput</h3>
+<p>Monitor <code>MB/s</code> and compare against the hardware's expected capability, if the workload requires <code>500 MB/s</code>
+but the disk can sustain only <code>200 MB/s</code> the disk is a likely bottleneck.</p>
+<h2 id="28-filesystem-monitoring">28. Filesystem Monitoring</h2>
+<p>Kafka stores <code>partition logs</code>, <code>segments</code>, <code>indexes</code> on disk. So monitor:</p>
+<ul>
+<li>filesystem capacity</li>
+<li>inode usage where relevant</li>
+<li>mount availability</li>
+<li>disk errors</li>
+</ul>
+<p>A failed mount can be catastrophic.</p>
+<h2 id="29-network-monitoring">29. Network Monitoring</h2>
+<p>Monitor:</p>
+<ul>
+<li>network ingress</li>
+<li>network egress</li>
+<li>packet errors</li>
+<li>connection counts</li>
+<li>network saturation</li>
+</ul>
+<p>Also distinguish <code>client traffic</code> from <code>inter-broker traffic</code>.</p>
+<h3 id="291-network-saturation-example">29.1. Network Saturation Example</h3>
+<p>Suppose <code>Network interface = 10 Gbps</code> and traffic reaches <code>9.8 Gbps</code>. You have very little headroom for:</p>
+<ul>
+<li>replication bursts</li>
+<li>recovery</li>
+<li>consumer spikes</li>
+<li>administrative operations</li>
+</ul>
+<p>This can create instability even before the theoretical maximum is reached.</p>
+<h2 id="30-monitoring-replication-during-recovery">30. Monitoring Replication During Recovery</h2>
+<p>Suppose a broker fails. A replacement broker must catch up:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Leader
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +--&gt; Recovery replica
+</span></span></code></pre><p>During recovery:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">network ↑
+</span></span><span class="line"><span class="cl">disk ↑
+</span></span></code></pre><p>Potentially affecting normal workloads. Therefore, recovery capacity must be included in monitoring and capacity
+planning.</p>
+<h2 id="31-alerting-philosophy">31. Alerting Philosophy</h2>
+<p>Avoid alerting on every metric.</p>
+<p><strong>Good alerts should be</strong>:</p>
+<ul>
+<li>actionable</li>
+<li>meaningful</li>
+<li>stable</li>
+</ul>
+<p><strong>Bad alert</strong>:
+<code>CPU &gt; 70%</code> by itself.</p>
+<p><strong>Better</strong>:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CPU &gt; 85%
+</span></span><span class="line"><span class="cl">AND
+</span></span><span class="line"><span class="cl">request latency elevated
+</span></span><span class="line"><span class="cl">AND
+</span></span><span class="line"><span class="cl">condition persists for 10 minutes
+</span></span></code></pre><h2 id="32-critical-kafka-alerts">32. Critical Kafka Alerts</h2>
+<p>A strong baseline includes alerts for:</p>
+<ul>
+<li>OfflinePartitionsCount &gt; 0</li>
+<li>UnderReplicatedPartitions &gt; 0 for sustained period</li>
+<li>consumer lag above SLA</li>
+<li>disk space critically low</li>
+<li>broker unavailable</li>
+<li>controller instability</li>
+<li>authentication failure spikes</li>
+<li>producer error spikes</li>
+<li>consumer rebalance storms</li>
+</ul>
+<h2 id="33-warning-vs-critical">33. Warning vs Critical</h2>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Consumer lag
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +-- 10,000 -&gt; warning
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   +-- 100,000 -&gt; critical
+</span></span></code></pre><p>But the threshold should be based on business requirements. For some workloads <code>lag = 10,000</code> may be insignificant.
+For a low-latency trading-like system, even <code>lag = 100</code> could be unacceptable.</p>
+<h2 id="34-alert-on-rate-not-just-value">34. Alert on Rate, Not Just Value</h2>
+<p>Consider <code>consumer lag = 10,000</code> is that bad?. If the system normally has <code>lag = 10,000</code> and is stable, it may be fine
+but <code>lag growth = +5,000/sec</code> is clearly concerning. Therefore, monitor <code>absolute lag +lag growth rate</code>.</p>
+<h2 id="35-prometheus">35. Prometheus</h2>
+<p>A common monitoring architecture uses Prometheus to collect metrics.</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">      Kafka
+</span></span><span class="line"><span class="cl">       |
+</span></span><span class="line"><span class="cl">       v
+</span></span><span class="line"><span class="cl">  JMX / Exporter
+</span></span><span class="line"><span class="cl">       |
+</span></span><span class="line"><span class="cl">       v
+</span></span><span class="line"><span class="cl">   Prometheus
+</span></span><span class="line"><span class="cl">       |
+</span></span><span class="line"><span class="cl">       v
+</span></span><span class="line"><span class="cl">Time-series database
+</span></span></code></pre><p>Prometheus can scrape exposed metrics.</p>
+<h2 id="36-grafana-can-visualize-metrics">36. Grafana can visualize metrics</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Prometheus
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">v
+</span></span><span class="line"><span class="cl">Grafana
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+-- Broker dashboard
+</span></span><span class="line"><span class="cl">+-- Producer dashboard
+</span></span><span class="line"><span class="cl">+-- Consumer dashboard
+</span></span><span class="line"><span class="cl">+-- JVM dashboard
+</span></span><span class="line"><span class="cl">+-- Replication dashboard 
+</span></span></code></pre><h2 id="37-recommended-dashboards">37. Recommended Dashboards</h2>
+<h3 id="371-cluster-overview">37.1. <strong>Cluster overview</strong></h3>
+<ul>
+<li>broker count</li>
+<li>controller state</li>
+<li>offline partitions</li>
+<li>under-replicated partitions</li>
+<li>bytes in/out</li>
+</ul>
+<h3 id="372-broker-dashboard">37.2. <strong>Broker dashboard</strong></h3>
+<ul>
+<li>CPU</li>
+<li>heap</li>
+<li>GC</li>
+<li>disk</li>
+<li>network</li>
+<li>request latency</li>
+<li>request handler utilization</li>
+</ul>
+<h3 id="373-consumer-dashboard">37.3. <strong>Consumer dashboard</strong></h3>
+<ul>
+<li>lag</li>
+<li>records consumed</li>
+<li>fetch latency</li>
+<li>rebalances</li>
+<li>processing time</li>
+</ul>
+<h3 id="374-producer-dashboard">37.4. <strong>Producer dashboard</strong></h3>
+<ul>
+<li>send rate</li>
+<li>errors</li>
+<li>retries</li>
+<li>latency</li>
+<li>batch size</li>
+<li>compression</li>
+<li>buffer utilization</li>
+</ul>
+<h2 id="38-cluster-health-dashboard">38. Cluster Health Dashboard</h2>
+<p>A simple conceptual dashboard:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">+------------------------------------------------+
+</span></span><span class="line"><span class="cl">|           Kafka Cluster Health                 |
+</span></span><span class="line"><span class="cl">+------------------------------------------------+
+</span></span><span class="line"><span class="cl">| Brokers:              3 / 3                    |
+</span></span><span class="line"><span class="cl">| Offline Partitions:   0                        |
+</span></span><span class="line"><span class="cl">| Under Replicated:     0                        |
+</span></span><span class="line"><span class="cl">| Controller Changes:   0                        |
+</span></span><span class="line"><span class="cl">+------------------------------------------------+
+</span></span><span class="line"><span class="cl">| Bytes In       450 MB/s                        |
+</span></span><span class="line"><span class="cl">| Bytes Out      1.2 GB/s                        |
+</span></span><span class="line"><span class="cl">+------------------------------------------------+
+</span></span><span class="line"><span class="cl">| CPU       B1 45%   B2 52%   B3 48%             |
+</span></span><span class="line"><span class="cl">| Disk      B1 60%   B2 55%   B3 63%             |
+</span></span><span class="line"><span class="cl">+------------------------------------------------+
+</span></span></code></pre><h2 id="39-troubleshooting-methodology">39. Troubleshooting Methodology</h2>
+<p>When Kafka has a problem:</p>
+<ol>
+<li>Define the symptom</li>
+<li>Determine scope</li>
+<li>Determine start time</li>
+<li>Check recent changes</li>
+<li>Check cluster health</li>
+<li>Check broker health</li>
+<li>Check replication</li>
+<li>Check producer</li>
+<li>Check consumer</li>
+<li>Correlate metrics and logs</li>
+<li>Identify root cause</li>
+<li>Apply controlled remediation</li>
+<li>Verify recovery</li>
+</ol>
+<h3 id="391-step-1-define-the-symptom">39.1. Step 1 — Define the Symptom</h3>
+<p>Bad:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Kafka is slow.
+</span></span></code></pre><p>Good:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer p99 latency increased from 20 ms to 500 ms at 09:15.
+</span></span></code></pre><p>This immediately narrows the investigation.</p>
+<h3 id="392-step-2-determine-scope">39.2. Step 2 — Determine Scope</h3>
+<p>Ask:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">One producer?
+</span></span><span class="line"><span class="cl">All producers?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">One topic?
+</span></span><span class="line"><span class="cl">All topics?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">One broker?
+</span></span><span class="line"><span class="cl">All brokers?
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">One consumer group?
+</span></span><span class="line"><span class="cl">All consumer groups?
+</span></span></code></pre><p>Scope is extremely valuable.</p>
+<h3 id="393-one-topic-vs-all-topics">39.3. One Topic vs All Topics</h3>
+<p>If:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic A = healthy
+</span></span><span class="line"><span class="cl">Topic B = lagging
+</span></span><span class="line"><span class="cl">Topic C = healthy
+</span></span></code></pre><p>the issue may be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">topic-specific
+</span></span><span class="line"><span class="cl">partition-specific
+</span></span><span class="line"><span class="cl">consumer-specific
+</span></span></code></pre><p>If all topics are affected, investigate:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">cluster
+</span></span><span class="line"><span class="cl">network
+</span></span><span class="line"><span class="cl">storage
+</span></span><span class="line"><span class="cl">infrastructure
+</span></span></code></pre><p>first.</p>
+<h3 id="394-one-broker-vs-all-brokers">39.4. One Broker vs All Brokers</h3>
+<p>Suppose:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Broker 1 = high disk latency
+</span></span><span class="line"><span class="cl">Broker 2 = normal
+</span></span><span class="line"><span class="cl">Broker 3 = normal
+</span></span></code></pre><p>This strongly suggests <code>broker-specific problem</code> rather than a cluster-wide Kafka problem.</p>
+<h3 id="395-check-recent-changes">39.5. Check Recent Changes</h3>
+<p>Many incidents are caused by:</p>
+<ul>
+<li>deployment</li>
+<li>configuration change</li>
+<li>topic change</li>
+<li>partition reassignment</li>
+<li>network change</li>
+<li>certificate rotation</li>
+<li>firewall change</li>
+<li>broker restart</li>
+<li>client upgrade</li>
+</ul>
+<p>Always ask <strong>What changed immediately before the incident?</strong></p>
+<h3 id="396-logs-metrics">39.6. Logs + Metrics</h3>
+<p>Metrics tell you <code>WHAT</code> and logs often help explain <code>WHY</code></p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Metric:
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Log:
+</span></span><span class="line"><span class="cl">Follower fetch timeout
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Infrastructure:
+</span></span><span class="line"><span class="cl">disk latency high
+</span></span></code></pre><p>Together these point toward a disk/storage problem.</p>
+<h3 id="397-troubleshooting-scenario-producer-timeout">39.7. Troubleshooting Scenario — Producer Timeout</h3>
+<p>Symptoms:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">producer latency ↑
+</span></span><span class="line"><span class="cl">timeouts ↑
+</span></span></code></pre><p>Investigation:</p>
+<ul>
+<li>Broker CPU normal</li>
+<li>Disk normal</li>
+<li>Network 99%</li>
+</ul>
+<p>Likely problem <code>network saturation</code>, do not immediately increase <code>request.timeout.ms</code></p>
+<p>That might hide the symptom rather than solve the cause.</p>
+<h3 id="398-troubleshooting-scenario-consumer-lag">39.8. Troubleshooting Scenario — Consumer Lag</h3>
+<p>Symptoms <code>lag ↑</code>, check:</p>
+<ul>
+<li>producer rate</li>
+<li>consumer rate</li>
+<li>partition distribution</li>
+<li>consumer CPU</li>
+<li>processing latency</li>
+<li>rebalance rate</li>
+<li>broker health</li>
+</ul>
+<p>If <code>consumer processing time ↑</code> the application is likely the bottleneck.</p>
+<h3 id="399-troubleshooting-scenario-isr-shrinking">39.9. Troubleshooting Scenario — ISR Shrinking</h3>
+<p>Symptoms:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">UnderReplicatedPartitions &gt; 0
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span></code></pre><p>Check:</p>
+<ul>
+<li>disk latency</li>
+<li>network</li>
+<li>CPU</li>
+<li>GC</li>
+<li>broker logs</li>
+<li>follower fetch performance</li>
+</ul>
+<h3 id="3910-troubleshooting-scenario-offline-partition">39.10. Troubleshooting Scenario — Offline Partition</h3>
+<p>Symptoms <code>OfflinePartitionsCount &gt; 0</code> Priority <code>CRITICAL</code></p>
+<p>Investigate:</p>
+<ul>
+<li>broker availability</li>
+<li>leader election</li>
+<li>controller</li>
+<li>replica availability</li>
+<li>network</li>
+</ul>
+<p>This is an availability incident rather than merely a performance warning.</p>
+<h3 id="3911-troubleshooting-scenario-frequent-rebalances">39.11. Troubleshooting Scenario — Frequent Rebalances</h3>
+<p>Symptoms:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">consumer group
+</span></span><span class="line"><span class="cl">rebalance
+</span></span><span class="line"><span class="cl">rebalance
+</span></span><span class="line"><span class="cl">rebalance
+</span></span></code></pre><p>Check:</p>
+<ul>
+<li>consumer crashes</li>
+<li>max.poll.interval.ms</li>
+<li>processing duration</li>
+<li>heartbeat/session behavior</li>
+<li>network connectivity</li>
+<li>deployment churn</li>
+</ul>
+<h3 id="3912-troubleshooting-scenario-high-cpu">39.12. Troubleshooting Scenario — High CPU</h3>
+<p>High CPU alone is insufficient. Break it down:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CPU ↑
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+--&gt; compression?
+</span></span><span class="line"><span class="cl">+--&gt; TLS?
+</span></span><span class="line"><span class="cl">+--&gt; GC?
+</span></span><span class="line"><span class="cl">+--&gt; request handling?
+</span></span><span class="line"><span class="cl">+--&gt; replication?
+</span></span><span class="line"><span class="cl">+--&gt; partition overhead?
+</span></span><span class="line"><span class="cl">+--&gt; other processes?
+</span></span></code></pre><p>Then correlate with Kafka metrics.</p>
+<h3 id="3913-troubleshooting-scenario-high-memory">39.13. Troubleshooting Scenario — High Memory</h3>
+<p>Check:</p>
+<ul>
+<li>JVM heap</li>
+<li>GC</li>
+<li>partition count</li>
+<li>metadata</li>
+<li>page cache</li>
+<li>off-heap/native memory</li>
+</ul>
+<p>Remember <code>high RAM usage</code> does not automatically mean <code>memory leak</code>. The operating system may intentionally use RAM for
+page cache.</p>
+<h3 id="3914-troubleshooting-scenario-high-disk-usage">39.14. Troubleshooting Scenario — High Disk Usage</h3>
+<p>Distinguish <code>disk capacity</code> from <code>disk performance</code></p>
+<p>Example <code>Disk = 80% full</code> doesn't necessarily mean disk I/O is the bottleneck. Conversely <code>Disk = 40% full</code> can still
+have <code>very high I/O latency</code></p>
+<h3 id="3915-troubleshooting-scenario-high-network">39.15. Troubleshooting Scenario — High Network</h3>
+<p>Determine whether the traffic is:</p>
+<ul>
+<li>producer ingress</li>
+<li>consumer egress</li>
+<li>replication</li>
+<li>recovery</li>
+</ul>
+<p>Then identify which workload changed.</p>
+<h3 id="3916-troubleshooting-scenario-one-hot-partition">39.16. Troubleshooting Scenario — One Hot Partition</h3>
+<p>Symptoms:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition 7:
+</span></span><span class="line"><span class="cl">900 MB/s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Partition 0-6:
+</span></span><span class="line"><span class="cl">50 MB/s
+</span></span></code></pre><p>Possible cause <code>partition key skew</code> investigate <code>producer key distribution</code> before changing broker configurations.</p>
+<h3 id="3917-troubleshooting-decision-tree">39.17. Troubleshooting Decision Tree</h3>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                    Kafka Problem
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">               +---------+---------+
+</span></span><span class="line"><span class="cl">               |                   |
+</span></span><span class="line"><span class="cl">          Availability?        Performance?
+</span></span><span class="line"><span class="cl">               |                   |
+</span></span><span class="line"><span class="cl">          +----+----+         +----+----+
+</span></span><span class="line"><span class="cl">          |         |         |         |
+</span></span><span class="line"><span class="cl">       Offline    ISR       Latency    Lag
+</span></span><span class="line"><span class="cl">      partitions  shrink      |         |
+</span></span><span class="line"><span class="cl">          |         |         |         |
+</span></span><span class="line"><span class="cl">       Broker?    Disk?     Broker?   Consumer?
+</span></span><span class="line"><span class="cl">                  Network?  Network?  Processing?
+</span></span><span class="line"><span class="cl">                  CPU?      Disk?     Partitions?
+</span></span><span class="line"><span class="cl">                  GC?       CPU?
+</span></span></code></pre><p>This is a useful mental model for certification questions.</p>
+<h2 id="40-root-cause-vs-symptom">40. Root Cause vs Symptom</h2>
+<p>Example <code>Consumer lag ↑</code> is a symptom. Potential root cause <code>consumer processing latency ↑</code>. Another
+<code>UnderReplicatedPartitions ↑</code> is a symptom. Potential root cause <code>follower disk latency ↑</code>.</p>
+<p><strong>Do not stop at the first metric that changed.</strong></p>
+<h2 id="41-five-whys-example">41. Five Whys Example</h2>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> <strong>Problem</strong>: Consumer lag increased.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>Why?</strong>: Consumer processing slowed.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>Why?</strong>: Database calls became slower.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>Why?</strong>: Database connection pool became saturated.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>Why?</strong>: A deployment increased the number of records processed per event.</li>
+</ol>
+<p><strong>Root cause</strong>: Application deployment changed downstream workload. Kafka was not necessarily the root cause.</p>
+<h2 id="42-correlation-example">42. Correlation Example</h2>
+<p>Suppose you see:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">09:00
+</span></span><span class="line"><span class="cl">CPU normal
+</span></span><span class="line"><span class="cl">ISR healthy
+</span></span><span class="line"><span class="cl">lag stable
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:15
+</span></span><span class="line"><span class="cl">deployment
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:17
+</span></span><span class="line"><span class="cl">consumer processing latency ↑
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">09:20
+</span></span><span class="line"><span class="cl">consumer lag ↑
+</span></span></code></pre><p>The temporal relationship strongly suggests investigating the deployment.</p>
+<h2 id="43-monitoring-during-broker-failure">43. Monitoring During Broker Failure</h2>
+<p>Suppose Broker 2 fails.</p>
+<p>Watch:</p>
+<ul>
+<li>OfflinePartitions</li>
+<li>UnderReplicatedPartitions</li>
+<li>Leader elections</li>
+<li>ISR</li>
+<li>Network</li>
+<li>Disk</li>
+<li>Consumer lag</li>
+<li>Producer errors</li>
+</ul>
+<p>Expected behavior:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Broker failure
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">Leader elections
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">  ISR changes
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">   Recovery
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl"> ISR restored
+</span></span></code></pre><h2 id="44-healthy-recovery">44. Healthy Recovery</h2>
+<p>After a broker failure <code>UnderReplicatedPartitions</code> may temporarily increase.</p>
+<p>The important question is <strong>Does the cluster recover to the expected state?</strong></p>
+<p>Healthy:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">0
+</span></span><span class="line"><span class="cl">100
+</span></span><span class="line"><span class="cl">500
+</span></span><span class="line"><span class="cl">200
+</span></span><span class="line"><span class="cl">50
+</span></span><span class="line"><span class="cl">0
+</span></span></code></pre><p>Unhealthy:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">0
+</span></span><span class="line"><span class="cl">100
+</span></span><span class="line"><span class="cl">500
+</span></span><span class="line"><span class="cl">1000
+</span></span><span class="line"><span class="cl">2000
+</span></span><span class="line"><span class="cl">3000
+</span></span><span class="line"><span class="cl">
+</span></span></code></pre><p>The second indicates worsening replication health.</p>
+<h2 id="45-alert-fatigue">45. Alert Fatigue</h2>
+<p>If operators receive <code>1000 Kafka alerts/day</code> they will eventually ignore them.</p>
+<p>Prefer:</p>
+<ul>
+<li>few</li>
+<li>high-value</li>
+<li>actionable</li>
+<li>alerts</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>offline partitions</li>
+<li>persistent under-replication</li>
+<li>critical disk space</li>
+<li>consumer SLA breach</li>
+<li>broker unavailable</li>
+</ul>
+<h2 id="46-alert-design">46. Alert Design</h2>
+<p>A good alert includes:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> What happened?</li>
+<li><input checked="" disabled="" type="checkbox"> Where?</li>
+<li><input checked="" disabled="" type="checkbox"> When?</li>
+<li><input checked="" disabled="" type="checkbox"> How severe?</li>
+<li><input checked="" disabled="" type="checkbox"> What should the operator check?</li>
+</ol>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CRITICAL:
+</span></span><span class="line"><span class="cl">Topic orders has 3 offline partitions
+</span></span><span class="line"><span class="cl">for more than 2 minutes.
+</span></span></code></pre><p>Check</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> broker availability.</li>
+<li><input checked="" disabled="" type="checkbox"> leader election state.</li>
+<li><input checked="" disabled="" type="checkbox"> and replica health.</li>
+</ol>
+<h2 id="47-monitoring-and-slos">47. Monitoring and SLOs</h2>
+<p>Kafka monitoring should connect to business requirements.</p>
+<p>Example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer availability &gt;= 99.99%
+</span></span><span class="line"><span class="cl">Consumer lag &lt; 5 seconds
+</span></span></code></pre><p>Then dashboards and alerts should measure those objectives.</p>
+<h2 id="48-slo-example">48. SLO Example</h2>
+<p>SLO <code>99% of records processed within 10 seconds</code></p>
+<p>Monitoring:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> consumer lag</li>
+<li><input checked="" disabled="" type="checkbox"> processing latency</li>
+<li><input checked="" disabled="" type="checkbox"> end-to-end latency</li>
+</ol>
+<p>is more useful than simply monitoring <code>CPU</code></p>
+<h2 id="49-end-to-end-latency">49. End-to-End Latency</h2>
+<p>Kafka's broker latency is not necessarily application end-to-end latency. A complete path might be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl"> Kafka
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Consumer
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">Database
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">   v
+</span></span><span class="line"><span class="cl">  API
+</span></span></code></pre><p>Measure:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> event creation
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl"> Kafka publish
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl"> Kafka consume
+</span></span><span class="line"><span class="cl">      |
+</span></span><span class="line"><span class="cl">      v
+</span></span><span class="line"><span class="cl">processing complete
+</span></span></code></pre><p>when the business SLA requires it.</p>
+<h2 id="50-developer-perspective">50. Developer Perspective</h2>
+<p>Developers should monitor:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> producer errors</li>
+<li><input checked="" disabled="" type="checkbox"> producer latency</li>
+<li><input checked="" disabled="" type="checkbox"> consumer lag</li>
+<li><input checked="" disabled="" type="checkbox"> consumer processing time</li>
+<li><input checked="" disabled="" type="checkbox"> consumer rebalances</li>
+<li><input checked="" disabled="" type="checkbox"> commit failures</li>
+<li><input checked="" disabled="" type="checkbox"> serialization failures</li>
+</ol>
+<p>They should also instrument application logic.</p>
+<h2 id="51-administrator-perspective">51. Administrator Perspective</h2>
+<p>Administrators should monitor:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> broker health</li>
+<li><input checked="" disabled="" type="checkbox"> replication</li>
+<li><input checked="" disabled="" type="checkbox"> disk</li>
+<li><input checked="" disabled="" type="checkbox"> network</li>
+<li><input checked="" disabled="" type="checkbox"> CPU</li>
+<li><input checked="" disabled="" type="checkbox"> JVM</li>
+<li><input checked="" disabled="" type="checkbox"> partitions</li>
+<li><input checked="" disabled="" type="checkbox"> controller</li>
+<li><input checked="" disabled="" type="checkbox"> request latency</li>
+<li><input checked="" disabled="" type="checkbox"> cluster capacity</li>
+</ol>
+<h2 id="52-shared-responsibility">52. Shared Responsibility</h2>
+<p>The strongest Kafka operations model combines:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Developer
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+--&gt; application metrics
+</span></span><span class="line"><span class="cl">+--&gt; producer/consumer metrics
+</span></span><span class="line"><span class="cl">+--&gt; processing latency
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Administrator
+</span></span><span class="line"><span class="cl">|
+</span></span><span class="line"><span class="cl">+--&gt; broker metrics
+</span></span><span class="line"><span class="cl">+--&gt; infrastructure
+</span></span><span class="line"><span class="cl">+--&gt; replication
+</span></span><span class="line"><span class="cl">+--&gt; capacity
+</span></span></code></pre><h2 id="53-certification-question">53. Certification Question</h2>
+<p>Question 1: <strong>Which metric is most directly associated with partitions whose replicas are not sufficiently caught up?</strong></p>
+<ul>
+<li>A. BytesOut</li>
+<li>B. UnderReplicatedPartitions</li>
+<li>C. Consumer lag</li>
+<li>D. HeapUsed</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 2: <strong>A consumer group's lag is continuously increasing. Which should you investigate first?</strong></p>
+<ul>
+<li>A. Only broker disk capacity</li>
+<li>B. Consumer processing rate versus incoming record rate</li>
+<li>C. Topic retention only</li>
+<li>D. Controller count</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 3: <strong>What does <code>OfflinePartitionsCount</code> indicate?</strong></p>
+<ul>
+<li>A. Partitions with no available leader</li>
+<li>B. Partitions with high consumer lag</li>
+<li>C. Partitions with compressed messages</li>
+<li>D. Partitions with no retention policy</li>
+</ul>
+<p>Answer: <strong>A</strong></p>
+<p>Question 4: <strong>Why are p99 latency metrics useful?</strong></p>
+<ul>
+<li>A. They show only the fastest requests</li>
+<li>B. They expose tail latency that averages can hide</li>
+<li>C. They replace all Kafka logs</li>
+<li>D. They measure disk capacity</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 5: <strong>A broker has high CPU and high GC pause times. What should you investigate?</strong></p>
+<ul>
+<li>A. Only consumer offsets</li>
+<li>B. JVM memory/GC behavior and CPU workload</li>
+<li>C. Topic names</li>
+<li>D. Retention timestamps</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 6: <strong>A consumer group has frequent rebalances. Which is a possible cause?</strong></p>
+<ul>
+<li>A. Consumer processing exceeds max.poll.interval.ms</li>
+<li>B. Topic retention is enabled</li>
+<li>C. Compression is disabled</li>
+<li>D. Replication factor is 1</li>
+</ul>
+<p>Answer: <strong>A</strong></p>
+<p>Question 7: <strong>Which is generally the most critical condition?</strong></p>
+<ul>
+<li>A. One consumer has 100 records of lag</li>
+<li>B. One broker has 50% CPU</li>
+<li>C. An offline partition exists</li>
+<li>D. A producer batch is 50% full</li>
+</ul>
+<p>Answer: <strong>C</strong></p>
+<p><strong>A cluster has</strong></p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CPU = 30%
+</span></span><span class="line"><span class="cl">Disk = 30%
+</span></span><span class="line"><span class="cl">Network = 98%
+</span></span></code></pre><p>Question 7: <strong>What should you investigate first?</strong></p>
+<ul>
+<li>A. JVM heap</li>
+<li>B. Network capacity</li>
+<li>C. Partition retention</li>
+<li>D. Consumer commit interval</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>A broker shows:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">UnderReplicatedPartitions &gt; 0
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span><span class="line"><span class="cl">Disk latency ↑
+</span></span></code></pre><p>Question 8: <strong>What is a likely cause?</strong></p>
+<ul>
+<li>A. Schema evolution</li>
+<li>B. Disk/storage bottleneck</li>
+<li>C. Consumer offset reset</li>
+<li>D. Topic naming</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 9: <strong>Which is a better alert?</strong></p>
+<ul>
+<li>A. CPU &gt; 70%</li>
+<li>B. OfflinePartitionsCount &gt; 0</li>
+<li>C. Batch size &lt; 100 KB</li>
+<li>D. One request was slow</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 10: <strong>Why should consumer lag be monitored per partition?</strong></p>
+<ul>
+<li>A. Kafka doesn't support topic-level lag</li>
+<li>B. One hot or stuck partition can be hidden by aggregate numbers</li>
+<li>C. Consumer groups only have one partition</li>
+<li>D. Partition offsets are not measurable</li>
+</ul>
+<p>Answer: <strong>B</strong></p>
+<p>Question 11: <strong>What is the best general troubleshooting strategy?</strong></p>
+<ul>
+<li>A. Change all Kafka configurations simultaneously</li>
+<li>B. Restart the entire cluster</li>
+<li>C. Establish the symptom, scope the problem, correlate metrics/logs, identify the bottleneck, then remediate</li>
+<li>D. Increase JVM heap immediately</li>
+</ul>
+<p>Answer: <strong>C</strong></p>
+<h2 id="54-administrator-scenario-replication-failure">54. Administrator Scenario — Replication Failure</h2>
+<p>You have:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">min.insync.replicas = 2
+</span></span><span class="line"><span class="cl">acks = all
+</span></span></code></pre><p>Broker 3 becomes unavailable.</p>
+<p>Monitoring shows:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR reduced from 3 to 2
+</span></span><span class="line"><span class="cl">UnderReplicatedPartitions &gt; 0
+</span></span><span class="line"><span class="cl">OfflinePartitions = 0
+</span></span></code></pre><p>What does this tell you?</p>
+<p><strong>Analysis</strong>: The cluster still has <code>2 ISR replicas</code> so the <code>min.insync.replicas=2</code> condition can still be satisfied.</p>
+<p>However <code>UnderReplicatedPartitions &gt; 0</code> means the cluster has reduced redundancy.</p>
+<p>The correct operational response is to <strong>investigate</strong> and <strong>restore</strong> the missing replica.</p>
+<h2 id="55-administrator-scenario-offline-partition">55. Administrator Scenario — Offline Partition</h2>
+<p>You observe <code>OfflinePartitionsCount = 4</code>. What is the priority? <code>CRITICAL</code></p>
+<p>Why?</p>
+<p>Because partitions have no available leader and may be unavailable to clients.</p>
+<p>Investigate:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> broker availability</li>
+<li><input checked="" disabled="" type="checkbox"> controller state</li>
+<li><input checked="" disabled="" type="checkbox"> replica availability</li>
+<li><input checked="" disabled="" type="checkbox"> network</li>
+<li><input checked="" disabled="" type="checkbox"> disk</li>
+</ol>
+<h2 id="56-administrator-scenario-consumer-lag">56. Administrator Scenario — Consumer Lag</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer rate = 100 MB/s
+</span></span><span class="line"><span class="cl">Consumer rate = 70 MB/s
+</span></span><span class="line"><span class="cl">Lag = increasing
+</span></span></code></pre><p>Root cause <code>consumer capacity &lt; incoming workload</code></p>
+<p>Possible remediation <code>increase consumer parallelism</code> but only if <strong>enough partitions exist and downstream processing can
+handle the additional concurrency.</strong></p>
+<h2 id="57-administrator-scenario-rebalance-storm">57. Administrator Scenario — Rebalance Storm</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Consumer lag ↑
+</span></span><span class="line"><span class="cl">Rebalance rate ↑
+</span></span><span class="line"><span class="cl">Consumer processing latency ↑
+</span></span></code></pre><p>Application logs show <code>processing time &gt; max.poll.interval.ms</code></p>
+<p>Root cause <strong>consumer processing is too slow between polls</strong></p>
+<p>Potential remediation</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">reduce max.poll.records
+</span></span><span class="line"><span class="cl">        +
+</span></span><span class="line"><span class="cl">optimize processing
+</span></span><span class="line"><span class="cl">        +
+</span></span><span class="line"><span class="cl">adjust max.poll.interval.ms if justified
+</span></span></code></pre><p>Do not simply increase the timeout without understanding why processing is slow.</p>
+<h2 id="58-administrator-scenario-hot-partition">58. Administrator Scenario — Hot Partition</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Partition 0: 900 MB/s
+</span></span><span class="line"><span class="cl">Partition 1: 40 MB/s
+</span></span><span class="line"><span class="cl">Partition 2: 45 MB/s
+</span></span><span class="line"><span class="cl">Partition 3: 42 MB/s
+</span></span></code></pre><p>Likely root cause <code>partition key skew</code></p>
+<p>Potential remediation <code>review partition key</code> not merely <code>increase consumer count</code></p>
+<h2 id="59-administrator-scenario-jvm-problem">59. Administrator Scenario — JVM Problem</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CPU = 80%
+</span></span><span class="line"><span class="cl">GC pauses = 5 seconds
+</span></span><span class="line"><span class="cl">Request latency = 1 second
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span></code></pre><p>There is a chain:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">        GC pauses
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">broker unable to process normally
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">    replication delayed
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">        ISR shrinks
+</span></span><span class="line"><span class="cl">            |
+</span></span><span class="line"><span class="cl">            v
+</span></span><span class="line"><span class="cl">request latency increases
+</span></span></code></pre><p>The JVM problem may be the underlying cause.</p>
+<h2 id="60-administrator-scenario-network-problem">60. Administrator Scenario — Network Problem</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Network utilization = 99%
+</span></span><span class="line"><span class="cl">Producer latency ↑
+</span></span><span class="line"><span class="cl">Consumer fetch latency ↑
+</span></span><span class="line"><span class="cl">Replication lag ↑
+</span></span><span class="line"><span class="cl">CPU normal
+</span></span><span class="line"><span class="cl">Disk normal
+</span></span></code></pre><p>Likely root cause <code>network saturation</code>
+This is a classic correlation question.</p>
+<h2 id="61-administrator-scenario-disk-problem">61. Administrator Scenario — Disk Problem</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Disk utilization = 95%
+</span></span><span class="line"><span class="cl">Disk latency = high
+</span></span><span class="line"><span class="cl">CPU = 40%
+</span></span><span class="line"><span class="cl">Network = 50%
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span></code></pre><p>Likely root cause <code>storage bottleneck</code></p>
+<p>Potential actions:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> investigate disk</li>
+<li><input checked="" disabled="" type="checkbox"> rebalance workloads</li>
+<li><input checked="" disabled="" type="checkbox"> increase storage performance</li>
+<li><input checked="" disabled="" type="checkbox"> add capacity</li>
+</ol>
+<h2 id="62-the-kafka-troubleshooting-matrix">62. The Kafka Troubleshooting Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>First things to investigate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Producer latency ↑</td>
+<td>Broker, network, disk, replication</td>
+</tr>
+<tr>
+<td>Producer errors ↑</td>
+<td>Logs, broker availability, authorization, message size</td>
+</tr>
+<tr>
+<td>Consumer lag ↑</td>
+<td>Consumer processing, partitions, broker, producer rate</td>
+</tr>
+<tr>
+<td>ISR shrinking</td>
+<td>Disk, network, CPU, GC</td>
+</tr>
+<tr>
+<td>Offline partitions</td>
+<td>Broker/controller/replica availability</td>
+</tr>
+<tr>
+<td>Frequent rebalances</td>
+<td>Poll interval, crashes, network</td>
+</tr>
+<tr>
+<td>High CPU</td>
+<td>Compression, TLS, GC, requests, replication</td>
+</tr>
+<tr>
+<td>High disk latency</td>
+<td>Storage throughput/IOPS</td>
+</tr>
+<tr>
+<td>High network</td>
+<td>Producer, consumer, replication traffic</td>
+</tr>
+<tr>
+<td>One hot partition</td>
+<td>Key distribution</td>
+</tr>
+<tr>
+<td>High GC</td>
+<td>Heap, allocation, partition/metadata load</td>
+</tr>
+<tr>
+<td>High request latency</td>
+<td>CPU, disk, network, queues</td>
+</tr>
+</tbody>
+</table>
+<h2 id="63-safe-troubleshooting-pattern">63. Safe Troubleshooting Pattern</h2>
+<p>Use:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl"> Observe
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl"> Measure
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">Hypothesize
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">  Test
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl">Remediate
+</span></span><span class="line"><span class="cl">   |
+</span></span><span class="line"><span class="cl"> Verify
+</span></span></code></pre><p>For example:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">         Lag ↑
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">Measure consumer processing
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">     Processing slow
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">Check downstream database
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">     Database slow
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">Fix database bottleneck
+</span></span><span class="line"><span class="cl">          |
+</span></span><span class="line"><span class="cl">          v
+</span></span><span class="line"><span class="cl">    Lag decreases
+</span></span></code></pre><h2 id="64-the-most-important-metrics-to-memorize">64. The Most Important Metrics to Memorize</h2>
+<p>For the administrator exam, prioritize:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> UnderReplicatedPartitions</li>
+<li><input checked="" disabled="" type="checkbox"> OfflinePartitionsCount</li>
+<li><input checked="" disabled="" type="checkbox"> BytesIn</li>
+<li><input checked="" disabled="" type="checkbox"> BytesOut</li>
+<li><input checked="" disabled="" type="checkbox"> Request latency</li>
+<li><input checked="" disabled="" type="checkbox"> Request handler utilization</li>
+<li><input checked="" disabled="" type="checkbox"> Network processor utilization</li>
+<li><input checked="" disabled="" type="checkbox"> ISR changes</li>
+<li><input checked="" disabled="" type="checkbox"> leader elections</li>
+<li><input checked="" disabled="" type="checkbox"> consumer lag</li>
+<li><input checked="" disabled="" type="checkbox"> disk usage</li>
+<li><input checked="" disabled="" type="checkbox"> disk latency</li>
+<li><input checked="" disabled="" type="checkbox"> JVM heap</li>
+<li><input checked="" disabled="" type="checkbox"> GC pauses</li>
+</ol>
+<h2 id="65-the-most-important-relationships-to-memorize">65. The Most Important Relationships to Memorize</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR shrinking -&gt; replication problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Offline partition -&gt; availability problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Consumer lag increasing -&gt; consumption cannot keep up with production
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Frequent rebalances -&gt; consumer group instability
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">High disk latency -&gt; potential replication/request latency problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">High network utilization -&gt; potential producer/consumer/replication bottleneck
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Long GC pauses -&gt; broker responsiveness can degrade
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">One hot partition -&gt; partition-key/distribution problem
+</span></span></code></pre><h2 id="66-certification-exam-traps">66. Certification Exam Traps</h2>
+<ul>
+<li>
+<p><strong>Trap 1</strong>: Consumer lag always means Kafka broker failure. <strong>False</strong>. The consumer application may simply be too slow.</p>
+</li>
+<li>
+<p><strong>Trap 2</strong>: More consumers always increase throughput. <strong>False</strong>. Parallelism is limited by partitions.</p>
+</li>
+<li>
+<p><strong>Trap 3</strong>: High CPU means Kafka is CPU-bound. <strong>Not necessarily</strong>. Investigate what is consuming CPU.</p>
+</li>
+<li>
+<p><strong>Trap 4</strong>: Under-replicated partitions mean data is already lost. <strong>False</strong>. They indicate reduced replication health, not necessarily data loss.</p>
+</li>
+<li>
+<p><strong>Trap 5</strong>: Offline partitions are merely a performance warning. <strong>False</strong>. They indicate an availability problem.</p>
+</li>
+<li>
+<p><strong>Trap 6</strong>: High disk usage means high disk latency. <strong>False</strong>. Capacity and performance are different metrics.</p>
+</li>
+<li>
+<p><strong>Trap 7</strong>: Average latency is sufficient. <strong>False</strong>. Tail latency can be hidden by averages.</p>
+</li>
+<li>
+<p><strong>Trap 8</strong>: Increasing JVM heap always improves Kafka performance. <strong>False</strong>. Kafka also relies heavily on OS page cache.</p>
+</li>
+</ul>
+<h2 id="67-practical-exercise-1-identify-the-bottleneck">67. Practical Exercise 1 — Identify the Bottleneck</h2>
+<p>You receive:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer rate:          500 MB/s
+</span></span><span class="line"><span class="cl">Producer latency p99:   600 ms
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker CPU:              35%
+</span></span><span class="line"><span class="cl">Broker disk:             40%
+</span></span><span class="line"><span class="cl">Broker network:          98%
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Consumer lag:            normal
+</span></span><span class="line"><span class="cl">ISR:                     healthy
+</span></span></code></pre><p><em>Question</em>: What is the most likely bottleneck?</p>
+<p><em>Answer</em>: Network</p>
+<p>Reason <code>network = 98%</code> while <code>CPU, disk, replication and consumers</code> appear healthy.</p>
+<h2 id="68-practical-exercise-2-consumer-lag">68. Practical Exercise 2 — Consumer Lag</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Producer: 200 MB/s
+</span></span><span class="line"><span class="cl">Consumer: 120 MB/s
+</span></span><span class="line"><span class="cl">Broker: healthy
+</span></span><span class="line"><span class="cl">Consumer CPU: 95%
+</span></span><span class="line"><span class="cl">Lag: increasing
+</span></span></code></pre><p><em>Question</em>: What is the likely bottleneck?</p>
+<p><em>Answer</em>: Consumer processing capacity, the consumer cannot process data as quickly as it arrives.</p>
+<h2 id="69-practical-exercise-3-isr">69. Practical Exercise 3 — ISR</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">RF = 3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ISR:
+</span></span><span class="line"><span class="cl">Broker 1
+</span></span><span class="line"><span class="cl">Broker 2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Broker 3:
+</span></span><span class="line"><span class="cl">disk latency = extremely high
+</span></span></code></pre><p><em>Question</em>: What is the likely root cause?</p>
+<p><em>Answer</em>: Broker 3 storage performance, the follower cannot keep up.</p>
+<h2 id="70-practical-exercise-4-rebalances">70. Practical Exercise 4 — Rebalances</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Consumer lag ↑
+</span></span><span class="line"><span class="cl">Rebalance rate ↑
+</span></span><span class="line"><span class="cl">Processing time = 400 seconds
+</span></span><span class="line"><span class="cl">max.poll.interval.ms = 300 seconds
+</span></span></code></pre><p><em>Answer</em>; The consumer is exceeding the allowed processing interval.</p>
+<p>Potential consequences:</p>
+<ol>
+<li><input disabled="" type="checkbox"> consumer removed</li>
+<li><input disabled="" type="checkbox"> rebalance</li>
+<li><input disabled="" type="checkbox"> partition reassignment</li>
+<li><input disabled="" type="checkbox"> lag growth</li>
+</ol>
+<h2 id="71-practical-exercise-5-hot-partition">71. Practical Exercise 5 — Hot Partition</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Topic:
+</span></span><span class="line"><span class="cl">P0 = 1 GB/s
+</span></span><span class="line"><span class="cl">P1 = 20 MB/s
+</span></span><span class="line"><span class="cl">P2 = 18 MB/s
+</span></span><span class="line"><span class="cl">P3 = 22 MB/s
+</span></span></code></pre><p><em>Question</em>: What should you investigate?</p>
+<p><em>Answer</em>: Partition-key distribution, look for a hot key or skewed partitioning.</p>
+<h2 id="72-practical-exercise-6-cluster-failure">72. Practical Exercise 6 — Cluster Failure</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">OfflinePartitionsCount = 2
+</span></span><span class="line"><span class="cl">UnderReplicatedPartitions = 20
+</span></span><span class="line"><span class="cl">Broker count = 2/3
+</span></span></code></pre><p><em>Question</em>: What should be investigated first?</p>
+<p><em>Answer</em>: Broker failure + leader/replica availability + controller state,  <strong>This is an availability incident</strong>.</p>
+<h2 id="73-practical-exercise-7-gc">73. Practical Exercise 7 — GC</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Heap utilization = 90%
+</span></span><span class="line"><span class="cl">GC pauses = 4 seconds
+</span></span><span class="line"><span class="cl">Request latency = 800 ms
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span></code></pre><p><em>Question</em>: Could GC be causing replication problems?</p>
+<p><em>Answer</em>: Yes. The chain can be:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">GC pause -&gt; broker unavailable for processing -&gt; follower falls behind -&gt; ISR shrinks
+</span></span></code></pre><h2 id="74-practical-exercise-8-disk">74. Practical Exercise 8 — Disk</h2>
+<p>Metrics:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Disk capacity = 50%
+</span></span><span class="line"><span class="cl">Disk latency = very high
+</span></span><span class="line"><span class="cl">Network = 40%
+</span></span><span class="line"><span class="cl">CPU = 30%
+</span></span><span class="line"><span class="cl">ISR shrinking
+</span></span></code></pre><p><em>Question</em>: Is disk still a possible bottleneck?</p>
+<p><em>Answer</em>: Absolutely. Disk capacity and disk performance are different.</p>
+<h2 id="75-practical-exercise-9-alert-design">75. Practical Exercise 9 — Alert Design</h2>
+<p>Which is more useful?</p>
+<ul>
+<li><strong>Alert A</strong></li>
+</ul>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">CPU &gt; 70%
+</span></span></code></pre><ul>
+<li><strong>Alert B</strong></li>
+</ul>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">UnderReplicatedPartitions &gt; 0
+</span></span><span class="line"><span class="cl">for 5 consecutive minutes
+</span></span></code></pre><p><em>Answer</em>: Generally <strong>B</strong> is more Kafka-specific and actionable.</p>
+<h2 id="78-practical-exercise-10-lag-trend">78. Practical Exercise 10 — Lag Trend</h2>
+<p>Scenario:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">09:00  lag = 1,000
+</span></span><span class="line"><span class="cl">09:05  lag = 1,100
+</span></span><span class="line"><span class="cl">09:10  lag = 1,050
+</span></span><span class="line"><span class="cl">09:15  lag = 1,000
+</span></span></code></pre><p><em>Question</em>: Is the consumer necessarily unhealthy?</p>
+<p><em>Answer</em>: No. Lag is stable/decreasing.</p>
+<p>Compare with:</p>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">09:00 1,000
+</span></span><span class="line"><span class="cl">09:05 5,000
+</span></span><span class="line"><span class="cl">09:10 20,000
+</span></span><span class="line"><span class="cl">09:15 80,000
+</span></span></code></pre><p>which indicates a clear problem.</p>
+<h2 id="79-administrator-exam-strategy">79. Administrator Exam Strategy</h2>
+<p>When a question gives you several metrics, identify:</p>
+<ol>
+<li>
+<p>The symptom
+Example: <code>consumer lag</code></p>
+</li>
+<li>
+<p>The correlated metric
+Example: <code>consumer CPU = 100%</code></p>
+</li>
+<li>
+<p>The likely bottleneck
+Example: <code>consumer processing</code></p>
+</li>
+<li>
+<p>The best action
+Prefer the action that addresses the bottleneck rather than merely increasing a random limit.</p>
+</li>
+</ol>
+<h2 id="80-developer-exam-strategy">80. Developer Exam Strategy</h2>
+<p>When a question concerns client behavior, focus on:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> producer</li>
+<li><input checked="" disabled="" type="checkbox"> batching</li>
+<li><input checked="" disabled="" type="checkbox"> compression</li>
+<li><input checked="" disabled="" type="checkbox"> acks</li>
+<li><input checked="" disabled="" type="checkbox"> retries</li>
+<li><input checked="" disabled="" type="checkbox"> idempotence</li>
+<li><input checked="" disabled="" type="checkbox"> consumer poll</li>
+<li><input checked="" disabled="" type="checkbox"> offsets</li>
+<li><input checked="" disabled="" type="checkbox"> rebalances</li>
+<li><input checked="" disabled="" type="checkbox"> lag</li>
+<li><input checked="" disabled="" type="checkbox"> serialization</li>
+</ol>
+<p>When it concerns infrastructure, think:</p>
+<ol>
+<li><input checked="" disabled="" type="checkbox"> broker</li>
+<li><input checked="" disabled="" type="checkbox"> partition</li>
+<li><input checked="" disabled="" type="checkbox"> replication</li>
+<li><input checked="" disabled="" type="checkbox"> ISR</li>
+<li><input checked="" disabled="" type="checkbox"> disk</li>
+<li><input checked="" disabled="" type="checkbox"> network</li>
+<li><input checked="" disabled="" type="checkbox"> JVM</li>
+</ol>
+<h2 id="81-administrator-exam-strategy">81. Administrator Exam Strategy</h2>
+<p>For administrator questions, prioritize:</p>
+<ul>
+<li>availability</li>
+<li>replication</li>
+<li>capacity</li>
+<li>monitoring</li>
+<li>disk</li>
+<li>network</li>
+<li>broker health</li>
+<li>partition distribution</li>
+<li>JVM</li>
+<li>security</li>
+</ul>
+<p>A useful priority hierarchy is:</p>
+<ol>
+<li>Availability</li>
+<li>Durability</li>
+<li>Data integrity</li>
+<li>Performance</li>
+<li>Capacity</li>
+<li>Optimization</li>
+</ol>
+<h2 id="82-final-certification-cheat-sheet">82. Final Certification Cheat Sheet</h2>
+<pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">                 KAFKA TROUBLESHOOTING
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">       +-----------------+-----------------+
+</span></span><span class="line"><span class="cl">       |                 |                 |
+</span></span><span class="line"><span class="cl">   Availability       Performance       Consumer
+</span></span><span class="line"><span class="cl">       |                 |                 |
+</span></span><span class="line"><span class="cl"> Offline partitions   Latency            Lag
+</span></span><span class="line"><span class="cl"> ISR                  CPU                Poll
+</span></span><span class="line"><span class="cl"> Leader elections     Disk               Rebalance
+</span></span><span class="line"><span class="cl"> Broker failure       Network            Processing
+</span></span><span class="line"><span class="cl"> Controller           GC                 Commit
+</span></span><span class="line"><span class="cl">       |                 |                 |
+</span></span><span class="line"><span class="cl">       +-----------------+-----------------+
+</span></span><span class="line"><span class="cl">                         |
+</span></span><span class="line"><span class="cl">                         v
+</span></span><span class="line"><span class="cl">                    ROOT CAUSE
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">OfflinePartitionsCount &gt; 0 = availability problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">UnderReplicatedPartitions &gt; 0 = replication health problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">ISR shrinking = replica falling behind
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Lag increasing = consumer cannot keep up
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Frequent rebalances = consumer-group instability
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">High disk latency = possible storage bottleneck
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">High network utilization = possible network bottleneck
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">Long GC pauses = possible broker responsiveness problem
+</span></span></code></pre><pre class="chroma light" data-lang="text"><code class="language-text"><span class="line"><span class="cl">One hot partition = possible key-distribution problem
+</span></span></code></pre>
+
+        <nav class="page-nav" aria-label="Page navigation">
+          <a class="prev" href="kafka-certification-mastery-chapter-12.html"><span class="nav-label">Previous</span><span class="nav-title">Chapter 12 — Kafka Performance, Tuning &amp; Capacity Planning</span></a>
+          <a class="next" href="kafka-certification-mastery-chapter-14.html"><span class="nav-label">Next</span><span class="nav-title">Chapter 14 — Kafka Reliability, Fault Tolerance &amp; Disaster Recovery Deep Dive</span></a>
+        </nav>
+
+        <div class="page-meta">
+          <span>Page 13 of 16</span>
+        </div>
+
+        <div class="build-meta">
+          
+          <span class="build-meta-text">Built with mdPress</span>
+        </div>
+      </div>
+      <aside class="page-toc" id="page-toc" role="navigation" aria-label="ON THIS PAGE">
+        <div class="page-toc-header">ON THIS PAGE</div>
+        <nav class="page-toc-nav" id="page-toc-nav"></nav>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+   
+  var __ui = {
+    searchPlaceholder: "Type to search…",
+    noResults: "No results for",
+    searchUnavailable: "Search unavailable",
+    searchResultsOne: "1 result",
+    searchResults: "%d results",
+    recentPages: "Recent pages",
+    recentEmpty: "No recent pages yet",
+    searchMatchTitle: "title",
+    searchMatchPath: "path",
+    searchMatchText: "text",
+    searchMatched: "Matched: %s",
+    copy: "Copy",
+    copied: "Copied!",
+    assetsMermaidFailed: "Diagram not rendered: the Mermaid library could not be loaded (offline, or the CDN is blocked). Its source is shown below.",
+    assetsKatexFailed: "Some formulas on this page are not rendered: the KaTeX library could not be loaded (offline, or the CDN is blocked). They are shown as LaTeX source."
+  };
+  
+
+  var __mdpressPage = { activeFile: "chapters\/kafka-certification-mastery-chapter-13.html", navFile: "" };
+  </script>
+  <script src="../assets/mdpress-c55798ccb0f70434.js"></script>
+</body>
+</html>

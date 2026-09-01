@@ -1,5 +1,9 @@
-# Apache Kafka Certification Mastery — Chapter 1
+# Chapter 1 — Kafka Mental Model
 
+> Certification track: CCDAK + CCAAK  
+> Reference foundation: *Kafka: The Definitive Guide*, 2nd Edition
+
+---
 ## Table of Contents
 
 - [Kafka Mental Model](#kafka-mental-model)
