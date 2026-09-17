@@ -2,6 +2,8 @@
 
 Welcome to the Kafka Certification Mastery repository.
 
+- [**Kafka Certification Mastery**](index.md)
+
 ## Study Chapters
 
 - [**Chapter 1 — Kafka Mental Model & Fundamentals**](src/chapters/kafka-certification-mastery-chapter-1.md)
