@@ -36,12 +36,12 @@ Welcome to the Kafka Certification Mastery repository.
 
 ## Interactive Mock Exams
 
-- [**Interactive Mock Exams — Exam Center**](exams/index.md)
-- [Mock Exam 1 — Mock Exam A — Developer Fundamentals](exams/mock-1.md)
-- [Mock Exam 2 — Mock Exam B — Producer / Consumer](exams/mock-2.md)
-- [Mock Exam 3 — Mock Exam C — Schema / Connect / Streams](exams/mock-3.md)
-- [Mock Exam 4 — Mock Exam D — Administrator](exams/mock-4.md)
-- [Mock Exam 5 — Mock Exam E — Security / Networking](exams/mock-5.md)
-- [Mock Exam 6 — Mock Exam F — Operations / Troubleshooting](exams/mock-6.md)
-- [Mock Exam 7 — Mock Exam G — Full CCDAK Simulation](exams/mock-7.md)
-- [Mock Exam 8 — Mock Exam H — Full CCAAK Simulation](exams/mock-8.md)
+- [**Interactive Mock Exams — Exam Center**](src/exams/index.md)
+- [Mock Exam 1 — Mock Exam A — Developer Fundamentals](src/exams/mock-1.md)
+- [Mock Exam 2 — Mock Exam B — Producer / Consumer](src/exams/mock-2.md)
+- [Mock Exam 3 — Mock Exam C — Schema / Connect / Streams](src/exams/mock-3.md)
+- [Mock Exam 4 — Mock Exam D — Administrator](src/exams/mock-4.md)
+- [Mock Exam 5 — Mock Exam E — Security / Networking](src/exams/mock-5.md)
+- [Mock Exam 6 — Mock Exam F — Operations / Troubleshooting](src/exams/mock-6.md)
+- [Mock Exam 7 — Mock Exam G — Full CCDAK Simulation](src/exams/mock-7.md)
+- [Mock Exam 8 — Mock Exam H — Full CCAAK Simulation](src/exams/mock-8.md)

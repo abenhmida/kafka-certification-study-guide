@@ -36,7 +36,9 @@ jobs:
           cargo install mdbook-mermaid --locked --version 0.17.0
 
       - name: Install Mermaid preprocessor for mdbook
-        run: mdbook-mermaid install src
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          mdbook-mermaid install src
 
       - name: Build
         run: |

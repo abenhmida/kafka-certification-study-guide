@@ -1,6 +1,5 @@
 # Kafka Developer Certification — Mock Exam Book
 
-
 ## Table of Contents
 
 - [How to Use This Mock Exam](#how-to-use-this-mock-exam)

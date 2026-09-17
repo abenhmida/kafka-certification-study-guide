@@ -6,7 +6,7 @@ src = "."
 
 [output.html]
 additional-css = ["theme/exam.css"]
-additional-js = ["exam.js", "mermaid.min.js", "mermaid-init.js"]
+additional-js = ["exam.js", "src/dashboard.js", "mermaid.min.js", "mermaid-init.js"]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"   
